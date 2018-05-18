@@ -18,23 +18,40 @@ names(des) <- c("fte", "fte_nome", "nd", "des")
 rec <- rec %>%
   group_by(nr) %>%
   mutate(rec = rec/1000000,
-         per_rec_fte = rec/sum(rec))
+         subtot_rec = sum(rec),
+         per_rec_fte = rec/sum(rec)) # calcula os % de distrib. de cada rec nas ftes
 
 des <- des %>%
   group_by(fte) %>%
   mutate(des = des/1000000,
-         per_fte_des = des/sum(des))
+         per_fte_des = des/sum(des)) # calcula os % de distrib. de fte nas desps
 
 matriz <- rec %>%
   full_join(des)
 
 matriz <- matriz %>% 
-  mutate(p = per_rec_fte * per_fte_des,
-         ramo = round(rec * p,0)) %>%
-  group_by(nr,nd) %>%
+  mutate(p = per_rec_fte * per_fte_des, # calcula o % de dist. de cada rec nas desps
+         ramo = round(subtot_rec * p,0)) %>% # calcula então o tamanho de cada link, a
+  group_by(nr,nd) %>%                        # partir do subtotal de cada receita
   summarise(p = sum(p),
             ramo = sum(ramo)) %>%
   select(nr,nd,p,ramo)
+
+# relacao unica dos rotulos de receita e despesa:
+rotulos <- c(unique(matriz$nr),unique(matriz$nd))
+
+# conta os nós e gera sequencia numerica a partir de zero
+num_nos <- length(rotulos)
+nos <- 0:(num_nos-1)
+
+# cria tabelinha para numerar os nos
+tab_aux <- data.frame(rotulos, nos)
+
+# incorpora os números dos nodes na matriz, para a receita... e para a despesa.
+matriz <- matriz %>%
+  left_join(tab_aux, by = c("nr" = "rotulos")) %>%   
+  left_join(tab_aux, by = c("nd" = "rotulos"), suffix = c("_rec","_desp"))
+  
 ```
 
 
@@ -46,9 +63,9 @@ p <- plot_ly(
     orientation = "h",
 
     node = list(
-      #label = c("A1", "A2", "B1", "B2", "C1", "C2"),
+      label = rotulos,
       #color = c("blue", "blue", "blue", "blue", "blue", "blue"),
-      pad = 15,
+      pad = 10,
       thickness = 20,
       line = list(
         color = "black",
@@ -57,13 +74,14 @@ p <- plot_ly(
     ),
 
     link = list(
-      source = c(0,1,0,2,3,3),
-      target = c(2,3,3,4,4,5),
-      value =  c(8,4,2,8,4,2)
+      source = matriz$nos_rec,
+      target = matriz$nos_desp,
+      value =  matriz$ramo
+      
     )
   ) %>% 
   layout(
-    title = "Basic Sankey Diagram",
+    title = "Para onde vai o dinheiro?",
     font = list(
       size = 10
     )
@@ -72,8 +90,4 @@ p <- plot_ly(
 p
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
-
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
-
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+Poderia criar vetores de cores na própria matriz, de maneira q, sempre q um nó fosse relacionado a dívida ou previdência (tanto receita, quanto despesa), usaria mesma cor.
