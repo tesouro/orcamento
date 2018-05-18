@@ -80,8 +80,8 @@ matriz <- rec %>%
 
 matriz <- matriz %>% 
   mutate(p = per_rec_fte * per_fte_des, # calcula o % de dist. de cada rec nas desps
-         ramo = round(subtot_rec * p,0)) %>% # calcula então o tamanho de cada link, a
-  group_by(nr,nd) %>%                        # partir do subtotal de cada receita
+         ramo = ifelse((round(subtot_rec * p,0)<1000000000),0,round(subtot_rec * p,0))) %>% # calcula então o tamanho de cada link, partir do subtotal de cada receita. ignorando se for menor que um bilhao
+  group_by(nr,nd) %>%                        
   summarise(p = sum(p),
             ramo = sum(ramo)) %>%
   select(nr,nd,p,ramo)
@@ -103,21 +103,55 @@ matriz <- matriz %>%
   
 ```
 
-```{r cores, message=FALSE, warning=FALSE}
+```{r cores-e-fontes, message=FALSE, warning=FALSE}
 library(RColorBrewer)
+library(extrafont)
+#font_import()
+#loadfonts(device = "win")
 #display.brewer.all()
 
-divida <- "#F3987D"
-previdencia <- "#FECE60"
+# DEFINIÇÕES DAS CORES
+azul_STN <- "#004a93"
+amarelo_STN <- "#ffd500"
+verde_STN <- "#329c32"
+cor_divida <- "#dd3127"
+cor_divida_transluc <- "rgba(221, 49, 39,0.4)"
+cor_RGPS <- azul_STN
+cor_RGPS_transluc <- "rgba(0,75,147,0.4)"
 
-matriz$cores_ramos <- "#F7EC64"
+# CONSTRUÇÃO DO VETOR DE CORES DOS NOS
+num_nos_rec <- length(unique(matriz$nr))
+num_nos_des <- length(unique(matriz$nd))
+
+cores_nos <- 1:num_nos
+cores_nos[1:num_nos_rec] <- amarelo_STN
+cores_nos[(num_nos_rec+1):(num_nos_rec+num_nos_des)] <- verde_STN
+
+# destacar dívida
+
+posicoes_divida <- c(
+  which(unique(matriz$nr)=="Emissões de títulos"),    # esses rotulos poderiam estar parametrizados
+  num_nos_rec+which(unique(matriz$nd)=="Amortização da Dívida"),
+  num_nos_rec+which(unique(matriz$nd)=="Juros"))
+
+cores_nos[posicoes_divida] <- cor_divida
+
+# destacar previdência
+
+posicoes_previdencia <- c(
+  which(unique(matriz$nr)=="Contribuições e outras receitas do RGPS"),
+  num_nos_rec+which(unique(matriz$nd)=="Benefícios Previdenciários RGPS"))
+
+cores_nos[posicoes_previdencia] <- cor_RGPS
+  
+matriz$cores_ramos <- "rgba(255,213,0,0.4)"
 
 for (i in 1:nrow(matriz)){
   if (matriz$nr[i] == "Emissões de títulos"){
-    matriz$cores_ramos <- divida
+    matriz$cores_ramos[i] <- cor_divida_transluc
   }
   else if (matriz$nr[i] == "Contribuições e outras receitas do RGPS"){
-    matriz$cores_ramos <- previdencia
+    matriz$cores_ramos[i] <- cor_RGPS_transluc
   }
 }
 
@@ -130,42 +164,48 @@ library(plotly)
 p <- plot_ly(
     type = "sankey",
     orientation = "h",
+    opacity = 0.2,
 
     textfont = list(
-      #family = "Roboto Condensed Light"
+      family = "Roboto Condensed Light, Source Sans Pro, Arial Narrow",
+      color = "black"
     ),
 
     node = list(
       label = rotulos,
-      #color = c("blue", "blue", "blue", "blue", "blue", "blue"),
+      color = cores_nos,
       pad = 10,
-      thickness = 20,
+      thickness = 25,
       line = list(
-        color = "black",
-        width = 0.5
+        color = "",
+        width = 0
       )
     ),
     
-    hoverlabel = list(
-      font = list(
-        #family = "Roboto Condensed Light"
-      )
-    ),
+    # hoverlabel = list(
+    #   font = list(
+    #     family = "Roboto Condensed Light, Source Sans Pro, Arial Narrow"
+    #   )
+    # ),
 
     link = list(
       source = matriz$nos_rec,
       target = matriz$nos_desp,
       value =  matriz$ramo#,
       #color = matriz$cores_ramos
+     #color =  "rgba(255,213,0,0.4)" # o pulo do gato! para deixar a cor translucida, é preciso usar rgba, e o último
+                                     # parâmetro é a opacidade
+      
       
     )
   ) %>% 
   layout(
     title = "",
     font = list(
-      family = "Roboto Condensed",
+      family = "Roboto Condensed Light, Source Sans Pro, Arial Narrow",
       size = 10,
       color = "#004a93"
+      
     )
 )
 
