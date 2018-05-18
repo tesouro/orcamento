@@ -1,14 +1,63 @@
 ---
-title: "R Notebook"
-output: html_notebook
+title: "Como são aplicadas as receitas federais?"
+output:
+  html_document:
+    theme: "cosmo"
+    df_print: paged
+    toc: false
+    code_folding: hide
 ---
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(readxl)
 library(tidyverse)
 ```
 
-```{r}
+```{css, echo=FALSE}
+
+h1,h2,h3,h4 {
+  color: #004a93;
+}
+
+h2 {
+  font-weight: bold;
+}
+
+.destaques {
+  padding: 1%;
+  background-color: #eae6af;
+}
+
+.destaques ul {
+  color: #004a93;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.destaques a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.destaques p {
+  padding: 1%;
+}
+
+.destaques p:hover{
+  color: #eae6af;
+  background-color: #004a93;
+}
+
+```
+
+## Metodologia
+
+As receitas arrecadadas são destinadas a fontes de recursos, e foram agrupadas segundo uma classificação.
+
+As despesas foram agrupadas conforme a classificação adotada no capítulo "Estrutura do Gasto Público no Brasil: evolução histórica e desafios".
+
+```{r message=FALSE, warning=FALSE}
 rec <- read_excel("dados/Sankey Receitas por Fonte.xlsx", skip = 10)
 des <- read_excel("dados/Sankey Despesas por Fonte.xlsx", skip = 10)
 
@@ -17,13 +66,13 @@ names(des) <- c("fte", "fte_nome", "nd", "des")
 
 rec <- rec %>%
   group_by(nr) %>%
-  mutate(rec = rec/1000000,
+  mutate(rec = rec,  #/1000000
          subtot_rec = sum(rec),
          per_rec_fte = rec/sum(rec)) # calcula os % de distrib. de cada rec nas ftes
 
 des <- des %>%
   group_by(fte) %>%
-  mutate(des = des/1000000,
+  mutate(des = des, #/1000000
          per_fte_des = des/sum(des)) # calcula os % de distrib. de fte nas desps
 
 matriz <- rec %>%
@@ -54,13 +103,37 @@ matriz <- matriz %>%
   
 ```
 
+```{r cores, message=FALSE, warning=FALSE}
+library(RColorBrewer)
+#display.brewer.all()
 
-```{r}
+divida <- "#F3987D"
+previdencia <- "#FECE60"
+
+matriz$cores_ramos <- "#F7EC64"
+
+for (i in 1:nrow(matriz)){
+  if (matriz$nr[i] == "Emissões de títulos"){
+    matriz$cores_ramos <- divida
+  }
+  else if (matriz$nr[i] == "Contribuições e outras receitas do RGPS"){
+    matriz$cores_ramos <- previdencia
+  }
+}
+
+```
+
+
+```{r message=FALSE, warning=FALSE}
 library(plotly)
 
 p <- plot_ly(
     type = "sankey",
     orientation = "h",
+
+    textfont = list(
+      #family = "Roboto Condensed Light"
+    ),
 
     node = list(
       label = rotulos,
@@ -72,18 +145,27 @@ p <- plot_ly(
         width = 0.5
       )
     ),
+    
+    hoverlabel = list(
+      font = list(
+        #family = "Roboto Condensed Light"
+      )
+    ),
 
     link = list(
       source = matriz$nos_rec,
       target = matriz$nos_desp,
-      value =  matriz$ramo
+      value =  matriz$ramo#,
+      #color = matriz$cores_ramos
       
     )
   ) %>% 
   layout(
-    title = "Para onde vai o dinheiro?",
+    title = "",
     font = list(
-      size = 10
+      family = "Roboto Condensed",
+      size = 10,
+      color = "#004a93"
     )
 )
 
