@@ -57,6 +57,24 @@ As receitas arrecadadas são destinadas a fontes de recursos, e foram agrupadas 
 
 As despesas foram agrupadas conforme a classificação adotada no capítulo "Estrutura do Gasto Público no Brasil: evolução histórica e desafios".
 
+## a fazer
+
+Poderia criar vetores de cores na própria matriz, de maneira q, sempre q um nó fosse relacionado a dívida ou previdência (tanto receita, quanto despesa), usaria mesma cor. <- já fiz
+
+fazer versão sem dívida, só deixando o pedaço da dívida q interage com o resto. só precisaria junta amortizacao com juros remover o link emissões-amortiz/juros.
+
+descrever os critérios
+
+juntar algumas receitas: 
+
+recebimentos... + juros
+explor + serviõs + taxas > outras
+contr econ > contrib soc (exceto rgps)
+remover linhas < 1bi
+usar anti_join
+
+cores muito escuras ainda...
+
 ```{r message=FALSE, warning=FALSE}
 rec <- read_excel("dados/Sankey Receitas por Fonte.xlsx", skip = 10)
 des <- read_excel("dados/Sankey Despesas por Fonte.xlsx", skip = 10)
@@ -78,9 +96,16 @@ des <- des %>%
 matriz <- rec %>%
   full_join(des)
 
+# calcula o % de dist. de cada rec nas desps
+# calcula então o tamanho de cada link, partir do subtotal de cada receita. ignorando se for menor que um bilhao
+### a fazer: remover as linhas com um anti_join, para não contaminar a informação do hoover (outgoing, ingoing count)
+
 matriz <- matriz %>% 
-  mutate(p = per_rec_fte * per_fte_des, # calcula o % de dist. de cada rec nas desps
-         ramo = ifelse((round(subtot_rec * p,0)<1000000000),0,round(subtot_rec * p,0))) %>% # calcula então o tamanho de cada link, partir do subtotal de cada receita. ignorando se for menor que um bilhao
+  mutate(p = per_rec_fte * per_fte_des, 
+         ramo = ifelse(
+           (round(subtot_rec * p,0)<1000000000),
+           0,
+           round(subtot_rec * p,0))) %>% 
   group_by(nr,nd) %>%                        
   summarise(p = sum(p),
             ramo = sum(ramo)) %>%
@@ -105,7 +130,7 @@ matriz <- matriz %>%
 
 ```{r cores-e-fontes, message=FALSE, warning=FALSE}
 library(RColorBrewer)
-library(extrafont)
+#library(extrafont)
 #font_import()
 #loadfonts(device = "win")
 #display.brewer.all()
@@ -113,11 +138,15 @@ library(extrafont)
 # DEFINIÇÕES DAS CORES
 azul_STN <- "#004a93"
 amarelo_STN <- "#ffd500"
+amarelo_transluc <- "rgba(255,213,0,0.6)"
 verde_STN <- "#329c32"
 cor_divida <- "#dd3127"
-cor_divida_transluc <- "rgba(221, 49, 39,0.4)"
+cor_divida_transluc <- "rgba(221, 49, 39,0.7)"
+cor_divida_transluc2 <- "rgba(221, 49, 39,0.55)"
 cor_RGPS <- azul_STN
-cor_RGPS_transluc <- "rgba(0,75,147,0.4)"
+cor_RGPS_transluc <- "rgba(0,75,147,0.7)"
+cor_RGPS_transluc2 <- "rgba(0,75,147,0.55)"
+### obs: se o alpha for muito baixo, o hover sobre o ramo/link fica imperceptível!
 
 # CONSTRUÇÃO DO VETOR DE CORES DOS NOS
 num_nos_rec <- length(unique(matriz$nr))
@@ -144,7 +173,7 @@ posicoes_previdencia <- c(
 
 cores_nos[posicoes_previdencia] <- cor_RGPS
   
-matriz$cores_ramos <- "rgba(255,213,0,0.4)"
+matriz$cores_ramos <- amarelo_transluc
 
 for (i in 1:nrow(matriz)){
   if (matriz$nr[i] == "Emissões de títulos"){
@@ -152,6 +181,14 @@ for (i in 1:nrow(matriz)){
   }
   else if (matriz$nr[i] == "Contribuições e outras receitas do RGPS"){
     matriz$cores_ramos[i] <- cor_RGPS_transluc
+  }
+# acrescentando condições  
+  else if (matriz$nd[i] == "Amortização da Dívida" | matriz$nd[i] == "Juros"){
+    matriz$cores_ramos[i] <- cor_divida_transluc2
+  }
+  
+  else if (matriz$nd[i] == "Benefícios Previdenciários RGPS"){
+    matriz$cores_ramos[i] <- cor_RGPS_transluc2
   }
 }
 
@@ -182,17 +219,17 @@ p <- plot_ly(
       )
     ),
     
-    # hoverlabel = list(
-    #   font = list(
-    #     family = "Roboto Condensed Light, Source Sans Pro, Arial Narrow"
-    #   )
-    # ),
+    hoverlabel = list(
+       font = list(
+         family = "Roboto Condensed Light, Source Sans Pro, Arial Narrow"
+       )
+     ),
 
     link = list(
       source = matriz$nos_rec,
       target = matriz$nos_desp,
-      value =  matriz$ramo#,
-      #color = matriz$cores_ramos
+      value =  matriz$ramo,
+      color = matriz$cores_ramos
      #color =  "rgba(255,213,0,0.4)" # o pulo do gato! para deixar a cor translucida, é preciso usar rgba, e o último
                                      # parâmetro é a opacidade
       
@@ -201,15 +238,15 @@ p <- plot_ly(
   ) %>% 
   layout(
     title = "",
+    width = 700,
+    height = 800,
     font = list(
       family = "Roboto Condensed Light, Source Sans Pro, Arial Narrow",
-      size = 10,
+      size = 11,
       color = "#004a93"
-      
     )
 )
 
 p
 ```
 
-Poderia criar vetores de cores na própria matriz, de maneira q, sempre q um nó fosse relacionado a dívida ou previdência (tanto receita, quanto despesa), usaria mesma cor.
