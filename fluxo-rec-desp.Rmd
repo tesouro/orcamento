@@ -4,14 +4,10 @@ output:
   html_document:
     theme: "cosmo"
     df_print: paged
-    toc: false
+    toc: true
+    toc_float: true
     code_folding: hide
 ---
-
-```{r message=FALSE, warning=FALSE}
-library(readxl)
-library(tidyverse)
-```
 
 ```{css, echo=FALSE}
 
@@ -53,27 +49,65 @@ h2 {
 
 ## Metodologia
 
-As receitas arrecadadas são destinadas a fontes de recursos, e foram agrupadas segundo uma classificação.
+Todas as receitas arrecadadas pelo Governo Federal passam por uma dupla classificação: 
 
-As despesas foram agrupadas conforme a classificação adotada no capítulo "Estrutura do Gasto Público no Brasil: evolução histórica e desafios".
+* uma classificação por "natureza de receita", que procura identificar a origem do recursos, segundo o fato gerador (receitas de impostos, de contribuições para o INSS, de taxas, de aluguéis, de operações de crédito etc.); e
 
-## a fazer
+* uma classificação por "fonte/destinação" dos recursos, que procura agrupar e direcionar os recursos de acordo com as aplicações previstas na legislação (por exemplo, 18% da receita de impostos deve ser aplicada em Educação, os recursos das contribuições do INSS devem ser aplicados no pagamento de benefícios previdenciários etc.)
 
-Poderia criar vetores de cores na própria matriz, de maneira q, sempre q um nó fosse relacionado a dívida ou previdência (tanto receita, quanto despesa), usaria mesma cor. <- já fiz
+Além disso, no orçamento da União, cada despesa autorizada deve especificar justamente qual a origem do recurso que irá custeá-la. Isso é feito justamente por meio desse classificador "fonte/destinação de recursos". Como explica o [Manual Técnico de Orçamento de 2018 (MTO 2018)](http://www.planejamento.gov.br/assuntos/orcamento-1/informacoes-orcamentarias/arquivos/MTOs/mto_atual.pdf), da Secretaria de Orçamento Federal:
 
-fazer versão sem dívida, só deixando o pedaço da dívida q interage com o resto. só precisaria junta amortizacao com juros remover o link emissões-amortiz/juros.
+>A Fonte, nesse contexto, é instrumento de Gestão da Receita e da Despesa ao mesmo tempo, pois tem como objetivo assegurar que determinadas receitas sejam direcionadas para financiar atividades (despesas) do governo em conformidade com Leis que regem o tema.
 
-descrever os critérios
+Um exemplo prático pode ajudar a iluminar um pouco mais o assunto. Imagine que um cidadão pagou um <abbr title="Documento de Arrecadação de Receitas Federais">DARF</abbr> na rede bancária referente a imposto de renda apurado em sua declaração de ajuste anual. Esse DARF possui um código, o código de recolhimento 0211. Os recursos arrecadados serão classificados na natureza de receita correspondente ao Imposto de Renda Pessoa Física, e serão creditados na conta única do Tesouro. No entanto, o Governo não poderá aplicar esse dinheiro da forma que entender melhor: existem uma série de destinações dos recursos de impostos criadas pela legislação. Assim, esse recurso deverá ser destinado da seguinte forma:
 
-juntar algumas receitas: 
+* 0,6% ao Fundo Constitucional do Norte;
+* 1,8% ao Fundo Constitucional do Nordeste;
+* 0,6% ao Fundo Constitucional do Centro-Oeste;
+* 24,5% ao Fundo de Participação dos Municípios;
+* 21,5% ao Fundo de Participação dos Estados;
+* 9,72% à Manutenção e Desenvolvimento do Ensino (são os 18% mencionados acima, porém esse percentual é aplicado ao que resta dos recursos arrecadados após a distribuição aos Fundos de Participação dos Municípios e dos Estados -- 46%);
+* 41,28%, o restante, serão destinados de forma mais ou menos discricionária no Orçamento da União.
 
-recebimentos... + juros
-explor + serviõs + taxas > outras
-contr econ > contrib soc (exceto rgps)
-remover linhas < 1bi
-usar anti_join
+Para controlar todas essas destinações, o governo utiliza as tais "fontes/destinações de recursos".
 
-cores muito escuras ainda...
+Ou seja, as receitas orçamentárias arrecadadas são distribuídas em fontes de recursos, e os recursos das fontes de recursos são alocados às despesas orçamentárias.
+
+Assim, embora não seja possível afirmar categoricamente que um determinado real pago por um cidadão a título de imposto de renda foi com certeza utilizado no pagamento de uma determinada despesa, sabemos que um percentual dos recursos arrecadados foram destinados a certas fontes, e sabemos os percentuais dessas fontes que foram destinadas a cada uma das despesas.
+
+Dessa forma, analisando essas distribuições e calculando esses percentuais, podemos estimar então que um percentual de uma determinada receita foi destinada a uma determinada despesa. É o que fizemos aqui neste documento.
+
+Os valores utilizados são aqueles da Lei Orçamentária Anual de 2018.
+
+### Como as receitas foram classificadas
+
+Existem diversas formas possíveis de se agruparem as receitas orçamentárias. Para este exercício, procuramos destacar certos agrupamentos de receitas, tais como as emissões de títulos públicos, as receitas do INSS, as receitas de impostos etc. 
+
+A classificação por natureza de receitas utiliza uma estrutura de codificação baseada num código numérico de 8 dígitos, em que as posições dos dígitos constituem classificadores intermediários, da seguinte forma:
+
+![Estrutura da Natureza de Receita. Fonte: MTO 2018](imagens/MTO_nat_receita.PNG)
+
+Para esta análise, as receitas foram agrupadas no seu terceiro nível, o nível de *Espécie*. Além disso, os recursos do Regime Geral de Previdência Social foram tratados de forma separada, por meio do classificador "unidade orçamentária".
+
+Assim, as receitas foram agrupadas da seguinte forma:
+
+![Classificação adotada para as receitas](imagens/tabela-rec.png)
+
+### Como as despesas foram classificadas
+
+Para as despesas, foi adotada uma classificação baseada naquela utiliza no capítulo "Estrutura do Gasto Público no Brasil", de autoria de Mansueto Almeida, do livro "A Reforma Esquecida", acrescentando-se as despesas da dívida pública e as transferências a estados e municípios. 
+
+Essa classificação estabelece um recorte das despesas públicas da seguinte forma:
+
+![Classificação adotada para as receitas](imagens/tabela-desp.png)
+
+### Tratamento dos dados
+
+```{r message=FALSE, warning=FALSE}
+library(readxl)
+library(tidyverse)
+```
+
 
 ```{r message=FALSE, warning=FALSE}
 rec <- read_excel("dados/Sankey Receitas por Fonte.xlsx", skip = 10)
@@ -102,15 +136,25 @@ matriz <- rec %>%
 
 matriz <- matriz %>% 
   mutate(p = per_rec_fte * per_fte_des, 
-         ramo = ifelse(
-           (round(subtot_rec * p,0)<1000000000),
-           0,
-           round(subtot_rec * p,0))) %>% 
+         # ramo = ifelse((round(subtot_rec * p,0)<1000000000),0,round(subtot_rec * p,0))) %>%
+         ramo = round(subtot_rec * p,0)) %>% 
   group_by(nr,nd) %>%                        
   summarise(p = sum(p),
             ramo = sum(ramo)) %>%
   select(nr,nd,p,ramo)
+```
 
+```{r limpeza, message=FALSE, warning=FALSE}
+tamanho_critico <- 500000000 
+ramos_a_limpar <- matriz %>% filter(ramo<tamanho_critico) #fazer no shiny
+
+matriz_original <- matriz
+
+matriz <- matriz %>%
+  anti_join(ramos_a_limpar)
+```
+
+```{r numera-nos, message=FALSE, warning=FALSE}
 # relacao unica dos rotulos de receita e despesa:
 rotulos <- c(unique(matriz$nr),unique(matriz$nd))
 
@@ -128,6 +172,9 @@ matriz <- matriz %>%
   
 ```
 
+
+
+
 ```{r cores-e-fontes, message=FALSE, warning=FALSE}
 library(RColorBrewer)
 #library(extrafont)
@@ -138,14 +185,14 @@ library(RColorBrewer)
 # DEFINIÇÕES DAS CORES
 azul_STN <- "#004a93"
 amarelo_STN <- "#ffd500"
-amarelo_transluc <- "rgba(255,213,0,0.6)"
+amarelo_transluc <- "rgba(181,150,40,0.7)" # links receitas normais
 verde_STN <- "#329c32"
 cor_divida <- "#dd3127"
 cor_divida_transluc <- "rgba(221, 49, 39,0.7)"
-cor_divida_transluc2 <- "rgba(221, 49, 39,0.55)"
+cor_divida_transluc2 <- "rgba(229, 90, 39,0.7)" # links outras receitas destinadas à dívida
 cor_RGPS <- azul_STN
 cor_RGPS_transluc <- "rgba(0,75,147,0.7)"
-cor_RGPS_transluc2 <- "rgba(0,75,147,0.55)"
+cor_RGPS_transluc2 <- "rgba(68,75,147,0.55)" # links outras receitas destinada ao RGPS
 ### obs: se o alpha for muito baixo, o hover sobre o ramo/link fica imperceptível!
 
 # CONSTRUÇÃO DO VETOR DE CORES DOS NOS
@@ -194,14 +241,16 @@ for (i in 1:nrow(matriz)){
 
 ```
 
+## O diagrama: como são aplicadas as receitas federais?
 
 ```{r message=FALSE, warning=FALSE}
 library(plotly)
 
-p <- plot_ly(
+p <- function(dados){
+  plot_ly(
     type = "sankey",
     orientation = "h",
-    opacity = 0.2,
+    opacity = 0.6, # será q isso controla a opacidade dos hovers??
 
     textfont = list(
       family = "Roboto Condensed Light, Source Sans Pro, Arial Narrow",
@@ -226,10 +275,10 @@ p <- plot_ly(
      ),
 
     link = list(
-      source = matriz$nos_rec,
-      target = matriz$nos_desp,
-      value =  matriz$ramo,
-      color = matriz$cores_ramos
+      source = dados$nos_rec,
+      target = dados$nos_desp,
+      value =  dados$ramo,
+      color = dados$cores_ramos
      #color =  "rgba(255,213,0,0.4)" # o pulo do gato! para deixar a cor translucida, é preciso usar rgba, e o último
                                      # parâmetro é a opacidade
       
@@ -246,7 +295,10 @@ p <- plot_ly(
       color = "#004a93"
     )
 )
+}
 
-p
+p(matriz)
 ```
+
+
 
