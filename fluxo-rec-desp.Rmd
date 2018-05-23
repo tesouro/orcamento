@@ -19,6 +19,11 @@ h2 {
   font-weight: bold;
 }
 
+blockquote {
+  font-size: 12px;
+  background-color: #edeff9; 
+}
+
 .destaques {
   padding: 1%;
   background-color: #eae6af;
@@ -253,8 +258,9 @@ p <- function(dados){
     opacity = 0.6, # será q isso controla a opacidade dos hovers??
 
     textfont = list(
-      family = "Roboto Condensed Light, Source Sans Pro, Arial Narrow",
-      color = "black"
+      family = "Roboto Condensed, Source Sans Pro, Arial Narrow",
+      color = "#444444",
+      size = 12
     ),
 
     node = list(
