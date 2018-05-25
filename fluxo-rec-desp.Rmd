@@ -49,7 +49,6 @@ blockquote {
   color: #eae6af;
   background-color: #004a93;
 }
-
 ```
 
 ## Metodologia
@@ -255,10 +254,12 @@ p <- function(dados){
   plot_ly(
     type = "sankey",
     orientation = "h",
-    opacity = 0.6, # será q isso controla a opacidade dos hovers??
+    opacity = 0.6, # será q isso controla a opacidade dos hovers??#,
+    #valueformat = ">-.3~g",
+    #valuesuffix = " bilhões de reais",
 
     textfont = list(
-      family = "Roboto Condensed, Source Sans Pro, Arial Narrow",
+      family = "Roboto Condensed, Arial Narrow, Source Sans Pro",
       color = "#444444",
       size = 12
     ),
@@ -276,7 +277,7 @@ p <- function(dados){
     
     hoverlabel = list(
        font = list(
-         family = "Roboto Condensed Light, Source Sans Pro, Arial Narrow"
+         family = "Roboto Condensed Light, Arial Narrow, Source Sans Pro"
        )
      ),
 
@@ -296,7 +297,7 @@ p <- function(dados){
     width = 700,
     height = 800,
     font = list(
-      family = "Roboto Condensed Light, Source Sans Pro, Arial Narrow",
+      family = "Roboto Condensed Light, Arial Narrow, Source Sans Pro",
       size = 11,
       color = "#004a93"
     )
