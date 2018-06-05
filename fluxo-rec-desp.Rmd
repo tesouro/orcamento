@@ -7,6 +7,7 @@ output:
     toc: true
     toc_float: true
     code_folding: hide
+    fig_height: 9
 ---
 
 ```{css, echo=FALSE}
@@ -245,12 +246,31 @@ for (i in 1:nrow(matriz)){
 
 ```
 
+```{r sem-divida, message=FALSE, warning=FALSE}
+# qual o numero do no de juros
+no_juros <- unique(matriz$nos_desp[which(matriz$nd=="Juros")])
+
+# qual o numero do no de amortização da dívida
+no_amort <- unique(matriz$nos_desp[which(matriz$nd=="Amortização da Dívida")])
+
+matriz_semdivida <- matriz %>%
+  mutate(nd = replace(nd, nd=="Juros", "Dívida"),
+         nd = replace(nd, nd=="Amortização da Dívida", "Dívida"),
+         nos_desp = replace(nos_desp, nd=="Dívida", min(no_juros,no_amort))) %>%
+  filter(!(nr == "Emissões de títulos" & nd == "Dívida")) %>% # atenção a esse filtro!
+  group_by(nr,nd,nos_rec,nos_desp,cores_ramos)%>%
+  summarize(p = sum(p),
+            ramo = sum(ramo))
+
+rotulos_divida <- c(unique(matriz_semdivida$nr),unique(matriz_semdivida$nd))
+```
+
 ## O diagrama: como são aplicadas as receitas federais?
 
 ```{r message=FALSE, warning=FALSE}
 library(plotly)
 
-p <- function(dados){
+p <- function(dados,nomes){
   plot_ly(
     type = "sankey",
     orientation = "h",
@@ -265,7 +285,7 @@ p <- function(dados){
     ),
 
     node = list(
-      label = rotulos,
+      label = nomes,
       color = cores_nos,
       pad = 10,
       thickness = 25,
@@ -303,9 +323,23 @@ p <- function(dados){
     )
 )
 }
-
-p(matriz)
 ```
 
+### A versão completa
 
+```{r message=FALSE, warning=FALSE}
+p(matriz, rotulos)
+```
+
+### A versão sem o refinanciamento da dívida
+
+Nesta versão, as operações da dívida estão restritas aos valores:
+
+* das receitas de emissões destinadas a outras despesas; e
+
+* dos pagamentos de dívida com recursos de outras receitas.
+
+```{r message=FALSE, warning=FALSE}
+p(matriz_semdivida,rotulos_divida)
+```
 
