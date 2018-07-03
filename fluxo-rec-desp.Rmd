@@ -181,68 +181,79 @@ matriz <- matriz %>%
 
 
 ```{r cores-e-fontes, message=FALSE, warning=FALSE}
-library(RColorBrewer)
-#library(extrafont)
-#font_import()
-#loadfonts(device = "win")
-#display.brewer.all()
 
 # DEFINIÇÕES DAS CORES
+library(RColorBrewer)
+
 azul_STN <- "#004a93"
-amarelo_STN <- "#ffd500"
-amarelo_transluc <- "rgba(181,150,40,0.7)" # links receitas normais
-verde_STN <- "#329c32"
-cor_divida <- "#dd3127"
 cor_divida_transluc <- "rgba(221, 49, 39,0.7)"
-cor_divida_transluc2 <- "rgba(229, 90, 39,0.7)" # links outras receitas destinadas à dívida
-cor_RGPS <- azul_STN
 cor_RGPS_transluc <- "rgba(0,75,147,0.7)"
-cor_RGPS_transluc2 <- "rgba(68,75,147,0.55)" # links outras receitas destinada ao RGPS
-### obs: se o alpha for muito baixo, o hover sobre o ramo/link fica imperceptível!
+cor_divida <- "#dd3127"
+cor_RGPS <- azul_STN
+cor_padrao_despesas <- "#888888"
 
-# CONSTRUÇÃO DO VETOR DE CORES DOS NOS
-num_nos_rec <- length(unique(matriz$nr))
-num_nos_des <- length(unique(matriz$nd))
+qde_rec_destacadas <- 2
+qde_cores_extras <- length(unique(matriz$nr)) - qde_rec_destacadas
 
-cores_nos <- 1:num_nos
-cores_nos[1:num_nos_rec] <- amarelo_STN
-cores_nos[(num_nos_rec+1):(num_nos_rec+num_nos_des)] <- verde_STN
+paleta_STN <- brewer.pal(qde_cores_extras, "Set2")
+#paleta_STN <- c("#F8AC08","#CEC806","#96C11E","#028063","#149339","#4E857E","#6E287C")
 
-# destacar dívida
+paleta_STN_rgb <- col2rgb(paleta_STN)
 
-posicoes_divida <- c(
-  which(unique(matriz$nr)=="Emissões de títulos"),    # esses rotulos poderiam estar parametrizados
-  num_nos_rec+which(unique(matriz$nd)=="Amortização da Dívida"),
-  num_nos_rec+which(unique(matriz$nd)=="Juros"))
+# essa função gera uma matriz com os componentes RGB.
+# precisamos fornecer as cores no formato "rgb(r,g,b)"
+# além disso, para os ramos, é interessante que as cores sejam translúcidas, 
+# então vamos acrescentar um componente de transparência
 
-cores_nos[posicoes_divida] <- cor_divida
+paleta_STN_transluc <- NULL
+for (i in 1:dim(paleta_STN_rgb)[2] ) {
+  paleta_STN_transluc <- c(paleta_STN_transluc, paste("rgba(", paleta_STN_rgb[1,i],", ",  paleta_STN_rgb[2,i],", ",  paleta_STN_rgb[3,i],", 0.7)", sep = ""))
+}
 
-# destacar previdência
+# rotininha para povoar as cores dos ramos e dos nos, conforme as receitas
 
-posicoes_previdencia <- c(
-  which(unique(matriz$nr)=="Contribuições e outras receitas do RGPS"),
-  num_nos_rec+which(unique(matriz$nd)=="Benefícios Previdenciários RGPS"))
+receitas <- unique(matriz$nr)
 
-cores_nos[posicoes_previdencia] <- cor_RGPS
-  
-matriz$cores_ramos <- amarelo_transluc
+cores_ramos <- NULL
+cores_nos <- NULL
+k = 1
 
-for (i in 1:nrow(matriz)){
-  if (matriz$nr[i] == "Emissões de títulos"){
-    matriz$cores_ramos[i] <- cor_divida_transluc
+for (i in 1:length(receitas)) {
+  if (receitas[i] == "Contribuições e outras receitas do RGPS") {
+    cores_ramos <- c(cores_ramos, cor_RGPS_transluc)
+    cores_nos <- c(cores_nos, cor_RGPS)
   }
-  else if (matriz$nr[i] == "Contribuições e outras receitas do RGPS"){
-    matriz$cores_ramos[i] <- cor_RGPS_transluc
+  else if (receitas[i] == "Emissões de títulos") {
+    cores_ramos <- c(cores_ramos, cor_divida_transluc)
+    cores_nos <- c(cores_nos, cor_divida)
   }
-# acrescentando condições  
-  else if (matriz$nd[i] == "Amortização da Dívida" | matriz$nd[i] == "Juros"){
-    matriz$cores_ramos[i] <- cor_divida_transluc2
-  }
-  
-  else if (matriz$nd[i] == "Benefícios Previdenciários RGPS"){
-    matriz$cores_ramos[i] <- cor_RGPS_transluc2
+  else {
+    cores_ramos <- c(cores_ramos, paleta_STN_transluc[k])
+    cores_nos <- c(cores_nos, paleta_STN[k])
+    k <- k + 1 # o certo seria fazer algo modular, caso sejam mais receitas que cores
   }
 }
+
+## povoando as cores das despesas... (com um método mais elegante do que um loop)
+despesas <- unique(matriz$nd)
+cores_despesas <- rep(cor_padrao_despesas, length(despesas))
+
+cores_despesas[despesas == "Amortização da Dívida" | despesas == "Juros"] <- cor_divida
+
+cores_despesas[despesas == "Benefícios Previdenciários RGPS"] <- cor_RGPS
+
+## fechando a lista de cores dos nos
+
+cores_nos <- c(cores_nos, cores_despesas)
+
+## tabelinha para usar de referência no preenchimento da matriz
+
+tabelinha_cores_ramos <- data.frame(receitas, cores_ramos)
+
+## preenchendo as cores dos ramos na matriz a partir dessa tabelinha
+
+matriz <- matriz %>%
+  left_join(tabelinha_cores_ramos, by = c("nr" = "receitas"))
 
 ```
 
@@ -279,7 +290,7 @@ p <- function(dados,nomes){
     #valuesuffix = " bilhões de reais",
 
     textfont = list(
-      family = "Roboto Condensed, Arial Narrow, Source Sans Pro",
+      family = "Source Sans Pro",
       color = "#444444",
       size = 12
     ),
@@ -297,7 +308,7 @@ p <- function(dados,nomes){
     
     hoverlabel = list(
        font = list(
-         family = "Roboto Condensed Light, Arial Narrow, Source Sans Pro"
+         family = "Source Sans Pro"
        )
      ),
 
@@ -317,7 +328,7 @@ p <- function(dados,nomes){
     width = 700,
     height = 800,
     font = list(
-      family = "Roboto Condensed Light, Arial Narrow, Source Sans Pro",
+      family = "Source Sans Pro",
       size = 11,
       color = "#004a93"
     )
