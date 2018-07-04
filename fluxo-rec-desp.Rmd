@@ -281,10 +281,18 @@ rotulos_divida <- c(unique(matriz_semdivida$nr),unique(matriz_semdivida$nd))
 ```{r message=FALSE, warning=FALSE}
 library(plotly)
 
+# os textos do hover estão hardcoded no plotly. Então, em plotly-latest.min.js,
+# que está na instalação do R, R\win-library\3.4\plotly\htmlwidgets\lib\plotlyjs,
+# substituí "Incoming Flow Count", "Outgoing Flow Count", "Source:" e "Target:"
+# pelas expressões que eu quis.
+
+
 p <- function(dados,nomes){
   plot_ly(
     type = "sankey",
     orientation = "h",
+    width = 800,
+    height = 700,
     opacity = 0.6, # será q isso controla a opacidade dos hovers??#,
     #valueformat = ">-.3~g",
     #valuesuffix = " bilhões de reais",
@@ -325,8 +333,6 @@ p <- function(dados,nomes){
   ) %>% 
   layout(
     title = "",
-    width = 700,
-    height = 800,
     font = list(
       family = "Source Sans Pro",
       size = 11,
