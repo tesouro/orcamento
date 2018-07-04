@@ -113,6 +113,7 @@ library(readxl)
 library(tidyverse)
 ```
 
+Os dados utilizados estão disponíveis [aqui (Receitas)](https://github.com/gt-cead/gt-cead.github.io/blob/master/downloads/Sankey%20Receitas%20por%20Fonte.xlsx) e [aqui (Despesas)](https://github.com/gt-cead/gt-cead.github.io/blob/master/downloads/Sankey%20Despesas%20por%20Fonte.xlsx).
 
 ```{r message=FALSE, warning=FALSE}
 rec <- read_excel("dados/Sankey Receitas por Fonte.xlsx", skip = 10)
@@ -176,9 +177,6 @@ matriz <- matriz %>%
   left_join(tab_aux, by = c("nd" = "rotulos"), suffix = c("_rec","_desp"))
   
 ```
-
-
-
 
 ```{r cores-e-fontes, message=FALSE, warning=FALSE}
 
@@ -293,7 +291,8 @@ p <- function(dados,nomes){
     orientation = "h",
     width = 800,
     height = 700,
-    opacity = 0.6, # será q isso controla a opacidade dos hovers??#,
+    opacity = 0.6, 
+    # será q isso controla a opacidade dos hovers? # nope, é hardcoded,
     #valueformat = ">-.3~g",
     #valuesuffix = " bilhões de reais",
 
@@ -325,9 +324,8 @@ p <- function(dados,nomes){
       target = dados$nos_desp,
       value =  dados$ramo,
       color = dados$cores_ramos
-     #color =  "rgba(255,213,0,0.4)" # o pulo do gato! para deixar a cor translucida, é preciso usar rgba, e o último
-                                     # parâmetro é a opacidade
-      
+     #color =  "rgba(255,213,0,0.4)" 
+     # para deixar a cor translucida, é preciso usar rgba
       
     )
   ) %>% 
