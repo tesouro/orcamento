@@ -28,7 +28,7 @@ DRU_n_DRU <- analise_rec %>%
 lista_DRU <- analise_rec %>%
   ungroup() %>%
   filter(DRU == "DRU" & Cod_Fonte == "00") %>%
-  select(Cod_Nat_Rec)
+  select(nat_rec = Cod_Nat_Rec, fte = Cod_Fonte)
 
 percent_DRU <- analise_rec %>%
   semi_join(lista_DRU) %>%
