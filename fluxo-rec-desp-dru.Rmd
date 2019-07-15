@@ -118,7 +118,7 @@ Os dados utilizados estão disponíveis [aqui (Receitas)](https://github.com/gt-
 
 ```{r message=FALSE, warning=FALSE}
 
-# processa receitas
+# processa receitas --------------------------------------------------------
 
 rec_RGPS_raw  <- read_excel("dados/Sankey Receitas por Fonte (com DRU) - RGPS.xlsx", skip = 10)
 rec_nRGPS_raw <- read_excel("dados/Sankey Receitas por Fonte (com DRU) - exceto RGPS.xlsx", skip = 10)
@@ -139,32 +139,58 @@ rec_nRGPS <- rec_nRGPS_raw %>%
           TRUE ~ "Demais receitas")) %>%
   select(-origem)
 
-rec <- bind_rows(rec_nRGPS, rec_RGPS)
+rec <- bind_rows(rec_nRGPS, rec_RGPS) %>%
+  select(nr = classificador,
+         nat_rec = `Natureza Receita Código Completo`,
+         fte = `Fonte Recursos Código`,
+         fte_nome = `Fonte Recursos Nome`,
+         rec = `Saldo R$ (Item Informação)`)
 
 # #verifica
-# rec %>% group_by(classificador) %>%
-#   summarise(soma = sum(`Saldo R$ (Item Informação)`)) %>%
+# rec %>% group_by(nr) %>%
+#   summarise(soma = sum(rec)) %>%
 #   arrange(desc(soma))
 
+# processa despesas ----------------------------------------------------------
 
-des <- read_excel("dados/Sankey Despesas por Fonte.xlsx", skip = 10)
+des_raw <- read_excel("dados/Sankey Despesas por Fonte (com DRU).xlsx", skip = 10)
 
-names(rec) <- c("nr_cod", "nr", "natRec", "natRec_nome", "fte", "fte_nome", "rec")
-names(des) <- c("fte", "fte_nome", "nd", "des")
+names(des_raw) <- c("fte", "fte_nome", "nd", "des")
 
-rec <- rec %>%
-  group_by(nr) %>%
+des <- des_raw %>%
+  mutate(des = as.numeric(des))
+
+# continuar daqui
+
+rec_dist <- rec %>%
+  group_by(nr, nat_rec) %>%
   mutate(rec = rec,  #/1000000
          subtot_rec = sum(rec),
          per_rec_fte = rec/sum(rec)) # calcula os % de distrib. de cada rec nas ftes
 
-des <- des %>%
+des_dist <- des %>%
   group_by(fte) %>%
   mutate(des = des, #/1000000
          per_fte_des = des/sum(des)) # calcula os % de distrib. de fte nas desps
 
 matriz <- rec %>%
   full_join(des)
+
+
+exec_rec_dru <- read_excel("./dados/exec_rec_dru.xlsx", skip = 8)
+
+lista_dru <- exec_rec_dru %>%
+  mutate(DRU = ifelse(Cod_Detalhe %in% c("980000", "980001"),
+                      "DRU",
+                      "Demais")) %>%
+  group_by(Cod_Nat_Rec, Cod_Fonte, DRU) %>%
+  summarise() %>%
+  ungroup() %>%
+  filter(DRU == "DRU" & Cod_Fonte == "00") %>%
+  select(nat_rec = Cod_Nat_Rec, fte = Cod_Fonte)
+
+
+
 
 # calcula o % de dist. de cada rec nas desps
 # calcula então o tamanho de cada link, partir do subtotal de cada receita. ignorando se for menor que um bilhao
