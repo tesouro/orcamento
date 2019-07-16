@@ -160,22 +160,7 @@ names(des_raw) <- c("fte", "fte_nome", "nd", "des")
 des <- des_raw %>%
   mutate(des = as.numeric(des))
 
-# continuar daqui
-
-rec_dist <- rec %>%
-  group_by(nr, nat_rec) %>%
-  mutate(rec = rec,  #/1000000
-         subtot_rec = sum(rec),
-         per_rec_fte = rec/sum(rec)) # calcula os % de distrib. de cada rec nas ftes
-
-des_dist <- des %>%
-  group_by(fte) %>%
-  mutate(des = des, #/1000000
-         per_fte_des = des/sum(des)) # calcula os % de distrib. de fte nas desps
-
-matriz <- rec %>%
-  full_join(des)
-
+# dru ------------------------------------------------------------------------
 
 exec_rec_dru <- read_excel("./dados/exec_rec_dru.xlsx", skip = 8)
 
@@ -187,10 +172,86 @@ lista_dru <- exec_rec_dru %>%
   summarise() %>%
   ungroup() %>%
   filter(DRU == "DRU" & Cod_Fonte == "00") %>%
-  select(nat_rec = Cod_Nat_Rec, fte = Cod_Fonte)
+  select(nat_rec = Cod_Nat_Rec, fte = Cod_Fonte, DRU)
 
+rec_dist_preliminar <- rec %>%
+  left_join(lista_dru) %>%
+  group_by(nr) %>%
+  mutate(rec = rec,  #/1000000
+         subtot_rec = sum(rec),
+         per_rec_fte = rec/sum(rec)) %>%
+  ungroup() %>%
+  # gambiarra a partir daqui em razao da BAGUNÇA que fizeram
+  # em 2019 nas classificações das receitas de contribuições
+  mutate(DRU = ifelse(
+    str_sub(nat_rec, 1, 4) %in% c("1211", "1212", "1213", "1214") & fte == "00",
+    "DRU",
+    DRU))
 
+rec_dist <- rec_dist_preliminar %>%
+  group_by(nr, DRU, fte, fte_nome, subtot_rec) %>%
+  summarise(per_rec_fte = sum(per_rec_fte))
 
+# ## verifica se percentuais estão ok
+# rec_dist %>% group_by(nr) %>% summarise(soma = sum(per_rec_fte))
+# rec_dist %>% group_by(nr) %>% summarise(soma = sum(per_rec_fte)) %>% group_by() %>% summarise(mean(soma) == 1)
+
+# tirando a dru
+
+rec_dist_sem_dru <- rec_dist %>% 
+  filter(is.na(DRU)) %>%
+  ungroup() %>%
+  select(-DRU)
+  
+# processando a dru em separado
+# (a dru vai ser receita e despesa)
+
+rec_dist_so_dru <- rec_dist %>% 
+  filter(DRU == "DRU") %>%
+  select(-DRU)
+
+dru_como_rec <- rec_dist_so_dru %>% 
+  mutate(subtot_rec = subtot_rec * per_rec_fte) %>%
+  group_by(fte, fte_nome) %>%
+  summarise(subtot_rec = sum(subtot_rec)) %>%
+  ungroup() %>%
+  mutate(per_rec_fte = 1,
+         nr = "DRU")
+# ou seja, agora temos uma linha para a DRU como se fosse uma receita, em que 100% dos recursos são destinados à fonte 100.
+
+# agora acrescentamos a DRU como receita/origem, para que sejam calculados seus ramos na matriz. depois de montarmos a matriz, vamos acrescentar a DRU como despesa/destino (pois suas origens já sabemos, está no rec_dist_so_dru)
+
+rec_dist_final <- rec_dist_sem_dru %>%
+  bind_rows(dru_como_rec)
+
+# termina as despesas ---------------------------------------------
+
+des_dist <- des %>%
+  filter(des > 0) %>%
+  group_by(fte) %>%
+  mutate(des = des, #/1000000
+         per_fte_des = des/sum(des)) # calcula os % de distrib. de fte nas desps
+
+matriz_pre <- rec_dist_final %>%
+  full_join(des_dist)
+
+# DRU como destino -------------------
+
+dru_como_desp <- rec_dist_so_dru %>% 
+  ungroup() %>%
+  mutate(nd = "DRU",
+         des = subtot_rec * per_rec_fte) %>%
+  group_by(nd) %>%
+  mutate(per_fte_des = des/sum(des),
+         des = sum(des)) %>%
+  select(-DRU)
+
+# junta essa DRU à matriz:
+
+matriz <- matriz_pre %>%
+  bind_rows(dru_como_desp)
+
+# acrescentar 
 
 # calcula o % de dist. de cada rec nas desps
 # calcula então o tamanho de cada link, partir do subtotal de cada receita. ignorando se for menor que um bilhao
