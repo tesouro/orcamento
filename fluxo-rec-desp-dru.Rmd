@@ -235,29 +235,13 @@ des_dist <- des %>%
 matriz_pre <- rec_dist_final %>%
   full_join(des_dist)
 
-# DRU como destino -------------------
-
-dru_como_desp <- rec_dist_so_dru %>% 
-  ungroup() %>%
-  mutate(nd = "DRU",
-         des = subtot_rec * per_rec_fte) %>%
-  group_by(nd) %>%
-  mutate(per_fte_des = des/sum(des),
-         des = sum(des)) %>%
-  select(-DRU)
-
-# junta essa DRU à matriz:
-
-matriz <- matriz_pre %>%
-  bind_rows(dru_como_desp)
-
 # acrescentar 
 
 # calcula o % de dist. de cada rec nas desps
 # calcula então o tamanho de cada link, partir do subtotal de cada receita. ignorando se for menor que um bilhao
 ### a fazer: remover as linhas com um anti_join, para não contaminar a informação do hoover (outgoing, ingoing count)
 
-matriz <- matriz %>% 
+matriz_quase <- matriz_pre %>% 
   mutate(p = per_rec_fte * per_fte_des, 
          # ramo = ifelse((round(subtot_rec * p,0)<1000000000),0,round(subtot_rec * p,0))) %>%
          ramo = round(subtot_rec * p,0)) %>% 
@@ -265,6 +249,23 @@ matriz <- matriz %>%
   summarise(p = sum(p),
             ramo = sum(ramo)) %>%
   select(nr,nd,p,ramo)
+
+# DRU como destino -------------------
+
+dru_como_desp <- rec_dist_so_dru %>% 
+  ungroup() %>%
+  rename(p = per_rec_fte) %>%
+  mutate(nd = "DRU",
+         ramo = p * subtot_rec) %>%
+  select(-DRU, -subtot_rec, -fte, -fte_nome)
+
+# junta essa DRU à matriz:
+
+matriz <- matriz_quase %>%
+  bind_rows(dru_como_desp)
+
+## testa
+# matriz %>% group_by(nr) %>% summarise(sum(p))
 ```
 
 ```{r limpeza, message=FALSE, warning=FALSE}
