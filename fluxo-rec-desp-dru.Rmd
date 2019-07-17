@@ -269,7 +269,7 @@ matriz <- matriz_quase %>%
 ```
 
 ```{r limpeza, message=FALSE, warning=FALSE}
-tamanho_critico <- 500000000 
+tamanho_critico <- 2e9 
 ramos_a_limpar <- matriz %>% filter(ramo<tamanho_critico) #fazer no shiny
 
 matriz_original <- matriz
@@ -280,7 +280,7 @@ matriz <- matriz %>%
 
 ```{r numera-nos, message=FALSE, warning=FALSE}
 # relacao unica dos rotulos de receita e despesa:
-rotulos <- c(unique(matriz$nr),unique(matriz$nd))
+rotulos <- unique(c(unique(matriz$nr),unique(matriz$nd)))
 
 # conta os nós e gera sequencia numerica a partir de zero
 num_nos <- length(rotulos)
@@ -407,8 +407,7 @@ p <- function(dados,nomes){
   plot_ly(
     type = "sankey",
     orientation = "h",
-    width = 800,
-    height = 700,
+    height = 800,
     opacity = 0.6, 
     # será q isso controla a opacidade dos hovers? # nope, é hardcoded,
     #valueformat = ">-.3~g",
@@ -473,6 +472,6 @@ Nesta versão, as operações da dívida estão restritas aos valores:
 * dos pagamentos de dívida com recursos de outras receitas.
 
 ```{r message=FALSE, warning=FALSE}
-p(matriz_semdivida,rotulos_divida)
+p(matriz %>% filter(!(nd == "Amortização da Dívida" & nr == "Emissões de títulos") & !(nd == "Juros" & nr == "Emissões de títulos")), rotulos)
 ```
 
