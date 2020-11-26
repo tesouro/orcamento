@@ -116,7 +116,7 @@ const utils = {
   },
 
 
-  gera_grid : function(svg_ref, step) {
+  gera_grid : function(svg_ref, step = 10) {
     const w = svg_ref.attr("width") | +svg_ref.style("width").slice(0,-2);
     const h = svg_ref.attr("height") | +svg_ref.style("height").slice(0,-2);
     console.log("svg dimensions", w, h);
