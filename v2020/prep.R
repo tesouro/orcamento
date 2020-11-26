@@ -102,9 +102,34 @@ matriz <- matriz_raw %>%
   summarise(pct_rec_desp = sum(pct_rec_desp),
             valor_link   = sum(valor_link))
 
+# verifica
 sum(matriz$valor_link, na.rm = T) - sum(rec$valor_rec) # tem que dar zero
 
+# testes
 matriz %>% filter(valor_link  >= 2.5e8) %>% nrow()
 ggplot(matriz %>% filter(valor_link  <= 1e9)) + geom_histogram(aes(valor_link))
 
+# filtra
+matriz_reduz <- matriz %>% filter(
+  valor_link >= 2.5e8
+)
 
+sum(matriz_reduz$valor_link, na.rm = T)- sum(rec$valor_rec)
+
+
+# 03 Numeração dos nós ----------------------------------------------------
+
+# relacao unica dos rotulos de receita e despesa:
+rotulos <- c(unique(matriz_reduz$receita),unique(matriz_reduz$despesa))
+
+# conta os nós e gera sequencia numerica a partir de zero
+num_nodes <- length(rotulos)
+nodes <- 0:(num_nodes - 1)
+
+# cria tabelinha para numerar os nos
+tab_nodes <- data.frame(rotulos, nodes)
+
+# incorpora os números dos nodes na matriz, para a receita... e para a despesa.
+matriz_nodes <- matriz_reduz %>%
+  left_join(tab_nodes, by = c("receita" = "rotulos")) %>%   
+  left_join(tab_nodes, by = c("despesa" = "rotulos"), suffix = c("_rec","_desp"))
