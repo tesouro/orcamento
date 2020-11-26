@@ -124,10 +124,11 @@ rotulos <- c(unique(matriz_reduz$receita),unique(matriz_reduz$despesa))
 
 # conta os nós e gera sequencia numerica a partir de zero
 num_nodes <- length(rotulos)
-nodes <- 0:(num_nodes - 1)
+nodes_vetor <- 0:(num_nodes - 1)
 
 # cria tabelinha para numerar os nos
-tab_nodes <- data.frame(nodes, rotulos)
+tab_nodes <- data.frame(nodes_vetor, 
+                        rotulos)
 
 # incorpora os números dos nodes na matriz, para a receita... e para a despesa.
 matriz_nodes <- matriz_reduz %>%
@@ -143,6 +144,12 @@ links <- matriz_nodes %>%
          target = despesa,
          value  = valor_link)
 
+nodes <- tab_nodes
+nodes$tipo <- c(
+  rep("receita", length(unique(matriz_reduz$receita))),
+  rep("despesa", length(unique(matriz_reduz$despesa)))
+)
+
 write.csv(links, "./v2020/vis/links.csv", fileEncoding = "utf8")
-write.csv(tab_nodes, "./v2020/vis/nodes.csv", fileEncoding = "utf8")
+write.csv(nodes, "./v2020/vis/nodes.csv", fileEncoding = "utf8")
 
