@@ -97,6 +97,23 @@ const vis = {
                 files => vis.control.begin(files)
             );
 
+        },
+
+        get_positions : function(nodes) {
+
+            vis.data.posicoes = nodes.map(d => ({
+
+                rotulos : d.rotulos,
+                ordem : d.y0,
+                tipo : d.tipo,
+                height : d.y1 - d.y0,
+                width  : d.x1 - d.x0,
+                y0 : d.y0,
+                y1 : d.y1,
+                x0 : d.x0,
+                x1 : d.x1
+            }));
+
         }
 
     },
@@ -105,56 +122,78 @@ const vis = {
 
         graph : null,
 
-        sankey_setup : function(data) {
+        sankey : {
+            
+            setup : function(data) {
 
-            console.log(data)
+                console.log(data)
 
-            const sankey = d3.sankey()
-              .nodeId(d => d.rotulos)
-              .nodeWidth(15)
-              .nodePadding(10)
-              .extent([
-                  [vis.dims.margins.left, vis.dims.margins.top], 
-                  [vis.dims.w - vis.dims.margins.right, vis.dims.h - vis.dims.margins.bottom]])
-            ;
+                const sankey = d3.sankey()
+                .nodeId(d => d.rotulos)
+                .nodeWidth(15)
+                .nodePadding(10)
+                .extent([
+                    [vis.dims.margins.left, vis.dims.margins.top], 
+                    [vis.dims.w - vis.dims.margins.right, vis.dims.h - vis.dims.margins.bottom]])
+                ;
 
-            vis.draw.graph = sankey({
-                    nodes: data.nodes.map(d => Object.assign({}, d)),
-                    links: data.links.map(d => Object.assign({}, d))
-            });
+                vis.data.graph = sankey({
+                        nodes: data.nodes.map(d => Object.assign({}, d)),
+                        links: data.links.map(d => Object.assign({}, d))
+                });
 
-        },
+            },
 
-        sankey_position : function() {
+            create_elements : function() {
 
-            vis.sels.svg.append("g")
-                .attr("stroke", "#000")
-                .selectAll("rect")
-                .data(vis.draw.graph.nodes)
-                .join("rect")
-                .attr("x", d => d.x0)
-                .attr("y", d => d.y0)
-                .attr("height", d => d.y1 - d.y0)
-                .attr("width", d => d.x1 - d.x0)
-                .attr("fill", "blue")
-                .append("title")
-                .text(d => d.rotulos);
+                // nodes
 
-            const link = vis.sels.svg.append("g")
-                .attr("fill", "none")
-                .attr("stroke-opacity", 0.5)
-                .selectAll("g")
-                .data(vis.draw.graph.links)
-                .join("g")
-                .style("mix-blend-mode", "multiply")
-                .attr("data-source", d => d.source.rotulos)
-                .attr("data-target", d => d.target.rotulos)
-                .attr("data-value",  d => d.value);
+                vis.sels.svg.append("g")
+                    .attr("stroke", "#000")
+                    .selectAll("rect")
+                    .data(vis.data.graph.nodes)
+                    .join("rect")
+                    .attr("x", d => d.x0)
+                    .attr("y", d => d.y0)
+                    .attr("height", d => d.y1 - d.y0)
+                    .attr("width", d => d.x1 - d.x0)
+                    .attr("fill", "blue")
+                    .classed("hidden", true)
+                    .classed("nodes", true)
+                    .attr("data-tipo", d => d.tipo)
+                    .append("title")
+                    .text(d => d.rotulos)
+                ;
 
-            link.append("path")
-                .attr("d", d3.sankeyLinkHorizontal())
-                .attr("stroke", "#401F14")
-                .attr("stroke-width", d => Math.max(1, d.width));
+                // links
+
+                const link = vis.sels.svg.append("g")
+                    .attr("fill", "none")
+                    .attr("stroke-opacity", 0.5)
+                    .selectAll("g")
+                    .data(vis.data.graph.links)
+                    .join("g")
+                    .style("mix-blend-mode", "multiply")
+                    .attr("data-source", d => d.source.rotulos)
+                    .attr("data-target", d => d.target.rotulos)
+                    .attr("data-value",  d => d.value)
+                    .classed("links", true)
+                    .classed("hidden", true)
+                ;
+
+                link.append("path")
+                    .attr("d", d3.sankeyLinkHorizontal())
+                    .attr("stroke", "#401F14")
+                    .attr("stroke-width", d => Math.max(1, d.width))
+                ;
+
+            },
+
+            show : function( elements, true_false ) {
+
+                vis.sels.svg.selectAll("." + elements).classed("hidden", !true_false);
+
+            }
 
         }
 
@@ -188,8 +227,9 @@ const vis = {
 
             vis.data.raw = data;
 
-            vis.draw.sankey_setup(data);
-            vis.draw.sankey_position();
+            vis.draw.sankey.setup(data);
+            vis.draw.sankey.create_elements();
+            vis.f.get_positions(vis.data.graph.nodes);
 
             console.log(vis);
 
