@@ -138,8 +138,8 @@ const vis = {
                 ;
 
                 vis.data.graph = sankey({
-                        nodes: data.nodes.map(d => Object.assign({}, d)),
-                        links: data.links.map(d => Object.assign({}, d))
+                        nodes: [...data.nodes],
+                        links: [...data.links]
                 });
 
             },
