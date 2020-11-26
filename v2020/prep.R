@@ -127,9 +127,22 @@ num_nodes <- length(rotulos)
 nodes <- 0:(num_nodes - 1)
 
 # cria tabelinha para numerar os nos
-tab_nodes <- data.frame(rotulos, nodes)
+tab_nodes <- data.frame(nodes, rotulos)
 
 # incorpora os números dos nodes na matriz, para a receita... e para a despesa.
 matriz_nodes <- matriz_reduz %>%
   left_join(tab_nodes, by = c("receita" = "rotulos")) %>%   
   left_join(tab_nodes, by = c("despesa" = "rotulos"), suffix = c("_rec","_desp"))
+
+
+
+# 04 Prepara dados para D3 ------------------------------------------------
+
+links <- matriz_nodes %>%
+  select(source = receita,
+         target = despesa,
+         value  = valor_link)
+
+write.csv(links, "./v2020/vis/links.csv", fileEncoding = "utf8")
+write.csv(tab_nodes, "./v2020/vis/nodes.csv", fileEncoding = "utf8")
+
