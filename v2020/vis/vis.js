@@ -42,7 +42,13 @@ const vis = {
     data : {
 
         raw : null,
-        processed : {}
+        graph : null,
+        params : {
+            x1_min : null,
+            x0_max : null,
+            y0_min : null,
+            y1_max : null
+        }
 
     },
 
@@ -101,10 +107,11 @@ const vis = {
 
         get_positions : function(nodes) {
 
-            vis.data.posicoes = nodes.map(d => ({
+            vis.data.posicoes = nodes.map((d,i) => ({
 
                 rotulos : d.rotulos,
                 ordem : d.y0,
+                posicao : i,
                 tipo : d.tipo,
                 height : d.y1 - d.y0,
                 width  : d.x1 - d.x0,
@@ -113,6 +120,44 @@ const vis = {
                 x0 : d.x0,
                 x1 : d.x1
             }));
+
+            const nos_por_tipo = {
+
+                receitas : vis.data.posicoes
+                             .filter(d => d.tipo == "receita")
+                             .sort((a, b) => b.y1 - a.y1),
+                
+                despesas : vis.data.posicoes
+                             .filter(d => d.tipo == "despesa")
+                             .sort((a, b) => b.y1 - a.y1)
+
+            }
+
+            console.log(nos_por_tipo["receitas"], nos_por_tipo.despesas);
+
+            const max_y1 = d3.max(vis.data.posicoes, d => d.y1);
+
+            vis.data.params.y1_max = max_y1;
+            vis.data.params.x0_max = nos_por_tipo.despesas[0].x0;
+            vis.data.params.x1_min = nos_por_tipo.receitas[0].x1;
+            vis.data.params.y0_min = d3.min(vis.data.posicoes, d => d.y0);
+
+            for (tipo of ["receitas", "despesas"]) {
+
+                console.log(tipo)
+
+                let y_atual = max_y1;
+
+                nos_por_tipo[tipo].forEach((d,i) => {
+    
+                    y_atual -= d.height;
+    
+                    vis.data.graph.nodes[d.posicao].y0_ini = y_atual;
+                    vis.data.graph.nodes[d.posicao].altura = d.height;
+    
+                });
+
+            }
 
         }
 
@@ -193,7 +238,59 @@ const vis = {
 
                 vis.sels.svg.selectAll("." + elements).classed("hidden", !true_false);
 
+                if (elements == "links" & true_false) vis.draw.cortina.animate();
+
             }
+
+        },
+
+        cortina : {
+
+            create : function() {
+
+                vis.sels.svg
+                  .append("rect")
+                  .classed("cortina", true)
+                  .attr("x", vis.data.params.x1_min)
+                  .attr("y", vis.data.params.y0_min)
+                  .attr("width", vis.data.params.x0_max - vis.data.params.x1_min)
+                  .attr("height", vis.data.params.y1_max - vis.data.params.y0_min)
+                  .attr("opacity", 1)
+                  .attr("fill", "coral");
+
+            },
+
+            animate : function() {
+
+                d3.select("rect.cortina")
+                  .attr("opacity", 1)
+                  .transition()
+                  .duration(1000)
+                  .attr("x", vis.data.params.x0_max)
+                  .attr("width", 0);
+            }
+
+
+
+        },
+
+        bar_chart : {
+
+            move: function(option) {
+
+                const prop = option == "initial" ?
+                                       "y0_ini" :
+                                       "y0";
+
+
+                let rects = d3.selectAll("rect.nodes");
+
+                rects
+                  .transition()
+                  .duration(1000)  
+                  .attr("y", d => d[prop]);
+            }
+
 
         }
 
@@ -228,8 +325,10 @@ const vis = {
             vis.data.raw = data;
 
             vis.draw.sankey.setup(data);
-            vis.draw.sankey.create_elements();
             vis.f.get_positions(vis.data.graph.nodes);
+            vis.draw.sankey.create_elements();
+            vis.draw.cortina.create();
+            
 
             console.log(vis);
 
