@@ -15,7 +15,7 @@ colnames(rec_rgps_raw) <- c(
 )
 
 rec_rgps <- rec_rgps_raw %>%
-  mutate(receita = "Receitas do RGPS")
+  mutate(receita = "RGPS")
 
 
 # 01b Importa Demais Receitas ---------------------------------------------
@@ -30,15 +30,16 @@ colnames(rec_raw) <- c(
   "valor_rec"
 )
 
-tab_rec <- rec_raw %>%
-  mutate(cod_esp = str_sub(natureza_cod, 1, 3),
-         nom_esp = especie) %>%
-  select(cod_esp, nom_esp) %>%
-  filter(str_sub(cod_esp, 1, 1) %in% c("1", "2")) %>%
-  distinct()
+# tab_rec <- rec_raw %>%
+#   mutate(cod_esp = str_sub(natureza_cod, 1, 3),
+#          nom_esp = especie) %>%
+#   select(cod_esp, nom_esp) %>%
+#   filter(str_sub(cod_esp, 1, 1) %in% c("1", "2")) %>%
+#   distinct()
 
 
 rec <- rec_raw %>%
+  bind_rows(rec_rgps) %>%
   mutate(
     cod_esp  = str_sub(natureza_cod, 1, 3),
     cat      = str_sub(natureza_cod, 1, 1) %>% as.numeric(),
@@ -50,6 +51,7 @@ rec <- rec_raw %>%
       cod_esp),
     
     receita = case_when(
+      receita == "RGPS"                   ~ "Receitas do RGPS",
       cod_esp %in% c("211", "212")        ~ "Emissões de Dívida",
       cod_esp %in% c("132", "164", "230") ~ "Juros e remunerações recebidas",
       cod_esp == "111"                    ~ "Impostos",
@@ -61,3 +63,48 @@ rec <- rec_raw %>%
   )
   
 rec %>% group_by(receita) %>% summarise(sum(valor_rec))
+
+# 01c Importa Despesas ----------------------------------------------------
+
+desp <- read_excel("v2020/dados/desp.xlsx", skip = 10)
+
+colnames(desp) <- c(
+  "fte_cod", "fte",
+  "despesa",
+  "valor_desp"
+)
+
+desp %>% group_by(despesa) %>% summarise(sum(valor_desp))
+
+sum(rec$valor_rec) - sum(desp$valor_desp) # tem que dar zero, ou próximo
+
+# 02 Preparação Matriz --------------------------------------------------
+
+rec_dist <- rec %>%
+  group_by(receita) %>%
+  mutate(subtot_rec = sum(valor_rec),
+         pct_rec_fte = valor_rec/sum(valor_rec)) %>%
+  select(receita, fte, subtot_rec, pct_rec_fte)
+
+desp_dist <- desp %>%
+  group_by(fte) %>%
+  mutate(pct_fte_des = valor_desp/sum(valor_desp)) %>%
+  select(despesa, fte, pct_fte_des)
+
+matriz_raw <- rec_dist %>%
+  full_join(desp_dist, by = "fte")
+
+matriz <- matriz_raw %>%
+  mutate(pct_rec_desp = pct_rec_fte * pct_fte_des,
+         valor_link   = subtot_rec * pct_rec_desp) %>%
+  filter(!is.na(receita)) %>%
+  group_by(receita, despesa) %>%
+  summarise(pct_rec_desp = sum(pct_rec_desp),
+            valor_link   = sum(valor_link))
+
+sum(matriz$valor_link, na.rm = T) - sum(rec$valor_rec) # tem que dar zero
+
+matriz %>% filter(valor_link  >= 2.5e8) %>% nrow()
+ggplot(matriz %>% filter(valor_link  <= 1e9)) + geom_histogram(aes(valor_link))
+
+
