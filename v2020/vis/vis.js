@@ -103,6 +103,8 @@ const vis = {
 
     draw : {
 
+        graph : null,
+
         sankey_setup : function(data) {
 
             console.log(data)
@@ -113,20 +115,22 @@ const vis = {
               .nodePadding(10)
               .extent([
                   [vis.dims.margins.left, vis.dims.margins.top], 
-                  [vis.dims.w - vis.dims.margins.right, vis.dims.h - vis.dims.margins.bottom]]);
+                  [vis.dims.w - vis.dims.margins.right, vis.dims.h - vis.dims.margins.bottom]])
+            ;
 
-            const graph = sankey({
+            vis.draw.graph = sankey({
                     nodes: data.nodes.map(d => Object.assign({}, d)),
                     links: data.links.map(d => Object.assign({}, d))
             });
 
-            console.log(graph);
+        },
 
+        sankey_position : function() {
 
             vis.sels.svg.append("g")
                 .attr("stroke", "#000")
                 .selectAll("rect")
-                .data(graph.nodes)
+                .data(vis.draw.graph.nodes)
                 .join("rect")
                 .attr("x", d => d.x0)
                 .attr("y", d => d.y0)
@@ -140,9 +144,12 @@ const vis = {
                 .attr("fill", "none")
                 .attr("stroke-opacity", 0.5)
                 .selectAll("g")
-                .data(graph.links)
+                .data(vis.draw.graph.links)
                 .join("g")
-                .style("mix-blend-mode", "multiply");
+                .style("mix-blend-mode", "multiply")
+                .attr("data-source", d => d.source.rotulos)
+                .attr("data-target", d => d.target.rotulos)
+                .attr("data-value",  d => d.value);
 
             link.append("path")
                 .attr("d", d3.sankeyLinkHorizontal())
@@ -150,6 +157,8 @@ const vis = {
                 .attr("stroke-width", d => Math.max(1, d.width));
 
         }
+
+                //"#da4f81"
 
 
     },
@@ -180,6 +189,7 @@ const vis = {
             vis.data.raw = data;
 
             vis.draw.sankey_setup(data);
+            vis.draw.sankey_position();
 
             console.log(vis);
 
