@@ -449,6 +449,9 @@ const vis = {
                     .attr("stroke-width", d => Math.max(1, d.width))
                 ;
 
+                vis.sels.links.append("title")
+                  .text(d => `${d.source.rotulos} → ${d.target.rotulos}\n${utils.valor_formatado(d.value)}`);
+
             },
 
             show : function( elements, true_false ) {
