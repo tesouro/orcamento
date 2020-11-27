@@ -419,7 +419,7 @@ const vis = {
 
                 link.append("path")
                     .attr("d", d3.sankeyLinkHorizontal())
-                    .attr("stroke", "#401F14")
+                    //.attr("stroke", "#401F14")
                     .attr("stroke-width", d => Math.max(1, d.width))
                 ;
 
@@ -448,7 +448,7 @@ const vis = {
                   .attr("y", vis.data.box_interno.y0_min)
                   .attr("width", vis.data.box_interno.x0_max - vis.data.box_interno.x1_min)
                   .attr("height", vis.data.box_interno.y1_max - vis.data.box_interno.y0_min)
-                  .attr("opacity", 1)
+                  .attr("opacity", 0)
                   .attr("fill", "transparent");
 
             },
@@ -461,6 +461,16 @@ const vis = {
                   .duration(2000)
                   .attr("x", vis.data.box_interno.x0_max)
                   .attr("width", 0);
+            },
+
+            reset : function() {
+
+                d3.select("rect.cortina")
+                  .attr("x", vis.data.box_interno.x1_min)
+                  .attr("width", vis.data.box_interno.x0_max - vis.data.box_interno.x1_min)
+                  .attr("opacity", 0)
+                ;
+
             }
 
 

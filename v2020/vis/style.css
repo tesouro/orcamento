@@ -22,13 +22,16 @@
 
         --rec: #80B8FF;
     --rec-texto: #6286B3;
+        --desp: #C666FF;
+    --desp-texto: #883EB3;
 
     */
     --rec: rgb(138, 203, 193);
     --rec-texto: rgb(127, 184, 167);
+    --desp: rgb(55, 76, 30);
+    --desp-texto: rgb(44, 53, 27);;
 
-    --desp: #C666FF;
-    --desp-texto: #883EB3;
+
 
     --dark: #807539;
     --darker: #403A1D;
@@ -173,6 +176,18 @@ rect[data-tipo="receita"] {
 
     opacity: 0;
 
+}
+
+.cortina {
+
+    fill: var(--amarelo);
+}
+
+.links path {
+    stroke: var(--amarelo);
+    stroke: #CCBB5C;
+    stroke: #FFC966;
+    stroke: #403A1D;
 }
 
 
