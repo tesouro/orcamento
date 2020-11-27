@@ -27,7 +27,7 @@
 
     */
     --rec: rgb(138, 203, 193);
-    --rec-texto: rgb(127, 184, 167);
+    --rec-texto: #1D4A66;
     --desp: rgb(55, 76, 30);
     --desp-texto: rgb(44, 53, 27);;
 
@@ -200,7 +200,8 @@ rect[data-tipo="receita"] {
 }
 
 .rotulos-nodes p {
-    font-size: .75rem;
+    font-size: .8rem;
+    font-weight: 300;
 }
 
 /*
@@ -226,4 +227,16 @@ rect[data-tipo="receita"] {
     stroke: #403A1D;
 }
 
+a.limpar {
+    text-decoration: none;
+    cursor: pointer;
+    position: absolute;
+    left: 0;
+    bottom: 1em;
+    font-size: .7rem;
+    padding: .5em 1em;
+    background-color: var(--dark);
+    border-radius: .5em;
+    color: var(--light);
+}
 

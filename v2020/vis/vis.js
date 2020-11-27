@@ -6,7 +6,8 @@ const vis = {
         cont: "div.vis-container",
         steps: "ul.steps",
         data: ["vis/links.csv", "vis/nodes.csv"],
-        nodes: "rect.nodes"
+        nodes: "rect.nodes",
+        botao_limpar: "a.limpar"
 
     },
 
@@ -369,8 +370,13 @@ const vis = {
 
             })
 
-        }
+        },
 
+        mostra_limpar : function(opcao) {
+
+            d3.select(vis.refs.botao_limpar).classed("hidden", !opcao);
+
+        }
 
     },
 
@@ -771,6 +777,8 @@ const vis = {
                     let node_clicado = this.dataset.idNode;
                     let tipo_node_clicado = this.dataset.tipo;
 
+                    vis.f.mostra_limpar(true);
+
                     console.log(this, node_clicado, tipo_node_clicado);
 
                     // rotulos
@@ -832,11 +840,35 @@ const vis = {
                       .classed("node-esmaecido", false)
                     ;
 
-
-
                 })
 
+            },
 
+            botao_limpar : function() {
+
+                d3.selectAll(vis.refs.botao_limpar)
+                  .on("click", function() {
+
+                    d3.selectAll(".links")
+                      .classed("node-selecionado", false)
+                      .classed("node-esmaecido", false)
+                    ;
+
+
+                    d3.selectAll("[data-id-node]")
+                      .classed("node-selecionado", false)
+                      .classed("node-esmaecido", false)
+                    ;
+
+                    d3.selectAll("[data-id-rotulo-node]")
+                      .classed("rotulo-de-node-selecionado", false)
+                      .classed("rotulo-de-node-esmaecido", false)
+                    ;
+
+                    vis.f.mostra_limpar(false);
+
+                  }
+                );
 
             }
 
@@ -961,6 +993,7 @@ const vis = {
 
             vis.control.monitora.steps();
             vis.control.monitora.nodes();
+            vis.control.monitora.botao_limpar();
             
 
             console.log(vis);
