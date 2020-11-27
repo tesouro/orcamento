@@ -129,8 +129,7 @@ const vis = {
                 height : null,
                 width  : null
 
-            }
-
+            },
 
         ],
 
@@ -160,7 +159,9 @@ const vis = {
 
             }
 
-        }
+        },
+
+        tabela_links : {}
 
     },
 
@@ -350,6 +351,23 @@ const vis = {
             desp_total.top = vis.data.barras_iniciais[ nomes_indexes["emissao"] ].y;
             desp_total.left = vis.data.params.x_right;
             desp_total.value = vis.data.totals.despesa;
+
+        },
+
+        make_link_table : function() {
+
+            vis.data.graph.nodes.forEach(d => {
+
+                const tipo_node = d.tipo == "receita" ? "source" : "target";
+                const tipo_relacionados = tipo_node == "source" ? "target" : "source";
+
+                nodes_relacionados = vis.data.graph.links.filter(link => link[tipo_node] == d);
+
+                vis.data.tabela_links[d.rotulos] = nodes_relacionados.map(link => link[tipo_relacionados].rotulos);
+
+                // não precisava disso, já tem em graph.nodes! :/
+
+            })
 
         }
 
@@ -912,6 +930,7 @@ const vis = {
 
             vis.draw.sankey.setup(data);
             vis.f.get_nodes_positions(vis.data.graph.nodes);
+            vis.f.make_link_table();
             vis.f.get_initial_bars_data();
             vis.draw.sankey.create_elements();
             vis.draw.bar_chart.move("initial")
