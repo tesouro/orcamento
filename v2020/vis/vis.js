@@ -32,8 +32,8 @@ const vis = {
         margins: {
 
             top: 10,
-            left: 200,
-            right: 10,
+            left: 100,
+            right: 100,
             bottom: 20
 
         },
@@ -63,10 +63,18 @@ const vis = {
 
         },
 
+        totals : {
+            receita : null,
+            despesa : null
+        },
+
         barras_iniciais : [
 
             {
                 nome : "receita",
+                tipo : "receita",
+                texto: "Receitas",
+                value : null,
                 x    : null,
                 y    : null,
                 height : null,
@@ -76,6 +84,9 @@ const vis = {
 
             {
                 nome : "despesa",
+                tipo : "despesa",
+                texto: "Despesas",
+                value : null,
                 x    : null,
                 y    : null,
                 height : null,
@@ -85,6 +96,9 @@ const vis = {
 
             {
                 nome : "juros",
+                tipo : "despesa",
+                texto: "Juros",
+                value : null,
                 x    : null,
                 y    : null,
                 height : null,
@@ -94,6 +108,9 @@ const vis = {
 
             {
                 nome : "amortizacao",
+                tipo : "despesa",
+                texto: "Amortização da Dívida",
+                value : null,
                 x    : null,
                 y    : null,
                 height : null,
@@ -103,6 +120,9 @@ const vis = {
 
             {
                 nome : "emissao",
+                tipo : "receita",
+                texto: "Emissões de dívida",
+                value : null,
                 x    : null,
                 y    : null,
                 height : null,
@@ -179,34 +199,35 @@ const vis = {
                 y0 : d.y0,
                 y1 : d.y1,
                 x0 : d.x0,
-                x1 : d.x1
+                x1 : d.x1,
+                value : d.value
             }));
 
             const nos_por_tipo = {
 
-                receitas : vis.data.posicoes
+                receita : vis.data.posicoes
                              .filter(d => d.tipo == "receita")
                              .sort((a, b) => b.y1 - a.y1),
                 
-                despesas : vis.data.posicoes
+                despesa : vis.data.posicoes
                              .filter(d => d.tipo == "despesa")
                              .sort((a, b) => b.y1 - a.y1)
 
             }
 
-            console.log(nos_por_tipo["receitas"], nos_por_tipo.despesas);
+            console.log(nos_por_tipo["receita"], nos_por_tipo.despesa);
 
             const max_y1 = d3.max(vis.data.posicoes, d => d.y1);
 
             vis.data.box_interno.y1_max = max_y1;
-            vis.data.box_interno.x0_max = nos_por_tipo.despesas[0].x0;
-            vis.data.box_interno.x1_min = nos_por_tipo.receitas[0].x1;
+            vis.data.box_interno.x0_max = nos_por_tipo.despesa[0].x0;
+            vis.data.box_interno.x1_min = nos_por_tipo.receita[0].x1;
             vis.data.box_interno.y0_min = d3.min(vis.data.posicoes, d => d.y0);
-            vis.data.params.x_left  = nos_por_tipo.receitas[0].x0;
-            vis.data.params.x_right = nos_por_tipo.despesas[0].x0;
+            vis.data.params.x_left  = nos_por_tipo.receita[0].x0;
+            vis.data.params.x_right = nos_por_tipo.despesa[0].x0;
             vis.data.params.y_final = max_y1;
 
-            for (tipo of ["receitas", "despesas"]) {
+            for (tipo of ["receita", "despesa"]) {
 
                 console.log(tipo)
 
@@ -220,6 +241,9 @@ const vis = {
                     vis.data.graph.nodes[d.posicao].altura = d.height;
     
                 });
+
+                // aproveita a carona para computar o valor total das receitas e despesas
+                vis.data.totals[tipo] = d3.sum(nos_por_tipo[tipo], no => no.value);
 
             }
 
@@ -247,6 +271,7 @@ const vis = {
                 vis.data.barras_iniciais[key].y = node_data.y0_ini;
                 vis.data.barras_iniciais[key].width = node_data.x1 - node_data.x0;
                 vis.data.barras_iniciais[key].height = node_data.y1 - node_data.y0;
+                vis.data.barras_iniciais[key].value = node_data.value;
             }
 
             get_node_data("Juros", "juros");
@@ -264,6 +289,7 @@ const vis = {
             receita.y = y_final_emissoes;
             receita.height = vis.data.params.y_final - y_final_emissoes;
             receita.width = vis.dims.width_bars;
+            receita.value = vis.data.totals.receita - vis.data.barras_iniciais[ nomes_indexes["emissao"] ].value;
 
 
             let despesa = vis.data.barras_iniciais[ nomes_indexes["despesa"] ];
@@ -275,6 +301,7 @@ const vis = {
             despesa.y = y_final_juros;
             despesa.height = vis.data.params.y_final - y_final_juros;
             despesa.width = vis.dims.width_bars;
+            despesa.value = vis.data.totals.despesa - vis.data.barras_iniciais[ nomes_indexes["juros"] ].value - vis.data.barras_iniciais[ nomes_indexes["amortizacao"] ].value;
 
         }
 
@@ -428,6 +455,49 @@ const vis = {
                       .attr("height", d => d.height)
                     ;
 
+                },
+
+                rotulos : {
+
+                    create : function() {
+
+
+                        vis.sels.totals_rotulos = vis.sels.cont
+                            .selectAll("p.rotulos-totals")
+                            .data(vis.data.barras_iniciais)
+                            .join("div")
+                            .classed("rotulos", true)
+                            .classed("rotulos-totals", true)
+                            .attr("data-id-rotulo-totals", d => d.nome)
+                            .attr("data-tipo-rotulo-totals", d => d.nome)
+                            .style("left", d => (d.tipo == "receita" ? d.x : (d.x + d.width)) + "px")
+                            .style("top", d => d.y + "px")
+                            .style("max-width", d => (d.tipo == "receita" ? vis.dims.margins.left : vis.dims.margins.right) + "px")
+                            .style("opacity", 0)
+                        ;
+
+                        vis.sels.totals_rotulos
+                          .append("h3")
+                          .text(d => d.texto)
+                        ;
+
+                        vis.sels.totals_rotulos
+                          .append("p")
+                          .text(d => utils.valor_formatado(d.value));
+                        ;
+
+                    },
+
+                    show : function(nome, opcao) {
+
+                        d3.select('[data-id-rotulo-totals="' + nome + '"]')
+                          .transition()
+                          .duration(1000)
+                          .style("opacity", opcao ? 1 : 0)
+                        ;
+    
+                    },
+
                 }
             },
 
@@ -504,6 +574,8 @@ const vis = {
                         this.dataset.currentStep = step;
 
                         console.log("STEP: ", step);
+
+                        vis.control.render_steps[step]();
     
     
                     } else {console.log("Clique num botão, meu filho.")}
@@ -516,9 +588,21 @@ const vis = {
 
         render_steps : {
 
-            "receita" : function() {
+            "receitas" : function() {
 
-            }
+                vis.draw.bar_chart.totals.animate("receita");
+                vis.draw.bar_chart.totals.rotulos.show("receita", true);
+
+            },
+
+            "despesas" : function() {
+
+                vis.draw.bar_chart.totals.animate("despesa");
+                vis.draw.bar_chart.totals.rotulos.show("despesa", true);
+
+            },
+
+
 
         },
 
@@ -545,7 +629,7 @@ const vis = {
             vis.draw.cortina.create();
 
             vis.draw.bar_chart.totals.create();
-            vis.draw.bar_chart.totals.animate("receita")
+            vis.draw.bar_chart.totals.rotulos.create();
 
             vis.control.monitora.steps();
             
