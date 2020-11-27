@@ -35,20 +35,80 @@ const vis = {
             right: 10,
             bottom: 20
 
-        }
+        },
+
+        width_bars : 20
 
     },
 
     data : {
 
         raw : null,
+
         graph : null,
-        params : {
+
+        box_interno : {
             x1_min : null,
             x0_max : null,
             y0_min : null,
             y1_max : null
-        }
+        },
+
+        params : {
+
+            y_final : null,
+            x_left  : null,
+            x_right : null
+
+        },
+
+        barras_iniciais : [
+
+            {
+                nome : "receita",
+                x    : null,
+                y    : null,
+                height : null,
+                width  : null
+
+            },
+
+            {
+                nome : "despesa",
+                x    : null,
+                y    : null,
+                height : null,
+                width  : null
+
+            },
+
+            {
+                nome : "juros",
+                x    : null,
+                y    : null,
+                height : null,
+                width  : null
+
+            },
+
+            {
+                nome : "amortizacao",
+                x    : null,
+                y    : null,
+                height : null,
+                width  : null
+
+            },
+
+            {
+                nome : "emissao",
+                x    : null,
+                y    : null,
+                height : null,
+                width  : null
+
+            }
+        ]
 
     },
 
@@ -105,7 +165,7 @@ const vis = {
 
         },
 
-        get_positions : function(nodes) {
+        get_nodes_positions : function(nodes) {
 
             vis.data.posicoes = nodes.map((d,i) => ({
 
@@ -137,10 +197,13 @@ const vis = {
 
             const max_y1 = d3.max(vis.data.posicoes, d => d.y1);
 
-            vis.data.params.y1_max = max_y1;
-            vis.data.params.x0_max = nos_por_tipo.despesas[0].x0;
-            vis.data.params.x1_min = nos_por_tipo.receitas[0].x1;
-            vis.data.params.y0_min = d3.min(vis.data.posicoes, d => d.y0);
+            vis.data.box_interno.y1_max = max_y1;
+            vis.data.box_interno.x0_max = nos_por_tipo.despesas[0].x0;
+            vis.data.box_interno.x1_min = nos_por_tipo.receitas[0].x1;
+            vis.data.box_interno.y0_min = d3.min(vis.data.posicoes, d => d.y0);
+            vis.data.params.x_left  = nos_por_tipo.receitas[0].x0;
+            vis.data.params.x_right = nos_por_tipo.despesas[0].x0;
+            vis.data.params.y_final = max_y1;
 
             for (tipo of ["receitas", "despesas"]) {
 
@@ -159,7 +222,61 @@ const vis = {
 
             }
 
+        },
+
+        get_initial_bars_data : function() {
+
+            // index das barras iniciais
+            // faz uma tabelinha { nome : index }
+
+            const nomes_indexes = {};
+            
+            vis.data.barras_iniciais.forEach( (d,i) => {
+                nomes_indexes[d.nome] = i;
+            });
+
+            function get_node_data(node, nome) {
+
+                const node_data = vis.data.graph.nodes.filter(d => d.rotulos == node)[0];
+                const key = nomes_indexes[nome];
+
+                console.log("Key:", key, "node", node_data, node_data.x0);
+
+                vis.data.barras_iniciais[key].x = node_data.x0;
+                vis.data.barras_iniciais[key].y = node_data.y0;
+                vis.data.barras_iniciais[key].width = node_data.x1 - node_data.x0;
+                vis.data.barras_iniciais[key].height = node_data.y1 - node_data.y0;
+            }
+
+            get_node_data("Juros", "juros");
+            get_node_data("Emissões de Dívida", "emissao");
+            get_node_data("Amortização da Dívida", "amortizacao");
+
+            // essa foi a parte fácil, parametrizável. agora a parte feia.
+
+            let receita = vis.data.barras_iniciais[ nomes_indexes["receita"] ];
+            receita.x = vis.data.params.x_left;
+
+            const y_final_emissoes =   vis.data.barras_iniciais[ nomes_indexes["emissao"] ].y 
+                                     + vis.data.barras_iniciais[ nomes_indexes["emissao"] ].height;
+            
+            receita.y = y_final_emissoes;
+            receita.height = vis.data.params.y_final - y_final_emissoes;
+            receita.width = vis.dims.width_bars;
+
+
+            let despesa = vis.data.barras_iniciais[ nomes_indexes["despesa"] ];
+            despesa.x = vis.data.params.x_right;
+
+            const y_final_juros =   vis.data.barras_iniciais[ nomes_indexes["juros"] ].y 
+                                  + vis.data.barras_iniciais[ nomes_indexes["juros"] ].height;
+            
+            despesa.y = y_final_juros;
+            despesa.height = vis.data.params.y_final - y_final_juros;
+            despesa.width = vis.dims.width_bars;
+
         }
+
 
     },
 
@@ -175,7 +292,7 @@ const vis = {
 
                 const sankey = d3.sankey()
                 .nodeId(d => d.rotulos)
-                .nodeWidth(15)
+                .nodeWidth(vis.dims.width_bars)
                 .nodePadding(10)
                 .extent([
                     [vis.dims.margins.left, vis.dims.margins.top], 
@@ -251,10 +368,10 @@ const vis = {
                 vis.sels.svg
                   .append("rect")
                   .classed("cortina", true)
-                  .attr("x", vis.data.params.x1_min)
-                  .attr("y", vis.data.params.y0_min)
-                  .attr("width", vis.data.params.x0_max - vis.data.params.x1_min)
-                  .attr("height", vis.data.params.y1_max - vis.data.params.y0_min)
+                  .attr("x", vis.data.box_interno.x1_min)
+                  .attr("y", vis.data.box_interno.y0_min)
+                  .attr("width", vis.data.box_interno.x0_max - vis.data.box_interno.x1_min)
+                  .attr("height", vis.data.box_interno.y1_max - vis.data.box_interno.y0_min)
                   .attr("opacity", 1)
                   .attr("fill", "coral");
 
@@ -266,7 +383,7 @@ const vis = {
                   .attr("opacity", 1)
                   .transition()
                   .duration(1000)
-                  .attr("x", vis.data.params.x0_max)
+                  .attr("x", vis.data.box_interno.x0_max)
                   .attr("width", 0);
             }
 
@@ -275,6 +392,43 @@ const vis = {
         },
 
         bar_chart : {
+
+            totals : {
+
+                create : function() {
+
+                    vis.sels.totals = vis.sels.svg
+                      .selectAll("rect.totals")
+                      .data(vis.data.barras_iniciais)
+                      .join("rect")
+                      .classed("totals", true)
+                      .attr("data-id-barra-totals", d => d.nome)
+                      .attr("x", d => d.x)
+                      .attr("y", d => d.y + d.height)
+                      .attr("width", d => d.width)
+                      .attr("height", 0)
+                      .attr("fill", "green")
+                    ;
+
+                },
+
+                show : function(option) {
+
+                    d3.selectAll("rect.totals").attr("opacity", !option);
+
+                },
+
+                animate : function(nome) {
+
+                    d3.select('[data-id-barra-totals="' + nome + '"]')
+                      .transition()
+                      .duration(1000)
+                      .attr("y", d => d.y)
+                      .attr("height", d => d.height)
+                    ;
+
+                }
+            },
 
             move: function(option) {
 
@@ -325,7 +479,8 @@ const vis = {
             vis.data.raw = data;
 
             vis.draw.sankey.setup(data);
-            vis.f.get_positions(vis.data.graph.nodes);
+            vis.f.get_nodes_positions(vis.data.graph.nodes);
+            vis.f.get_initial_bars_data();
             vis.draw.sankey.create_elements();
             vis.draw.cortina.create();
             
