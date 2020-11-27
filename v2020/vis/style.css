@@ -167,6 +167,10 @@ rect[data-tipo="receita"] {
     color: var(--desp-texto);
 }
 
+.rotulos-nodes p {
+    font-size: .6rem;
+}
+
 /*
 .rotulos h3 {
     margin: 0 0 5px 0;

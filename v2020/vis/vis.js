@@ -32,8 +32,8 @@ const vis = {
         margins: {
 
             top: 10,
-            left: 100,
-            right: 100,
+            left: 200,
+            right: 200,
             bottom: 20
 
         },
@@ -397,6 +397,7 @@ const vis = {
                     .classed("hidden", true)
                     .classed("nodes", true)
                     .attr("data-tipo", d => d.tipo)
+                    .attr("data-rotulo-node", d => d.rotulos)
                     .append("title")
                     .text(d => d.rotulos)
                 ;
@@ -432,6 +433,53 @@ const vis = {
                 vis.sels.svg.selectAll("." + elements).classed("hidden", !true_false);
 
                 if (elements == "links" & true_false) vis.draw.cortina.animate();
+
+            },
+
+            rotulos : {
+
+                create : function() {
+
+                    vis.sels.rotulos_nodes = vis.sels.cont
+                        .selectAll("div.rotulos-nodes")
+                        .data(vis.data.graph.nodes)
+                        .join("div")
+                        .classed("rotulos", true)
+                        .classed("rotulos-nodes", true)
+                        .attr("data-id-rotulo-node", d => d.rotulos)
+                        .attr("data-tipo-rotulo-totals", d => d.tipo)
+                        .style("left", d => (d.tipo == "receita" ? d.x0 : d.x1) + "px")
+                        .style("top", d => (d.y0 - 1) + "px")
+                        .style("max-width", d => (d.tipo == "receita" ? vis.dims.margins.left : vis.dims.margins.right) + "px")
+                        .style("opacity", 0)
+                    ;
+
+                    vis.sels.rotulos_nodes
+                      .append("p")
+                      .text(d => d.rotulos + ": R$ " + utils.valor_formatado(d.value))
+                  ;
+
+                },
+
+                show : function(rotulo, opcao) {
+
+                    let selection;
+
+                    if (rotulo == "todos") {
+                        selection = d3.selectAll("div.rotulos-nodes");
+                    } else {
+                        selection = d3.select("div[data-id-rotulo-node='" + rotulo + "']");
+                    }
+
+                    selection
+                      .transition()
+                      .duration(1000)
+                      .style("opacity", opcao ? 1 : 0)
+                    ;
+
+                }
+
+
 
             }
 
@@ -529,7 +577,7 @@ const vis = {
 
 
                         vis.sels.totals_rotulos = vis.sels.cont
-                            .selectAll("p.rotulos-totals")
+                            .selectAll("div.rotulos-totals")
                             .data(vis.data.barras_iniciais)
                             .join("div")
                             .classed("rotulos", true)
@@ -763,6 +811,22 @@ const vis = {
                 vis.draw.sankey.show("nodes", true);
                 vis.draw.bar_chart.move("sankey");
 
+                window.setTimeout(
+                    () => {
+                        vis.draw.sankey.show("links", true)
+                    }, 
+                    2000
+                );
+
+                window.setTimeout(
+                    () => {
+                        vis.draw.sankey.rotulos.show("todos", true);
+                    }, 
+                    1000
+                );
+
+                    
+
             }
 
 
@@ -792,6 +856,7 @@ const vis = {
             vis.draw.sankey.create_elements();
             vis.draw.bar_chart.move("initial")
             vis.draw.cortina.create();
+            vis.draw.sankey.rotulos.create();
 
             vis.draw.bar_chart.totals.create();
             vis.draw.bar_chart.totals.rotulos.create();
