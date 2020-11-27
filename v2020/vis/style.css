@@ -123,6 +123,7 @@ rect[data-tipo="receita"] {
 
 .nodes {
     stroke-width: 0;
+    cursor: pointer;
 }
 
 /* cliques no node */

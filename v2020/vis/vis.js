@@ -14,7 +14,7 @@ const vis = {
 
         svg : null,
         cont : null,
-        axis : {}
+        links : null
 
     },
 
@@ -405,7 +405,7 @@ const vis = {
 
                 // links
 
-                const link = vis.sels.svg.append("g")
+                vis.sels.links = vis.sels.svg.append("g")
                     .attr("fill", "none")
                     .attr("stroke-opacity", 0.5)
                     .selectAll("g")
@@ -419,7 +419,7 @@ const vis = {
                     .classed("hidden", true)
                 ;
 
-                link.append("path")
+                vis.sels.links.append("path")
                     .attr("d", d3.sankeyLinkHorizontal())
                     //.attr("stroke", "#401F14")
                     .attr("stroke-width", d => Math.max(1, d.width))
@@ -751,8 +751,9 @@ const vis = {
                 vis.sels.nodes.on("click", function() {
 
                     let node_clicado = this.dataset.idNode;
+                    let tipo_node_clicado = this.dataset.tipo;
 
-                    console.log(this, node_clicado);
+                    console.log(this, node_clicado, tipo_node_clicado);
 
                     // rotulos
 
@@ -775,9 +776,26 @@ const vis = {
                     ;
 
                     d3.selectAll("[data-id-node='" + node_clicado + "']")
-                    .classed("node-selecionado", true)
-                    .classed("node-esmaecido", false)
+                      .classed("node-selecionado", true)
+                      .classed("node-esmaecido", false)
                     ;
+
+                    // links
+
+                    const criterio = tipo_node_clicado == "receita" ? "source" : "target";
+
+                    d3.selectAll(".links[data-" + criterio + "]")
+                      .classed("node-selecionado", false)
+                      .classed("node-esmaecido", true)
+                    ;
+
+                    console.log(".links[data-" + criterio + "='" + node_clicado + "']");
+                    d3.selectAll(".links[data-" + criterio + "='" + node_clicado + "']")
+                      .classed("node-selecionado", true)
+                      .classed("node-esmaecido", false)
+                    ;
+
+
 
                 })
 
