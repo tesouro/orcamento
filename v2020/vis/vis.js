@@ -243,7 +243,7 @@ const vis = {
                 console.log("Key:", key, "node", node_data, node_data.x0);
 
                 vis.data.barras_iniciais[key].x = node_data.x0;
-                vis.data.barras_iniciais[key].y = node_data.y0;
+                vis.data.barras_iniciais[key].y = node_data.y0_ini;
                 vis.data.barras_iniciais[key].width = node_data.x1 - node_data.x0;
                 vis.data.barras_iniciais[key].height = node_data.y1 - node_data.y0;
             }
@@ -414,7 +414,7 @@ const vis = {
 
                 show : function(option) {
 
-                    d3.selectAll("rect.totals").attr("opacity", !option);
+                    d3.selectAll("rect.totals").classed("hidden", !option);
 
                 },
 
