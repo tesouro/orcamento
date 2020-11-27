@@ -198,7 +198,7 @@ const vis = {
             vis.elems.svg.style.setProperty(
                 "width", vis.dims.w + "px");
 
-            vis.elems.svg.style.setProperty("background-color", "coral");
+            //vis.elems.svg.style.setProperty("background-color", "coral");
 
 
         },
@@ -394,7 +394,6 @@ const vis = {
                     .attr("y", d => d.y0)
                     .attr("height", d => d.y1 - d.y0)
                     .attr("width", d => d.x1 - d.x0)
-                    .attr("fill", "blue")
                     .classed("hidden", true)
                     .classed("nodes", true)
                     .attr("data-tipo", d => d.tipo)
@@ -428,6 +427,8 @@ const vis = {
 
             show : function( elements, true_false ) {
 
+                // elements: links ou nodes
+
                 vis.sels.svg.selectAll("." + elements).classed("hidden", !true_false);
 
                 if (elements == "links" & true_false) vis.draw.cortina.animate();
@@ -448,7 +449,7 @@ const vis = {
                   .attr("width", vis.data.box_interno.x0_max - vis.data.box_interno.x1_min)
                   .attr("height", vis.data.box_interno.y1_max - vis.data.box_interno.y0_min)
                   .attr("opacity", 1)
-                  .attr("fill", "coral");
+                  .attr("fill", "transparent");
 
             },
 
@@ -457,7 +458,7 @@ const vis = {
                 d3.select("rect.cortina")
                   .attr("opacity", 1)
                   .transition()
-                  .duration(1000)
+                  .duration(2000)
                   .attr("x", vis.data.box_interno.x0_max)
                   .attr("width", 0);
             }
@@ -479,11 +480,11 @@ const vis = {
                       .classed("totals", true)
                       .classed("bordas", true)
                       .attr("data-id-barra-totals", d => d.nome)
+                      .attr("data-tipo", d => d.tipo)
                       .attr("x", d => d.x)
                       .attr("y", d => d.y + d.height)
                       .attr("width", d => d.width)
                       .attr("height", 0)
-                      .attr("fill", "green")
                     ;
 
                 },
@@ -582,6 +583,8 @@ const vis = {
 
                         if (nome == "parciais") {
                             selection = d3.selectAll(".rotulos-totais-parciais");
+                        } else if (nome == "gerais") {
+                            selection = d3.selectAll(".rotulos-totais-gerais")
                         } else {
                             selection = d3.select('[data-id-rotulo-totals="' + nome + '"]');
                         }
@@ -610,7 +613,7 @@ const vis = {
 
                 rects
                   .transition()
-                  .duration(1000)  
+                  .duration(2000)  
                   .attr("y", d => d[prop]);
             }
 
@@ -741,6 +744,15 @@ const vis = {
                     3000)
                 ;
 
+            },
+
+            "vinculacao" : function() {
+
+                vis.draw.bar_chart.totals.show(false);
+                vis.draw.bar_chart.totals.rotulos.show("gerais", false);
+                vis.draw.sankey.show("nodes", true);
+                vis.draw.bar_chart.move("sankey");
+
             }
 
 
@@ -768,6 +780,7 @@ const vis = {
             vis.f.get_nodes_positions(vis.data.graph.nodes);
             vis.f.get_initial_bars_data();
             vis.draw.sankey.create_elements();
+            vis.draw.bar_chart.move("initial")
             vis.draw.cortina.create();
 
             vis.draw.bar_chart.totals.create();
