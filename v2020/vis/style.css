@@ -121,6 +121,10 @@ rect[data-tipo="receita"] {
     stroke: var(--rec-texto);
 }
 
+.nodes {
+    stroke-width: 0;
+}
+
 
 /* rotulos totais */
 
@@ -168,7 +172,7 @@ rect[data-tipo="receita"] {
 }
 
 .rotulos-nodes p {
-    font-size: .6rem;
+    font-size: .75rem;
 }
 
 /*

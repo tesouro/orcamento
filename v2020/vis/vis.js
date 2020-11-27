@@ -32,8 +32,8 @@ const vis = {
         margins: {
 
             top: 10,
-            left: 200,
-            right: 200,
+            left: 250,
+            right: 250,
             bottom: 20
 
         },
