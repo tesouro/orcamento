@@ -798,6 +798,25 @@ const vis = {
                       .classed("node-esmaecido", false)
                     ;
 
+                    // os nos e rotulos relacionados, do outro lado
+
+                    let nos_relacionados = vis.data.tabela_links[node_clicado];
+
+                    nos_relacionados.forEach(no => {
+                        d3.select("[data-id-node='" + no + "']")
+                          .classed("node-selecionado", true)
+                          .classed("node-esmaecido", false)
+                        ;
+
+                        // os rotulos relacionados, do outro lado
+
+                        d3.select("[data-id-rotulo-node='" + no + "']")
+                          .classed("rotulo-de-node-selecionado", true)
+                          .classed("rotulo-de-node-esmaecido", false)
+                        ;
+                    })
+
+
                     // links
 
                     const criterio = tipo_node_clicado == "receita" ? "source" : "target";
