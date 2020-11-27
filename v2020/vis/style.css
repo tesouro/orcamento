@@ -128,14 +128,19 @@ rect[data-tipo="receita"] {
 
 /* cliques no node */
 
-.node-selecionado {
+.nodes.node-selecionado {
     opacity: 1;
+    fill: #da4f81;
 
 }
 
-.rotulo-de-node-selecionado {
-    opacity: 1;
+.links.node-selecionado path {
+    stroke: #da4f81;
+}
 
+.rotulos.rotulo-de-node-selecionado {
+    opacity: 1;
+    color : #da4f81;
 }
 
 .node-esmaecido {
