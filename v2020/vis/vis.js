@@ -179,14 +179,14 @@ const vis = {
 
         get_size: function() {
 
-            let win_w = window.innerWidth;
-            let win_h = window.innerHeight;
+            let win_w = +vis.sels.cont.style("width").slice(0,-2); //window.innerWidth;
+            let win_h = window.innerHeight; //+vis.sels.cont.style("height").slice(0,-2);
 
-            let pos_vis_y = vis.elems.svg.getBoundingClientRect().y;
+            let pos_vis_y = vis.elems.cont.getBoundingClientRect().y;
 
-            vis.dims.h = win_h - pos_vis_y - vis.dims.margins.top - vis.dims.margins.bottom;
+            vis.dims.h = win_h - pos_vis_y; //- pos_vis_y - vis.dims.margins.top - vis.dims.margins.bottom;
             // subtraio a margem para usar como margem
-            vis.dims.w = win_w - vis.dims.margins.left - vis.dims.margins.right; //+vis.sels.svg.style("width").slice(0, -2);
+            vis.dims.w = win_w; // - vis.dims.margins.left - vis.dims.margins.right; //+vis.sels.svg.style("width").slice(0, -2);
 
         },
 

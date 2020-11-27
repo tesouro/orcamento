@@ -47,13 +47,13 @@ body {
     font-family: Lato;
     color: var(--verde);
     margin: 1rem;
-    position: relative;
+    /*position: relative;*/
 }
 
 .logo {
     position: absolute;
     top: 0;
-    right: 0;
+    right: 1em;
     max-width: 80px;
 }
 
