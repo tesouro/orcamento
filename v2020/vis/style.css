@@ -89,11 +89,18 @@ rect.totals {
     
 }
 
-.rotulos[data-tipo-rotulo-totals="receita"] {
+.rotulos[data-tipo-rotulo-totals="receita"],
+.rotulos-totais-gerais[data-tipo-rotulo-totals="despesa"]
+ {
 
     transform: translateX(-100%);
     text-align: right;
 
+}
+
+.rotulos-totais-gerais[data-tipo-rotulo-totals="receita"] {
+    transform: translateX(0);
+    text-align: left;
 }
 
 .rotulos * {

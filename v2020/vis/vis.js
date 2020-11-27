@@ -129,7 +129,37 @@ const vis = {
                 width  : null
 
             }
-        ]
+
+
+        ],
+
+        rotulos_total_geral : {
+
+            "receita" : {
+
+                nome : "rec_total",
+                texto : "Receita Total",
+                tipo : "receita",
+                ref_posicao : "emissao",
+                top : null,
+                left : null,
+                value : null
+
+            },
+
+            "despesa" : {
+
+                nome : "desp_total",
+                texto : "Despesa Total",
+                tipo : "despesa",
+                ref_posicao : "emissao",
+                top : null,
+                left : null,
+                value : null
+
+            }
+
+        }
 
     },
 
@@ -280,6 +310,8 @@ const vis = {
 
             // essa foi a parte fácil, parametrizável. agora a parte feia.
 
+            // receita antes da divida
+
             let receita = vis.data.barras_iniciais[ nomes_indexes["receita"] ];
             receita.x = vis.data.params.x_left;
 
@@ -291,6 +323,7 @@ const vis = {
             receita.width = vis.dims.width_bars;
             receita.value = vis.data.totals.receita - vis.data.barras_iniciais[ nomes_indexes["emissao"] ].value;
 
+            // despesa antes da divida
 
             let despesa = vis.data.barras_iniciais[ nomes_indexes["despesa"] ];
             despesa.x = vis.data.params.x_right;
@@ -302,6 +335,20 @@ const vis = {
             despesa.height = vis.data.params.y_final - y_final_juros;
             despesa.width = vis.dims.width_bars;
             despesa.value = vis.data.totals.despesa - vis.data.barras_iniciais[ nomes_indexes["juros"] ].value - vis.data.barras_iniciais[ nomes_indexes["amortizacao"] ].value;
+
+            // receita total (so rotulos)
+
+            let rec_total = vis.data.rotulos_total_geral.receita;
+            rec_total.top = vis.data.barras_iniciais[ nomes_indexes["emissao"] ].y;
+            rec_total.left = vis.data.params.x_left + vis.dims.width_bars;
+            rec_total.value = vis.data.totals.receita;
+
+            // despesa total (so rotulos)
+
+            let desp_total = vis.data.rotulos_total_geral.despesa;
+            desp_total.top = vis.data.barras_iniciais[ nomes_indexes["emissao"] ].y;
+            desp_total.left = vis.data.params.x_right;
+            desp_total.value = vis.data.totals.despesa;
 
         }
 
@@ -468,8 +515,9 @@ const vis = {
                             .join("div")
                             .classed("rotulos", true)
                             .classed("rotulos-totals", true)
+                            .classed("rotulos-totais-parciais", true)
                             .attr("data-id-rotulo-totals", d => d.nome)
-                            .attr("data-tipo-rotulo-totals", d => d.nome)
+                            .attr("data-tipo-rotulo-totals", d => d.tipo)
                             .style("left", d => (d.tipo == "receita" ? d.x : (d.x + d.width)) + "px")
                             .style("top", d => d.y + "px")
                             .style("max-width", d => (d.tipo == "receita" ? vis.dims.margins.left : vis.dims.margins.right) + "px")
@@ -485,6 +533,38 @@ const vis = {
                           .append("p")
                           .text(d => utils.valor_formatado(d.value));
                         ;
+
+                        // rotulos dos totais gerais
+
+                        for (total of ["receita", "despesa"]) {
+
+                            let info = vis.data.rotulos_total_geral[total];
+
+                            let rotulo_total = vis.sels.cont
+                              .append("div")
+                              .classed("rotulos", true)
+                              .classed("rotulos-totals", true)
+                              .classed("rotulos-totais-gerais", true)
+                              .attr("data-id-rotulo-totals", info.nome)
+                              .attr("data-tipo-rotulo-totals", info.tipo)
+                              .style("left", info.left + "px")
+                              .style("top", info.top + "px")
+                              .style("max-width", (info.tipo == "receita" ? vis.dims.margins.left : vis.dims.margins.right) + "px")
+                              .style("opacity", 0)
+                            ;
+
+                            rotulo_total
+                                .append("h3")
+                                .text(d => info.texto)
+                            ;
+    
+                            rotulo_total
+                                .append("p")
+                                .text(d => utils.valor_formatado(info.value));
+                            ;
+
+                        }
+
 
                     },
 
@@ -611,7 +691,15 @@ const vis = {
                         vis.draw.bar_chart.totals.animate("amortizacao");
                         vis.draw.bar_chart.totals.rotulos.show("amortizacao", true);
                     }, 
-                    1000);
+                    1000)
+                ;
+
+                window.setTimeout(
+                    () => {
+                        vis.draw.bar_chart.totals.rotulos.show("desp_total", true);
+                    }, 
+                    2000)
+                ;
             },
 
 
