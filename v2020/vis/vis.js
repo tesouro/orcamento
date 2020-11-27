@@ -364,7 +364,10 @@ const vis = {
 
                 nodes_relacionados = vis.data.graph.links.filter(link => link[tipo_node] == d);
 
-                vis.data.tabela_links[d.rotulos] = nodes_relacionados.map(link => link[tipo_relacionados].rotulos);
+                vis.data.tabela_links[d.rotulos] = nodes_relacionados.map(link => ({
+                    nome: link[tipo_relacionados].rotulos,
+                    valor: link.value
+                }));
 
                 // não precisava disso, já tem em graph.nodes! :/
 
@@ -814,16 +817,19 @@ const vis = {
                     let nos_relacionados = vis.data.tabela_links[node_clicado];
 
                     nos_relacionados.forEach(no => {
-                        d3.select("[data-id-node='" + no + "']")
+                        d3.select("[data-id-node='" + no.nome + "']")
                           .classed("node-selecionado", true)
                           .classed("node-esmaecido", false)
                         ;
 
                         // os rotulos relacionados, do outro lado
+                        console.log(no);
 
-                        d3.select("[data-id-rotulo-node='" + no + "']")
+                        d3.select("[data-id-rotulo-node='" + no.nome + "']")
                           .classed("rotulo-de-node-selecionado", true)
                           .classed("rotulo-de-node-esmaecido", false)
+                          .select("p")
+                          .text(no.nome + ": R$ " + utils.valor_formatado(no.valor))
                         ;
                     })
 
@@ -866,6 +872,7 @@ const vis = {
                     d3.selectAll("[data-id-rotulo-node]")
                       .classed("rotulo-de-node-selecionado", false)
                       .classed("rotulo-de-node-esmaecido", false)
+                      .select("p").text(d => d.rotulos + ": R$ " + utils.valor_formatado(d.value))
                     ;
 
                     vis.f.mostra_limpar(false);
