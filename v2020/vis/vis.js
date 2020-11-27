@@ -5,7 +5,8 @@ const vis = {
         svg: "svg.vis",
         cont: "div.vis-container",
         steps: "ul.steps",
-        data: ["vis/links.csv", "vis/nodes.csv"]
+        data: ["vis/links.csv", "vis/nodes.csv"],
+        nodes: "rect.nodes"
 
     },
 
@@ -397,7 +398,7 @@ const vis = {
                     .classed("hidden", true)
                     .classed("nodes", true)
                     .attr("data-tipo", d => d.tipo)
-                    .attr("data-rotulo-node", d => d.rotulos)
+                    .attr("data-id-node", d => d.rotulos)
                     .append("title")
                     .text(d => d.rotulos)
                 ;
@@ -741,6 +742,47 @@ const vis = {
     
                 });
 
+            },
+
+            nodes : function() {
+
+                vis.sels.nodes = d3.selectAll(vis.refs.nodes);
+
+                vis.sels.nodes.on("click", function() {
+
+                    let node_clicado = this.dataset.idNode;
+
+                    console.log(this, node_clicado);
+
+                    // rotulos
+
+                    d3.selectAll("[data-id-rotulo-node]")
+                      .style("opacity", "")
+                      .classed("rotulo-de-node-selecionado", false)
+                      .classed("rotulo-de-node-esmaecido", true)
+                    ;
+
+                    d3.selectAll("[data-id-rotulo-node='" + node_clicado + "']")
+                      .style("opacity", "")
+                      .classed("rotulo-de-node-selecionado", true)
+                      .classed("rotulo-de-node-esmaecido", false)
+
+                    // nodes
+
+                    d3.selectAll("[data-id-node]")
+                      .classed("node-selecionado", false)
+                      .classed("node-esmaecido", true)
+                    ;
+
+                    d3.selectAll("[data-id-node='" + node_clicado + "']")
+                    .classed("node-selecionado", true)
+                    .classed("node-esmaecido", false)
+                    ;
+
+                })
+
+
+
             }
 
         },
@@ -862,6 +904,7 @@ const vis = {
             vis.draw.bar_chart.totals.rotulos.create();
 
             vis.control.monitora.steps();
+            vis.control.monitora.nodes();
             
 
             console.log(vis);

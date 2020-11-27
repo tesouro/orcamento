@@ -125,6 +125,28 @@ rect[data-tipo="receita"] {
     stroke-width: 0;
 }
 
+/* cliques no node */
+
+.node-selecionado {
+    opacity: 1;
+
+}
+
+.rotulo-de-node-selecionado {
+    opacity: 1;
+
+}
+
+.node-esmaecido {
+    opacity: .1;
+
+}
+
+.rotulo-de-node-esmaecido {
+    opacity: .1;
+
+}
+
 
 /* rotulos totais */
 
