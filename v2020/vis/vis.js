@@ -4,6 +4,7 @@ const vis = {
 
         svg: "svg.vis",
         cont: "div.vis-container",
+        steps: "ul.steps",
         data: ["vis/links.csv", "vis/nodes.csv"]
 
     },
@@ -464,6 +465,63 @@ const vis = {
     
         },
 
+        activates_button : function(all_buttons, clicked) {
+
+            let all_buttons_arr = Array.from(all_buttons);
+            // pq o que vem é um HTML Collection
+
+            all_buttons_arr.forEach(button => {
+                button.classList.remove("selected");
+            })
+
+            clicked.classList.add("selected");    
+
+        },
+
+        monitora : {
+
+            steps : function() {
+
+                let steps = document.querySelector(vis.refs.steps);
+
+                steps.addEventListener("click", function(e) {
+
+                    //console.log(this.children, e.target, this.children[0] == e.target);
+    
+                    // to avoid de-selecting all buttons and running everything when user clicks outside the buttons
+
+                    console.log(e.target);
+    
+                    if (e.target.matches("li[data-step]")) {
+    
+                        vis.control.activates_button(
+                            all_buttons = this.children,
+                            clicked = e.target
+                        );
+    
+                        let step = e.target.dataset.step;
+
+                        this.dataset.currentStep = step;
+
+                        console.log("STEP: ", step);
+    
+    
+                    } else {console.log("Clique num botão, meu filho.")}
+    
+                });
+
+            }
+
+        },
+
+        render_steps : {
+
+            "receita" : function() {
+
+            }
+
+        },
+
 
         begin : function(files) {
 
@@ -478,11 +536,18 @@ const vis = {
 
             vis.data.raw = data;
 
+            // isolar o que define os tamanahos das coisas, para eventualmente por dentro do listener de resize
+
             vis.draw.sankey.setup(data);
             vis.f.get_nodes_positions(vis.data.graph.nodes);
             vis.f.get_initial_bars_data();
             vis.draw.sankey.create_elements();
             vis.draw.cortina.create();
+
+            vis.draw.bar_chart.totals.create();
+            vis.draw.bar_chart.totals.animate("receita")
+
+            vis.control.monitora.steps();
             
 
             console.log(vis);
