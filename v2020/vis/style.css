@@ -1,3 +1,32 @@
+:root {
+    --cor1 : #BFB6AE;
+    --cor2 : #D98841;
+    --cor3 : #BF754B;
+    --cor4 : #A64732;
+    --cor5 : #402222;
+    --clara : #d5d4cb;
+    --clara2 : #d6e4e9;
+
+
+}
+
+body {
+    background-color : var(--clara);
+    font-family: Lato;
+    color: #444;
+}
+
+ul {
+    list-style: none;
+    font-size: .8rem;
+}
+
+li {
+    margin-bottom: .2em;
+}
+
+
+
 
 .hidden {
 

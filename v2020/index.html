@@ -3,16 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./vis/style.css">
     <title>Receitas e Despesas</title>
 </head>
 <body>
 
-    <div class="vis-container">
-        <svg class="vis">
+    <header>
+        <h1>O Orçamento Federal de 2020</h1>
+    </header>
 
-        </svg>
-    </div>
+    <main>
+        <ul class="steps">
+            <li data-step="receitas">As Receitas</li>
+            <li data-step="despesas">As Despesas</li>
+            <li data-step="divida">Os vencimentos da dívida</li>
+            <li data-step="necessidade">As necessidades de financiamento</li>
+            <li data-step="vinculacao">O fluxo das receitas para as despesas</li>
+        </ul>
+        <div class="vis-container">
+            <svg class="vis">
+    
+            </svg>
+        </div>
+
+    </main>
 
 
     <script src="./vis/d3.v6.min.js"></script>
