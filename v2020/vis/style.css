@@ -65,6 +65,10 @@ li.selected {
 
 }
 
+/*barras totais */
+rect.totals {
+    stroke : coral;
+}
 
 
 /* rotulos totais */

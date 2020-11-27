@@ -602,6 +602,19 @@ const vis = {
 
             },
 
+            "divida" : function() {
+
+                vis.draw.bar_chart.totals.animate("juros");
+                vis.draw.bar_chart.totals.rotulos.show("juros", true);
+                window.setTimeout(
+                    () => {
+                        vis.draw.bar_chart.totals.animate("amortizacao");
+                        vis.draw.bar_chart.totals.rotulos.show("amortizacao", true);
+                    }, 
+                    1000);
+            },
+
+
 
 
         },
