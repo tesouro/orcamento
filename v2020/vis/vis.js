@@ -477,6 +477,7 @@ const vis = {
                       .data(vis.data.barras_iniciais)
                       .join("rect")
                       .classed("totals", true)
+                      .classed("bordas", true)
                       .attr("data-id-barra-totals", d => d.nome)
                       .attr("x", d => d.x)
                       .attr("y", d => d.y + d.height)
@@ -490,6 +491,13 @@ const vis = {
                 show : function(option) {
 
                     d3.selectAll("rect.totals").classed("hidden", !option);
+
+                },
+
+                show_borders : function(option) {
+
+                    vis.sels.totals 
+                      .classed("bordas", option);
 
                 },
 
@@ -570,7 +578,17 @@ const vis = {
 
                     show : function(nome, opcao) {
 
-                        d3.select('[data-id-rotulo-totals="' + nome + '"]')
+                        let selection;
+
+                        if (nome == "parciais") {
+                            selection = d3.selectAll(".rotulos-totais-parciais");
+                        } else {
+                            selection = d3.select('[data-id-rotulo-totals="' + nome + '"]');
+                        }
+
+                        console.log(selection);
+
+                        selection
                           .transition()
                           .duration(1000)
                           .style("opacity", opcao ? 1 : 0)
@@ -686,6 +704,7 @@ const vis = {
 
                 vis.draw.bar_chart.totals.animate("juros");
                 vis.draw.bar_chart.totals.rotulos.show("juros", true);
+
                 window.setTimeout(
                     () => {
                         vis.draw.bar_chart.totals.animate("amortizacao");
@@ -701,6 +720,28 @@ const vis = {
                     2000)
                 ;
             },
+
+            "necessidade" : function() {
+
+                vis.draw.bar_chart.totals.animate("emissao");
+                vis.draw.bar_chart.totals.rotulos.show("emissao", true);
+
+                window.setTimeout(
+                    () => {
+                        vis.draw.bar_chart.totals.rotulos.show("rec_total", true);
+                    }, 
+                    1000)
+                ;
+
+                window.setTimeout(
+                    () => {
+                        vis.draw.bar_chart.totals.rotulos.show("parciais", false);
+                        vis.draw.bar_chart.totals.show_borders(false);
+                    }, 
+                    3000)
+                ;
+
+            }
 
 
 
