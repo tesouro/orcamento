@@ -240,3 +240,6 @@ a.limpar {
     color: var(--light);
 }
 
+rect.totals {
+    pointer-events: none;
+}
