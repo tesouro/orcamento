@@ -53,8 +53,10 @@ body {
 .logo {
     position: absolute;
     top: 0;
-    right: 1em;
-    max-width: 80px;
+    right: 1rem;
+    max-width: 100px;
+    font-size: 2rem;
+    margin-top: 0.67em;
 }
 
 ul {
