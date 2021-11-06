@@ -57,7 +57,7 @@ rec <- rec_raw %>%
       cod_esp == "111"                    ~ "Impostos",
       cod_esp %in% c("121", "122")        ~ "Contribuições sociais (exceto RGPS) e econômicas",
       cod_esp == "134"                    ~ "Exploração de Petróleo e outros recursos naturais",
-      cod_esp %in% c("292", "293")        ~ "Outras receitas financeiras (Conta Única e Bacen)",
+      cod_esp %in% c("292", "293")        ~ "Outras receitas financeiras",
       TRUE                                ~ "Demais receitas"
     )
   )
