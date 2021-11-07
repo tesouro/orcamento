@@ -757,7 +757,43 @@ const vis = {
 
         },
 
+        steps : null,
+
+        current_step : 0,
+
+        nof_steps : null,
+
         monitora : {
+
+            buttons : function() {
+
+                let buttons = document.querySelectorAll('.buttons-wrapper button');
+
+                buttons.forEach(button => button.addEventListener('click', function(e) {
+
+                    //console.log(e.target, e.target.parentNode, this, this.ariaLabel);
+
+                    const opcao = this.ariaLabel;
+                    let estado = vis.control.current_step;
+                    const nof_steps = vis.control.nof_steps;
+                    const steps = vis.control.steps;
+
+                    // colocar um argumento "direcao" no render_step
+
+                    if (
+                        (opcao == "Avançar" & estado == nof_steps - 1)
+                        |
+                        (opcao == "Voltar" & estado == 0)
+                    ) {
+                        console.log('nao vai nem vem');
+                    }
+
+
+                }))
+
+
+            },
+
 
             steps : function() {
 
@@ -1021,6 +1057,7 @@ const vis = {
             vis.draw.bar_chart.totals.rotulos.create();
 
             vis.control.monitora.steps();
+            vis.control.monitora.buttons();
             vis.control.monitora.nodes();
             vis.control.monitora.botao_limpar();
             
@@ -1031,6 +1068,8 @@ const vis = {
 
         init : function() {
 
+            vis.control.steps = Object.keys(vis.control.render_steps);
+            vis.control.nof_steps = vis.control.steps.length;
             vis.f.generates_refs();
             vis.f.get_size();
             vis.f.set_size();
