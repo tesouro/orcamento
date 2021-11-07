@@ -15,7 +15,10 @@ const vis = {
 
         svg : null,
         cont : null,
-        links : null
+        links : null,
+
+        // criados
+        totals_rotulos : null
 
     },
 
@@ -40,7 +43,9 @@ const vis = {
 
         },
 
-        width_bars : 20
+        width_bars : 20,
+
+        node_padding : 10,
 
     },
 
@@ -162,7 +167,9 @@ const vis = {
 
         },
 
-        tabela_links : {}
+        tabela_links : {},
+
+        posicoes : null
 
     },
 
@@ -205,15 +212,18 @@ const vis = {
 
             if (vis.dims.w < 700) {
 
+                vis.dims.node_padding = 20;
+
                 if (vis.dims.w < 500) {
 
-                    vis.dims.margins.left = 100;
-                    vis.dims.margins.right = 100;
+                    vis.dims.margins.left = 120;
+                    vis.dims.margins.right = 120;
+                    vis.dims.width_bars = 10;
 
                 } else {
 
-                    vis.dims.margins.left = 170;
-                    vis.dims.margins.right = 170;
+                    vis.dims.margins.left = 200;
+                    vis.dims.margins.right = 200;
 
                 }
 
@@ -407,12 +417,14 @@ const vis = {
             
             setup : function(data) {
 
-                console.log(data)
+                //console.log(data);
+
+                const pad = vis.dims.node_padding;
 
                 const sankey = d3.sankey()
                 .nodeId(d => d.rotulos)
                 .nodeWidth(vis.dims.width_bars)
-                .nodePadding(10)
+                .nodePadding(pad)
                 .extent([
                     [vis.dims.margins.left, vis.dims.margins.top], 
                     [vis.dims.w - vis.dims.margins.right, vis.dims.h - vis.dims.margins.bottom]])
@@ -496,7 +508,7 @@ const vis = {
                         .attr("data-id-rotulo-node", d => d.rotulos)
                         .attr("data-tipo-rotulo-totals", d => d.tipo)
                         .style("left", d => (d.tipo == "receita" ? d.x0 : d.x1) + "px")
-                        .style("top", d => (d.y0 - 1) + "px")
+                        .style("top", d => d.y0 + "px") // tava d.y0 - 1, pq?
                         .style("max-width", d => (d.tipo == "receita" ? vis.dims.margins.left : vis.dims.margins.right) + "px")
                         .style("opacity", 0)
                     ;

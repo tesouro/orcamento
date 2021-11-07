@@ -202,7 +202,6 @@ rect[data-tipo="receita"] {
     padding: 0 5px;
     text-align: left;
     font-size: .8rem;
-    font-family: Mohave;
     
 }
 
@@ -236,6 +235,7 @@ rect[data-tipo="receita"] {
 .rotulos-nodes p {
     font-size: .8rem;
     font-weight: 300;
+    line-height: 1.1;
 }
 
 @media (max-width: 700px) {
@@ -243,7 +243,17 @@ rect[data-tipo="receita"] {
     .rotulos-nodes p {
 
         font-size: .7rem;
-        line-height: 1;
+        font-family: Mohave;
+
+    }
+    
+}
+
+@media (max-width: 620px) {
+
+    .rotulos-nodes p {
+
+        font-size: .6rem;
 
     }
     
