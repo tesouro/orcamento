@@ -90,6 +90,62 @@ header > * {
     
 }
 
+/* = = = = = = =
+   BUTTONS
+   = = = = = = = */
+
+.buttons-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+button {
+
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    font-family: Lato;
+
+}
+
+button + button {
+    margin-left: .5rem;
+}
+
+button svg {
+
+    width: 1rem;
+
+}
+
+button path {
+
+    fill: var(--darker);
+    stroke: var(--darker);
+    stroke-width: 5;
+
+}
+
+button {
+
+    cursor: pointer;
+}
+
+button.disabled {
+
+    cursor: initial;
+
+}
+
+button.disabled path {
+
+    fill: transparent;
+    
+}
+
+button[aria-label="Avançar"]:not(.disabled):active path { transform: translateX(10%); }
+button[aria-label="Voltar"]:not(.disabled):active path { transform: translateX(-10%);}
+
 ul {
     list-style: none;
     font-size: .8rem;

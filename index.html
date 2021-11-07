@@ -19,6 +19,24 @@
     </header>
 
     <main>
+        <div class="buttons-wrapper">
+
+            <button aria-label="Voltar" class="disabled">
+                <svg class="arrow" viewBox="0 0 101 101">
+                    <path d="M100,0 L0,50 L100,100 Z" fill="black"></path>
+                </svg>
+            </button>
+
+            <button aria-label="Avançar">
+                <svg class="arrow" viewBox="0 0 101 101">
+                    <path d="M0,0 L100,50 L0,100 Z" fill="black"></path>
+                </svg>
+            </button>
+
+            <button>
+                <span>Reiniciar</span>
+            </button>
+        </div>
         <ul class="steps" data-current-step="receitas|despesas|divida...">
             <li data-step="receitas">As Receitas</li>
             <li data-step="despesas">As Despesas</li>
