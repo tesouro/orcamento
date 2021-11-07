@@ -50,13 +50,44 @@ body {
     /*position: relative;*/
 }
 
+/* = = = = = 
+   = HEADER
+   = = = = = */
+
+header {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+header > * {
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
 .logo {
-    position: absolute;
+    /*position: absolute;
     top: 0;
-    right: 1rem;
+    right: 1rem;*/
     max-width: 100px;
     font-size: 2rem;
-    margin-top: 0.67em;
+    /*margin-top: 0.67em;*/
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+
+    .logo {
+        order: 1;
+    }
+
+    header > h1 {
+        order : 2;
+    }
+    
 }
 
 ul {
@@ -171,6 +202,7 @@ rect[data-tipo="receita"] {
     padding: 0 5px;
     text-align: left;
     font-size: .8rem;
+    font-family: Mohave;
     
 }
 
@@ -204,6 +236,17 @@ rect[data-tipo="receita"] {
 .rotulos-nodes p {
     font-size: .8rem;
     font-weight: 300;
+}
+
+@media (max-width: 700px) {
+
+    .rotulos-nodes p {
+
+        font-size: .7rem;
+        line-height: 1;
+
+    }
+    
 }
 
 /*

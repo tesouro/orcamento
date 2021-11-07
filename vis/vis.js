@@ -203,6 +203,22 @@ const vis = {
 
             //vis.elems.svg.style.setProperty("background-color", "coral");
 
+            if (vis.dims.w < 700) {
+
+                if (vis.dims.w < 500) {
+
+                    vis.dims.margins.left = 100;
+                    vis.dims.margins.right = 100;
+
+                } else {
+
+                    vis.dims.margins.left = 170;
+                    vis.dims.margins.right = 170;
+
+                }
+
+            }
+
 
         },
 
@@ -716,15 +732,6 @@ const vis = {
 
     control : {
 
-        init : function() {
-
-            vis.f.generates_refs();
-            vis.f.get_size();
-            vis.f.set_size();
-            vis.f.read_data();
-    
-        },
-
         activates_button : function(all_buttons, clicked) {
 
             let all_buttons_arr = Array.from(all_buttons);
@@ -1008,6 +1015,15 @@ const vis = {
 
             console.log(vis);
 
+        },
+
+        init : function() {
+
+            vis.f.generates_refs();
+            vis.f.get_size();
+            vis.f.set_size();
+            vis.f.read_data();
+    
         }
 
     }
