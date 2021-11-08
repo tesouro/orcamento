@@ -492,6 +492,7 @@ const vis = {
                 vis.sels.svg.selectAll("." + elements).classed("hidden", !true_false);
 
                 if (elements == "links" & true_false) vis.draw.cortina.animate();
+                if (elements == "links" & !true_false) vis.draw.cortina.reset();
 
             },
 
@@ -573,6 +574,8 @@ const vis = {
             reset : function() {
 
                 d3.select("rect.cortina")
+                  .transition()
+                  .duration(2000)
                   .attr("x", vis.data.box_interno.x1_min)
                   .attr("width", vis.data.box_interno.x0_max - vis.data.box_interno.x1_min)
                   .attr("opacity", 0)
@@ -720,6 +723,8 @@ const vis = {
             },
 
             move: function(option) {
+
+                console.log(option);
 
                 const prop = option == "initial" ?
                                        "y0_ini" :
@@ -1067,21 +1072,23 @@ const vis = {
 
             "vinculacao" : function(direcao) {
 
-                vis.draw.bar_chart.totals.show(false);
-                vis.draw.bar_chart.totals.rotulos.show("gerais", false);
-                vis.draw.sankey.show("nodes", true);
-                vis.draw.bar_chart.move("sankey");
+                if (direcao == 'indo') vis.draw.bar_chart.totals.show(direcao == 'vindo');
+                vis.draw.bar_chart.totals.rotulos.show("gerais", direcao == 'vindo');
+                if (direcao == 'indo') vis.draw.sankey.show("nodes", true);
+                vis.draw.bar_chart.move(direcao == 'indo' ? "sankey" : "initial");
 
                 window.setTimeout(
                     () => {
-                        vis.draw.sankey.show("links", true)
+                        if (direcao == 'vindo') vis.draw.sankey.show("nodes", false);
+                        if (direcao == 'vindo') vis.draw.bar_chart.totals.show(direcao == 'vindo');
+                        vis.draw.sankey.show("links", direcao == 'indo')
                     }, 
                     2000
                 );
 
                 window.setTimeout(
                     () => {
-                        vis.draw.sankey.rotulos.show("todos", true);
+                        vis.draw.sankey.rotulos.show("todos", direcao == 'indo');
                     }, 
                     1000
                 );
