@@ -821,8 +821,6 @@ const vis = {
 
                         // atualiza o selecionado
 
-                        console.log(all_labels);
-
                         const proximo = steps[vis.control.current_step];
 
                         const proximo_label = document.querySelector('[data-step="' + proximo + '"]');
@@ -1110,7 +1108,7 @@ const vis = {
             vis.draw.bar_chart.totals.create();
             vis.draw.bar_chart.totals.rotulos.create();
 
-            vis.control.monitora.steps();
+            //vis.control.monitora.steps();
             vis.control.monitora.buttons();
             vis.control.monitora.nodes();
             vis.control.monitora.botao_limpar();

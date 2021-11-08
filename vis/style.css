@@ -171,7 +171,7 @@ li {
     border-left: solid 1px var(--dark);
     background: var(--light);
     margin: 0;
-    cursor: pointer;
+    /*cursor: pointer;*/
 }
 
 li:first-of-type {
