@@ -146,11 +146,20 @@ button.disabled path {
 button[aria-label="Avançar"]:not(.disabled):active path { transform: translateX(10%); }
 button[aria-label="Voltar"]:not(.disabled):active path { transform: translateX(-10%);}
 
+.controls-wrapper {
+
+    display: flex;
+    margin-bottom: 1rem;
+
+}
+
 ul {
     list-style: none;
     font-size: .8rem;
     display: flex;
     padding-inline-start: 0;
+    margin: 0;
+    margin-left: 1rem;
 }
 
 li {
