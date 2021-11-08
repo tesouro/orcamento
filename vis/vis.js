@@ -492,7 +492,6 @@ const vis = {
                 vis.sels.svg.selectAll("." + elements).classed("hidden", !true_false);
 
                 if (elements == "links" & true_false) vis.draw.cortina.animate();
-                if (elements == "links" & !true_false) vis.draw.cortina.reset();
 
             },
 
@@ -1076,12 +1075,15 @@ const vis = {
                 vis.draw.bar_chart.totals.rotulos.show("gerais", direcao == 'vindo');
                 if (direcao == 'indo') vis.draw.sankey.show("nodes", true);
                 vis.draw.bar_chart.move(direcao == 'indo' ? "sankey" : "initial");
+                if (direcao == 'vindo') {
+                    vis.draw.cortina.reset();
+                }
 
                 window.setTimeout(
                     () => {
                         if (direcao == 'vindo') vis.draw.sankey.show("nodes", false);
-                        if (direcao == 'vindo') vis.draw.bar_chart.totals.show(direcao == 'vindo');
-                        vis.draw.sankey.show("links", direcao == 'indo')
+                        if (direcao == 'vindo') vis.draw.bar_chart.totals.show(true);
+                        vis.draw.sankey.show("links", direcao == 'indo');
                     }, 
                     2000
                 );
