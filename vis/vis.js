@@ -619,13 +619,13 @@ const vis = {
 
                 },
 
-                animate : function(nome) {
+                animate : function(nome, direcao) {
 
                     d3.select('[data-id-barra-totals="' + nome + '"]')
                       .transition()
                       .duration(1000)
                       .attr("y", d => d.y)
-                      .attr("height", d => d.height)
+                      .attr("height", d => direcao == "indo" ? d.height : 0)
                     ;
 
                 },
@@ -753,7 +753,7 @@ const vis = {
                 button.classList.remove("selected");
             })
 
-            clicked.classList.add("selected");    
+            if (clicked) clicked.classList.add("selected");    
 
         },
 
@@ -788,7 +788,7 @@ const vis = {
                     if (
                         (opcao == "Avançar" & estado == nof_steps - 1)
                         |
-                        (opcao == "Voltar" & estado == 0)
+                        (opcao == "Voltar" & estado < 0)
                     ) {
                         console.log('nao vai nem vem');
                     } else {
@@ -799,7 +799,7 @@ const vis = {
 
                         // atualiza estado dos botões
 
-                        if (vis.control.current_step <= 0) {
+                        if (vis.control.current_step < 0) {
 
                             btn_voltar.classList.add('disabled');
 
@@ -822,6 +822,7 @@ const vis = {
                         // atualiza o selecionado
 
                         const proximo = steps[vis.control.current_step];
+                        const anterior = steps[vis.control.current_step + 1];
 
                         const proximo_label = document.querySelector('[data-step="' + proximo + '"]');
 
@@ -830,7 +831,21 @@ const vis = {
                             clicked = proximo_label
                         );
 
-                        vis.control.render_steps[proximo]();
+                        const direcao = termo == 1 ? 'indo' : 'vindo';
+
+                        console.log(direcao, anterior, proximo);
+
+                        if (direcao == 'indo') {
+
+                            vis.control.render_steps[proximo](direcao);
+
+                        } else {
+
+                            vis.control.render_steps[anterior](direcao);
+
+                        }
+
+                        
 
                         console.log('proximo: ', proximo);
 
@@ -993,56 +1008,56 @@ const vis = {
 
         render_steps : {
 
-            "receitas" : function() {
+            "receitas" : function(direcao) {
 
-                vis.draw.bar_chart.totals.animate("receita");
-                vis.draw.bar_chart.totals.rotulos.show("receita", true);
-
-            },
-
-            "despesas" : function() {
-
-                vis.draw.bar_chart.totals.animate("despesa");
-                vis.draw.bar_chart.totals.rotulos.show("despesa", true);
+                vis.draw.bar_chart.totals.animate("receita", direcao);
+                vis.draw.bar_chart.totals.rotulos.show("receita", direcao == 'indo');
 
             },
 
-            "divida" : function() {
+            "despesas" : function(direcao) {
 
-                vis.draw.bar_chart.totals.animate("juros");
-                vis.draw.bar_chart.totals.rotulos.show("juros", true);
+                vis.draw.bar_chart.totals.animate("despesa", direcao);
+                vis.draw.bar_chart.totals.rotulos.show("despesa", direcao == 'indo');
+
+            },
+
+            "divida" : function(direcao) {
+
+                vis.draw.bar_chart.totals.animate("juros", direcao);
+                vis.draw.bar_chart.totals.rotulos.show("juros", direcao == 'indo');
 
                 window.setTimeout(
                     () => {
-                        vis.draw.bar_chart.totals.animate("amortizacao");
-                        vis.draw.bar_chart.totals.rotulos.show("amortizacao", true);
+                        vis.draw.bar_chart.totals.animate("amortizacao", direcao);
+                        vis.draw.bar_chart.totals.rotulos.show("amortizacao", direcao == 'indo');
                     }, 
                     1000)
                 ;
 
                 window.setTimeout(
                     () => {
-                        vis.draw.bar_chart.totals.rotulos.show("desp_total", true);
+                        vis.draw.bar_chart.totals.rotulos.show("desp_total", direcao == 'indo');
                     }, 
                     2000)
                 ;
             },
 
-            "necessidade" : function() {
+            "necessidade" : function(direcao) {
 
-                vis.draw.bar_chart.totals.animate("emissao");
-                vis.draw.bar_chart.totals.rotulos.show("emissao", true);
+                vis.draw.bar_chart.totals.animate("emissao", direcao);
+                vis.draw.bar_chart.totals.rotulos.show("emissao", direcao == 'indo');
 
                 window.setTimeout(
                     () => {
-                        vis.draw.bar_chart.totals.rotulos.show("rec_total", true);
+                        vis.draw.bar_chart.totals.rotulos.show("rec_total", direcao == 'indo');
                     }, 
                     1000)
                 ;
 
                 window.setTimeout(
                     () => {
-                        vis.draw.bar_chart.totals.rotulos.show("parciais", false);
+                        vis.draw.bar_chart.totals.rotulos.show("parciais", direcao == 'vindo');
                         vis.draw.bar_chart.totals.show_borders(false);
                     }, 
                     3000)
@@ -1050,7 +1065,7 @@ const vis = {
 
             },
 
-            "vinculacao" : function() {
+            "vinculacao" : function(direcao) {
 
                 vis.draw.bar_chart.totals.show(false);
                 vis.draw.bar_chart.totals.rotulos.show("gerais", false);
