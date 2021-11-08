@@ -759,7 +759,7 @@ const vis = {
 
         steps : null,
 
-        current_step : 0,
+        current_step : -1,
 
         nof_steps : null,
 
@@ -781,6 +781,8 @@ const vis = {
                     const btn_voltar = document.querySelector('[aria-label="Voltar"]');
                     const btn_avancar = document.querySelector('[aria-label="Avançar"]');
 
+                    const all_labels = document.querySelectorAll('[data-step]');
+
                     // colocar um argumento "direcao" no render_step
 
                     if (
@@ -791,13 +793,13 @@ const vis = {
                         console.log('nao vai nem vem');
                     } else {
 
-                        const proximo = opcao == "Avançar" ? +1 : -1;
+                        const termo = opcao == "Avançar" ? +1 : -1;
 
-                        vis.control.current_step += proximo;
+                        vis.control.current_step += termo;
 
                         // atualiza estado dos botões
 
-                        if (vis.control.current_step == 0) {
+                        if (vis.control.current_step <= 0) {
 
                             btn_voltar.classList.add('disabled');
 
@@ -817,7 +819,22 @@ const vis = {
 
                         }
 
-                        console.log('proximo: ', steps[vis.control.current_step]);
+                        // atualiza o selecionado
+
+                        console.log(all_labels);
+
+                        const proximo = steps[vis.control.current_step];
+
+                        const proximo_label = document.querySelector('[data-step="' + proximo + '"]');
+
+                        vis.control.activates_button(
+                            all_buttons = all_labels,
+                            clicked = proximo_label
+                        );
+
+                        vis.control.render_steps[proximo]();
+
+                        console.log('proximo: ', proximo);
 
 
 
