@@ -4,7 +4,7 @@ library(tidyverse)
 
 # 01a Importa Receitas do RGPS --------------------------------------------
 
-rec_rgps_raw <- read_excel("v2020/dados/rec_rgps.xlsx", skip = 10)
+rec_rgps_raw <- read_excel("./dados/rec_rgps.xlsx", skip = 10)
 
 colnames(rec_rgps_raw) <- c(
   "especie_cod", "especie",
@@ -20,7 +20,7 @@ rec_rgps <- rec_rgps_raw %>%
 
 # 01b Importa Demais Receitas ---------------------------------------------
 
-rec_raw <- read_excel("v2020/dados/rec.xlsx", skip = 10)
+rec_raw <- read_excel("./dados/rec.xlsx", skip = 10)
 
 colnames(rec_raw) <- c(
   "especie_cod", "especie",
@@ -66,7 +66,7 @@ rec %>% group_by(receita) %>% summarise(sum(valor_rec))
 
 # 01c Importa Despesas ----------------------------------------------------
 
-desp <- read_excel("v2020/dados/desp.xlsx", skip = 10)
+desp <- read_excel("./dados/desp.xlsx", skip = 10)
 
 colnames(desp) <- c(
   "fte_cod", "fte",
@@ -150,6 +150,6 @@ nodes$tipo <- c(
   rep("despesa", length(unique(matriz_reduz$despesa)))
 )
 
-write.csv(links, "./v2020/vis/links.csv", fileEncoding = "utf8")
-write.csv(nodes, "./v2020/vis/nodes.csv", fileEncoding = "utf8")
+write.csv(links, "./vis/links.csv", fileEncoding = "utf8")
+write.csv(nodes, "./vis/nodes.csv", fileEncoding = "utf8")
 
