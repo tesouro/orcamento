@@ -78,6 +78,15 @@ header > * {
     flex-shrink: 0;
 }
 
+.cartaz {
+
+    display: none;
+    margin: 0;
+    margin-left: 1rem;
+    line-height: 1rem;
+
+}
+
 @media (max-width: 600px) {
 
     .logo {
@@ -86,6 +95,18 @@ header > * {
 
     header > h1 {
         order : 2;
+    }
+
+    .cartaz {
+
+        display: inline-block;
+
+    }
+
+    ul.steps {
+
+        display: none;
+
     }
     
 }

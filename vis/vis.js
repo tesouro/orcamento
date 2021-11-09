@@ -842,6 +842,7 @@ const vis = {
                         if (direcao == 'indo') {
 
                             vis.control.render_steps[proximo](direcao);
+                            
 
                         } else {
 
@@ -849,9 +850,9 @@ const vis = {
 
                         }
 
-                        
+                        vis.control.cartaz.update(proximo);
 
-                        console.log('proximo: ', proximo);
+                        console.log('proximo: ', proximo, proximo == undefined);
 
 
 
@@ -1005,6 +1006,26 @@ const vis = {
 
                   }
                 );
+
+            }
+
+        },
+
+        cartaz : {
+
+            textos : {
+
+                'receitas'    : '1. As Receitas',
+                'despesas'    : '2. As Despesas',
+                'divida'      : '3. A Dívida',
+                'necessidade' : '4. Fechando o Orçamento',
+                'vinculacao'  : '5. O Fluxo'
+
+            },
+
+            update : (step) => {
+
+                document.querySelector('p.cartaz').innerHTML = step == undefined ? "" : vis.control.cartaz.textos[step];
 
             }
 
