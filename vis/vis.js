@@ -1062,6 +1062,7 @@ const vis = {
                 window.setTimeout(
                     () => {
                         vis.draw.bar_chart.totals.rotulos.show("parciais", direcao == 'vindo');
+                        if (direcao == 'vindo') vis.draw.bar_chart.totals.rotulos.show("emissao", false);
                         vis.draw.bar_chart.totals.show_borders(false);
                     }, 
                     3000)
