@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mohave:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./vis/style.css">
+    <title>Receitas e Despesas</title>
+</head>
+<body>
+
+    <header>
+        <h1>O Orçamento Federal de 2021</h1>
+        <img src="./logo-enef.png" alt="Logotipo da Oitava Semana Nacional de Educação Financeira" class="logo">
+    </header>
+
+    <main>
+        <div class="controls-wrapper">
+
+            <div class="buttons-wrapper">
+
+                <button aria-label="Voltar" class="disabled">
+                    <svg class="arrow" viewBox="0 0 101 101">
+                        <path d="M100,0 L0,50 L100,100 Z" fill="black"></path>
+                    </svg>
+                </button>
+    
+                <button aria-label="Avançar">
+                    <svg class="arrow" viewBox="0 0 101 101">
+                        <path d="M0,0 L100,50 L0,100 Z" fill="black"></path>
+                    </svg>
+                </button>
+    
+            </div>
+            <ul class="steps" data-current-step="receitas|despesas|divida...">
+                <li data-step="receitas">As Receitas</li>
+                <li data-step="despesas">As Despesas</li>
+                <li data-step="divida">A dívida</li>
+                <li data-step="necessidade">Fechando o orçamento</li>
+                <li data-step="vinculacao">O fluxo</li>
+            </ul>
+
+            <p class="cartaz"></p>
+
+        </div>
+
+        <div class="vis-container">
+            <svg class="vis">
+    
+            </svg>
+            <a class="limpar hidden">Limpar seleção</a>
+        </div>
+
+    </main>
+
+
+    <script src="./vis/d3.v6.min.js"></script>
+    <script src="./vis/ext/d3-array.min.js"></script>
+    <script src="./vis/ext/d3-collection.min.js"></script>
+    <script src="./vis/ext/d3-path.min.js"></script>
+    <script src="./vis/ext/d3-sankey.min.js"></script>
+    <script src="./vis/ext/d3-shape.min.js"></script>
+    <script src="./vis/utils.js"></script>
+    <script src="./vis/vis.js"></script>
+</body>
+</html>

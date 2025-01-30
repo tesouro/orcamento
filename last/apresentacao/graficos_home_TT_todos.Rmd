@@ -1,0 +1,773 @@
+---
+title: "Gráficos da Home do TT"
+author: "tiago"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r libraries}
+library(tidyverse)
+library(readxl)
+library(scales)
+library(ggrepel)
+library(extrafont)
+library(gganimate)
+library(RColorBrewer)
+library(ckanr)
+library(zoo)
+library(transformr)
+library(viridis)
+library(lubridate)
+
+tema <- function(){
+    theme_minimal() +
+    theme(
+      text = element_text(family = "Inter", colour = "grey20"),
+      axis.text = element_text(family = "Inter Light", face = "plain", colour = "grey20", size = 14),
+      title = element_text(family = "Inter", face = "bold", size = 16), # size para o Shiny
+      plot.subtitle = element_text(family = "Inter", face = "plain", size = 20, color = "#1E4C7A"),
+      plot.caption = element_text(face = "italic"),
+      panel.grid.major = element_blank(), 
+      panel.grid.minor = element_blank(),
+      legend.text = element_text(size = 18),
+      legend.title = element_text(size = 18),
+      axis.ticks = element_line(size = 0.5),
+      axis.ticks.length = unit(.25, "cm"),
+      axis.title = element_text(size = 16),
+      legend.position = 'bottom')
+  }
+
+```
+
+
+## Resultado primário
+
+```{r importa, echo=FALSE}
+recurso_TT <- resource_show(id="527ccdb1-3059-42f3-bf23-b5e3ab4c6dc6",
+                             url="http://www.tesourotransparente.gov.br/ckan")
+download.file(recurso_TT$url, destfile = "rtn.xlsx", mode = 'wb' )
+tabela <- read_excel("rtn.xlsx", sheet = "1.1-A", skip = 4)
+```
+
+## Tratando os dados
+
+```{r}
+
+meses <- c("Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro")
+
+serie <- tabela %>% 
+  rename(rotulos = 1) %>%
+  filter(str_detect(rotulos, "5. RESULTADO PRIMÁRIO") |
+           str_detect(rotulos, "Deflator - IPCA")) %>%
+  mutate(rotulos = c("Valor", "IPCA")) %>%
+  gather(-1, key = "Periodo", value = "Valores") %>%
+  spread(key = rotulos, value = Valores) %>%
+  mutate(Valor = as.numeric(Valor),
+         IPCA = as.numeric(IPCA),
+         Periodo = as.Date(as.numeric(Periodo), origin = "1899-12-30"),
+         Ano = lubridate::year(Periodo),
+         Mes = lubridate::month(Periodo),
+         Valor_12m = zoo::rollapply(Valor, width = 12, FUN = sum, fill = NA, align = 'right'),
+         Resultado = ifelse(Valor_12m > 0, "Positivo", "Negativo"),
+         Data = paste0(Ano, " - ", meses[Mes])) %>%
+  filter(!is.na(Valor_12m)) %>%
+  filter(Periodo >= "2006-01-01") # para ficar igual à série da dívida
+
+
+```
+
+Para poder fazer um gráfico de area, preciso segmentar o gráfico em grupo contíguos. Ou seja, agrupar as sequencias de negativos e positivos.
+
+```{r}
+palavra_chave <- "Grupo_"
+i <- 1
+ultimo_grupo <- paste0("Grupo_", i)
+grupo <- c(ultimo_grupo)
+
+vetor <- serie$Resultado
+
+for (j in 2:length(vetor)) {
+  if (vetor[j] != vetor[j-1]) {
+    i <- i+1
+    ultimo_grupo <- paste0("Grupo_", i)
+  }
+  grupo <- c(grupo, ultimo_grupo)
+}
+
+serie$Grupos <- grupo
+```
+
+Plotando
+
+```{r}
+vermelho <- brewer.pal(3, name = "Set1")[1]
+azul <- "#1f476a" # brewer.pal(3, name = "Set1")[2]
+verde <- brewer.pal(3, name = "Set1")[3]
+
+vermelho_claro <- "#ee7576"
+azul_claro     <- "#2c90bf" # "#87b1d4"
+
+grafico_linha <- ggplot(serie, aes(x = Periodo, y = Valor_12m, color = Resultado, fill = Resultado, group = 1)) +
+  geom_area(aes(group = Grupos)) +
+  geom_line(size = 1) + 
+  #geom_point(size = 3, shape = 21, fill = "#f0f5f7") +
+  geom_hline(yintercept = 0, color = '#f0f5f7', size = 1) +
+  scale_color_manual(values = c("Negativo" = vermelho, "Positivo" = azul)) +
+  scale_fill_manual(values = c("Negativo" = vermelho_claro, "Positivo" = azul_claro)) +  
+  scale_y_continuous(labels = function(x){format(x/1e3, big.mark=".", decimal.mark=",")}) +
+  scale_x_date(date_breaks = "1 years", 
+               date_labels = "%Y", 
+               limits = c(as.Date("2006-01-01"), NA), #"1997-12-01"
+               expand = expand_scale(mult = c(.04, .04))) +
+  coord_cartesian(clip = 'off') + 
+  labs(x = NULL, y = NULL) +
+  # geom_text(aes(x = Periodo + 200,
+  #               label = format(round(Valor_12m/1000,0), 
+  #                                     big.mark = ".", 
+  #                                     decimal.mark = ",")),
+  #           size = 7, fontface = 'plain', family = "Open Sans SemiBold") +
+  tema() +   
+  theme(legend.position = 'none',
+        panel.grid.major.y = element_blank(),
+        panel.grid.major.x = element_blank(),
+        plot.background = element_rect(color = "#f0f5f7", linetype = "solid", size = 2))
+
+ggsave('result.png', plot=last_plot(), width = 16, height = 6)
+
+```
+
+diminuir width!
+
+```{r}
+gif_linhas <- grafico_linha +
+  transition_reveal(Periodo) +
+  labs(
+    #title = "Resultado do Tesouro Nacional (R$ bi)", 
+    subtitle = paste("Últimos 12 meses, atualizados pelo IPCA, até {lubridate::year(frame_along)}/{meses[lubridate::month(frame_along)]}")) 
+
+animate(gif_linhas, nframes = round(nrow(serie)/2), height = 488, width = 668,
+        renderer = gifski_renderer(loop = FALSE)) #type = "cairo"
+
+
+anim_save("hom_TT_rtn.gif", animation = last_animation())
+
+```
+
+## Dados do estoque da dívida
+
+```{r}
+recurso_dpf_TT <- resource_show(id="0402cb77-5e4c-4414-966f-0e87d802a29a",
+                              url="http://www.tesourotransparente.gov.br/ckan")
+download.file(recurso_dpf_TT$url, destfile = "./dpf.xlsx", mode = 'wb' )
+tabela_div <- read_excel("dpf.xlsx", skip = 4)
+```
+
+```{r}
+meses_red <- c("Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez")
+which(meses_red == "Fev")
+
+#         Mes_nome = factor(Mes, levels = meses_red)
+
+dpf <- tabela_div %>%
+  rename(rotulos = 1) %>%
+  filter(str_detect(rotulos, "DPF EM PODER")) %>%
+  select(-1) %>%
+  gather(key = Mes_Ano, value = Valor) %>%
+  separate(Mes_Ano, into = c("Mes", "Ano"), sep = "/") %>%
+  filter(!is.na(Ano)) %>% # (3)
+  mutate(Ano = as.integer(paste0('20', Ano)), # (4)
+         Mes_num = match(Mes, meses_red),
+         Periodo = as.Date(paste0(Ano, "-",
+                                  if_else(Mes_num < 10, "0", ""), Mes_num, "-",
+                                  "01")))
+```
+
+Atualizando os valores pelo IPCA
+
+```{r}
+ipca <- serie %>% select(Periodo, IPCA)
+
+dpf <- dpf %>% 
+  left_join(ipca) %>%
+  mutate(Valor_ipca = Valor * IPCA)
+  
+
+```
+
+
+
+```{r}
+grafico_linha_dpf <- ggplot(dpf, aes(x = Periodo, y = Valor_ipca, color = TRUE, group = 1)) +
+  #geom_area(fill = "#6cb2d2", color = NA) +
+  geom_line(size = 1) + 
+  #geom_hline(yintercept = 0, color = '#f0f5f7', size = 1) +
+  #geom_point(size = 3, shape = 21, fill = "#f0f5f7") +
+  scale_color_manual(values = c("TRUE" = "#1E4C7A")) +
+  scale_x_date(date_breaks = "1 years", 
+               date_labels = "%Y", 
+               limits = c(as.Date("2006-01-01"), NA),
+               expand = expand_scale(mult = c(.05, .04))) +
+  coord_cartesian(
+    ylim = c(min(dpf$Valor_ipca), 
+             max(dpf$Valor_ipca)),
+    clip = "on") + # ponto e valor iniciais fixos a seguit
+  # geom_point(size = 3, shape = 21, fill = "#f0f5f7",
+  #            x = dpf$Periodo[1], y = dpf$Valor_ipca[1]) +
+  # geom_text(x = dpf$Periodo[1] - 100, y = dpf$Valor_ipca[1] + 50,
+  #           label = format(round(dpf$Valor_ipca[1]/1000, 2), 
+  #                                     big.mark = ".", 
+  #                                     decimal.mark = ","),
+  #           size = 7, fontface = 'plain', family = "Open Sans SemiBold") + # fim vlrs iniciais
+  labs(x = NULL, y = NULL) +
+  # geom_text(aes(x = Periodo + 200,
+  #               label = format(round(Valor_ipca/1000, 2), 
+  #                                     big.mark = ".", 
+  #                                     decimal.mark = ",")),
+  #           size = 7, fontface = 'plain', family = "Open Sans SemiBold") +
+  scale_y_continuous(labels = function(x){format(x, big.mark=".", decimal.mark=",")}) +
+  tema() +   
+  theme(legend.position = 'none',
+        panel.grid.major.y = element_blank(),
+        panel.grid.major.x = element_blank(),
+        # axis.title.y = element_blank(),
+        # axis.text.y = element_blank(),
+        # axis.ticks.y = element_blank(),
+        plot.background = element_rect(color = "#f0f5f7", linetype = "solid", size = 2))
+
+ggsave('divida.png', plot=last_plot(), width = 16, height = 6)
+
+# observações: se vc setar o ylim(), a área deixa de aparecer. para mantê-la, é preciso setar o ylim como parâmetro do coord_cartesian(). Da documentação (https://ggplot2.tidyverse.org/reference/lims.html):
+
+# "For changing x or y axis limits without dropping data observations, see coord_cartesian()."
+```
+
+Animando
+
+```{r}
+gif_linhas_dpf <- grafico_linha_dpf +
+  transition_reveal(Periodo) +
+  labs(
+    #title = "Dívida Pública Federal (R$ tri)", 
+    subtitle = paste("Estoque atualizado pelo IPCA até {lubridate::year(frame_along)}/{meses[lubridate::month(frame_along)]}")) 
+
+animate(gif_linhas_dpf, nframes = round(nrow(dpf)/2), height = 488, width = 668,
+        renderer = gifski_renderer(loop = FALSE))
+
+
+anim_save("hom_TT_dpf.gif", animation = last_animation())
+```
+
+## Despesas União
+
+Carga dos dados a partir do ckan
+
+```{r tg_para_csv}
+# # lê o arquivo do ckan
+# recurso_TT_desp <- resource_show(id="1043f379-e7fb-4c18-be52-345b8672ccfb",
+#                              url="https://apickan.tesouro.gov.br/ckan")
+# download.file(recurso_TT_desp$url, destfile = "./desp_uniao.xlsx", mode = 'wb' )
+# desp_uniao <- read_excel("desp_uniao.xlsx")
+# save(desp_uniao, file = "desp_uniao.RData")
+# 
+#load("desp_uniao.RData")
+desp_uniao <- readRDS(file = "../base-siafi/dados/exportados/despesa_uniao.rds")
+```
+
+### Classificação dos dados
+
+```{r}
+# classificadores do rpps
+# atencao: esses agrupamentos de ações e subfunções não devem ser levados em consideração isoladamente, mas sim combinados com outros critérios. vide "case_when" mais abaixo.
+
+acoes_rpps_civil <- c("0053", "0054", "0055", "009K", "0181", "0397")
+acoes_rpps_militar <- c("0179")
+acoes_rpps_fcdf <- c("00Q2", "00QD", "00QN", "009T")
+acoes_rpps_demais_desp <- c("0005", "0041", "00F1", "00F2", "00NS", "0536", "0739", "0C01")
+acoes_rpps_acoes_antigas <- c("0396", "0436", "0C00")
+acoes_rpps_seguridade <- c(acoes_rpps_civil, acoes_rpps_militar, acoes_rpps_fcdf, acoes_rpps_demais_desp, acoes_rpps_acoes_antigas)
+
+acoes_rpps_militar_esf_fiscal <- c("214H", "218K")
+
+subfuncoes_rpps <- c("272", "273", "274", "845", "846")
+
+desp <- desp_uniao %>%
+  mutate(classificador = case_when(
+    DespesaRGPS == TRUE ~ "Benefícios RGPS",
+    GND_cod %in% c("4", "5") ~ "Investimentos",
+    GND_cod %in% c("2", "6") ~ "Dívida",
+    GND_cod == "3" & Funcao_cod == "10" ~ "Custeio Saúde",
+    GND_cod == "3" & Funcao_cod == "12" ~ "Custeio Educação",
+    GND_cod == "3" & Funcao_cod %in% c("08", "11") ~ "Custeio Social",
+    GND_cod == "3" & as.numeric(Modalidade_cod) %in% 30:49 ~ "Outras Transferências",
+    GND_cod == "3" ~ "Custeio Administrativo",
+    GND_cod == "1" & 
+      (
+        (Esfera_cod == "2" & 
+         Subfuncao_cod %in% subfuncoes_rpps &
+         Acao_cod %in% acoes_rpps_seguridade) 
+        |
+        (Esfera_cod == "1" &
+         Acao_cod %in% acoes_rpps_militar_esf_fiscal)
+      ) ~ "Benefícios RPPS",
+    GND_cod == "1" ~ "Pessoal (ativo)"))
+
+# um gráfico inicial para verificação
+
+# desp %>%  
+#   group_by(Ano, classificador) %>%
+#   summarise(Valor = sum(Valor)) %>%
+#   filter(Ano != "2019", !classificador %in% c("Dívida", "Outras Transferências")) %>%
+#   ggplot(aes(x = Ano, y = Valor, color = classificador)) + 
+#   geom_line(aes(group = classificador))
+
+#desp <- desp %>% filter(Periodo <= "2020-08-01")
+      
+desp_12m_ipca <- desp %>%
+  group_by(Periodo, classificador) %>%
+  summarise(Valor = sum(Valor)) %>%
+  ungroup() %>%
+  spread(classificador, Valor) %>%
+  mutate_at(-1, funs(zoo::rollapply(., width = 12, FUN = sum, fill = NA, align = 'right'))) %>% 
+  gather(-1, key = "classificador", value = "Valor_12m") %>%
+  mutate(Periodo = as.Date(Periodo)) %>%
+  left_join(ipca) %>%
+  mutate(Valor_12m_ipca = Valor_12m * IPCA / 1e9) %>%
+  filter(!is.na(Valor_12m_ipca)) %>%
+  filter(!classificador %in% c("Dívida", "Outras Transferências")) %>%
+  arrange(Periodo)
+
+# # tabelinha pra verificar os totais
+# dados_desp_plot %>%
+#   filter(Mes_num == "12") %>%
+#   group_by(Ano) %>%
+#   summarize(Valor = sum(Valor_12m))
+
+```
+
+
+### Cores
+
+```{r}
+# # cores_temas_TT <- c("#643275", "#e59405", "#03859a", "#1f476a", "#709a2d", "#ba3917")
+# cores_TT <- c("#832F11", "#CA4017", "#F8AC08", "#CEC806", "#96C11E", "#028063", 
+# "#149339", "#4E857E", "#08869B", "#1E466A", "#6E287C")
+# cores_temas_TT_pasteis <- c("#D5845E", "#F3987D", "#FECE60", "#F7EC64", "#CED950", "#63BEAF", "#149339", "#CED9D8", "#049DAC", "#7A9CBD", "#BE8EBF")
+# #paleta <- c(cores_temas_TT, brewer.pal(8, "Dark2")[7:8])
+# 
+# qde_class <- length(unique(desp_12m_ipca$classificador))
+# 
+# paleta <- cores_temas_TT_pasteis[1:qde_class]
+# paleta_darker <- cores_TT[1:qde_class]
+
+paleta <- viridis(8)
+paleta <- brewer.pal(8, "Set3")
+
+# ajeitar cores
+
+paleta_rgb <- col2rgb(paleta)
+
+# clareia <- function(pal, n, i, fator){
+#   componente <- round(pal[n,i] * fator, 0)
+#   if (componente > 255) return(255)
+#   else return(componente)
+# }
+
+fator <- 1.5
+paleta_darker <- NULL
+
+for (i in 1:dim(paleta_rgb)[2] ) {
+  paleta_darker <- c(paleta_darker,
+                     rgb(paleta_rgb[1,i] %/% fator,
+                         paleta_rgb[2,i] %/% fator,
+                         paleta_rgb[3,i] %/% fator, maxColorValue = 255))
+}
+
+paleta_original <- c("#832F11", "#CA4017", "#F8AC08", "#CEC806", "#96C11E", "#028063", "#149339", "#4E857E", "#08869B", "#1E466A", "#6E287C")
+
+```
+
+### Gráfico de linhas
+
+```{r}
+
+janeiros <- unique(desp_12m_ipca$Periodo[str_detect(desp_12m_ipca$Periodo, "-01-01")])
+
+anos <- lubridate::year(janeiros)
+
+ultimo_periodo <- max(desp_12m_ipca$Periodo)
+# dados_desp_plot$posicoes_finais_rotulos <- c(rep(0, nrow(dados_desp_plot) - 7), c(0, 20, 0, -20, 20, 0, 0)) + dados_desp_plot$Valor_12m_ipca
+
+graf_linhas_desp <- ggplot(desp_12m_ipca, aes(x = Periodo, y = Valor_12m_ipca, group = classificador, color = classificador)) +
+  geom_line(size = 1) +
+  scale_x_date(breaks = janeiros,
+              #date_breaks = "1 years", 
+               labels = anos,
+               #date_labels = "%Y",
+               expand = expand_scale(mult = c(0, .50))) +
+  scale_color_manual(values = paleta_darker) + 
+  coord_cartesian(clip = 'off') +
+  labs(
+    y = NULL,
+    x = NULL
+  ) +
+  tema() + 
+  theme(legend.position = 'none') +
+  theme(axis.text = element_text(size = 14, family = "Open Sans Condensed Light"), # era 10
+                    axis.text.y = element_blank(),
+                    axis.ticks.y = element_blank(),
+                    axis.title.y = element_blank(),
+                    plot.background = element_rect(color = "#f0f5f7", linetype = "solid", size = 2))
+
+# aqui tinha um problema. com o expand tão grande, a escala continuava até sei lá quanto (2025, acho). para resolver isso tentei usar o `limits`. Não resolveu. aí resolvi setar mais ou menos manualmente, bom breaks e labels no lugar de date_breaks e date_labels. Mas eu tinha deixado o limits, então o geom_text não estava sendo escrito, pq ficou fora do limite.
+
+graf_desp_para_gif <- graf_linhas_desp +
+  geom_segment(aes(xend = ultimo_periodo, yend = Valor_12m_ipca), linetype = 2) +
+  geom_point(size = 3) +
+  geom_text(aes(x = ultimo_periodo + 50,
+                label = paste(
+                  str_pad(round(Valor_12m_ipca, 0), width = 3, pad = " "),
+                  enc2native(classificador)),
+                y = ifelse(Periodo < ultimo_periodo,
+                           Valor_12m_ipca,
+                           Valor_12m_ipca + c(0, 25, -8, 0, 0, 0, -11, 10))), 
+            hjust = 0, family = "Open Sans Condensed Light",
+            size = 6) #não tinha definido
+
+# para acertar os posicionamentos
+graf_linhas_desp + 
+  geom_point(size = 3, aes(y = ifelse(Periodo == ultimo_periodo, Valor_12m_ipca, NA))) +
+  geom_text(aes(x = ultimo_periodo + 50,
+                label = paste(round(Valor_12m_ipca, 0), classificador),
+                y = ifelse(Periodo < ultimo_periodo,
+                           NA,
+                           Valor_12m_ipca + c(0, 25, -8, 0, 0, 0, -11, 10))), 
+            hjust = 0, family = "Open Sans Condensed Light",
+            size = 6)
+
+ggsave(filename = "desp.png", plot = last_plot(), h = 7, w = 10)
+# ordem do vetor de posicionamento: (alfabética)
+# RGPS, RPPS, Administrativo, Educação, Saúde, Social, Investimentos, Pessoal
+
+
+# outro problema: o vetor de posições não estava funcionando pq a tibble estava ordenada por classificador, e não por período.
+```
+
+```{r}
+gif_linhas_desp <- graf_desp_para_gif +
+  transition_reveal(Periodo) +
+  labs(subtitle = paste("Últimos 12 meses, atualizados pelo IPCA, até {lubridate::year(frame_along)}/{meses[lubridate::month(frame_along)]}")) 
+# + theme(axis.text = element_text(size = 10, family = "Open Sans")) 
+# 
+animate(gif_linhas_desp, nframes = round(nrow(ipca)/2), height = 488, width = 668,
+        renderer = gifski_renderer(loop = FALSE))
+# adicionar type = "cairo" no windows
+```
+
+```{r}
+anim_save("home_TT_despesas.gif", animation = last_animation())
+```
+
+## Experimento com small multiples
+
+```{r}
+
+tab_class <- data.frame(
+  classificador2 = unique(desp_12m_ipca$classificador)
+)
+
+desp_12m_ipca_small <- desp_12m_ipca %>%
+  full_join(tab_class, by = character())
+
+
+graf_linhas_small <- ggplot(desp_12m_ipca_small, aes(x = Periodo, y = Valor_12m_ipca, group = classificador)) +
+  annotate(geom="rect", xmin = as.Date("2020-03-01"), xmax= as.Date(ultimo_periodo), ymin = -Inf, ymax = +Inf, fill = "lightcoral", alpha = .25) +
+  geom_line(size = 1, aes(color = classificador == classificador2,
+                          alpha = classificador == classificador2)) +
+  geom_point(aes(y = ifelse(Periodo == ultimo_periodo, Valor_12m_ipca, NA), 
+                 color = classificador == classificador2,
+                 size = classificador == classificador2)) +
+  geom_text(aes(x = ultimo_periodo + 140,
+                label = ifelse(classificador == classificador2, 
+                               paste(round(Valor_12m_ipca, 0), "bi"),
+                               NA),
+                y = ifelse(Periodo < ultimo_periodo,
+                           NA,
+                           Valor_12m_ipca),
+                color = classificador == classificador2), 
+            hjust = 0, family = "Fira Code",
+            size = 2) +
+  scale_x_date(breaks = janeiros,
+              #date_breaks = "1 years", 
+               labels = anos,
+               #date_labels = "%Y",
+               expand = expand_scale(mult = c(0, .50))) +
+  scale_color_manual(values = c("TRUE" = "firebrick", "FALSE" = "#cecece")) + 
+  scale_alpha_manual(values = c("TRUE" = 1, "FALSE" = .3)) + 
+  scale_size_manual(values = c("TRUE" = 2, "FALSE" = NA)) + 
+  coord_cartesian(clip = 'off') +
+  labs(
+    y = NULL,
+    x = NULL
+  ) +
+  tema() + 
+  theme(legend.position = 'none') +
+  theme(
+    axis.text = element_text(size = 5, family = "Fira Code"), # era 10
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.y = element_blank(),
+    strip.text = element_text(hjust = 0, family = "Fira Code"),
+          axis.ticks = element_line(size = 0.25),
+      axis.ticks.length = unit(.15, "cm")) +
+  facet_wrap(~classificador2)
+
+ggsave(plot = graf_linhas_small, filename = "small.png", h = 6, w = 12)
+```
+
+## Saúde x Gasto Primário
+
+Juntamos os dados.
+
+```{r}
+gasto_prim <- tabela %>% 
+  rename(rotulos = 1) %>%
+  filter(str_detect(rotulos, "IV. DESPESA TOTAL")) %>%
+  mutate(rotulos = "Valor") %>%
+  gather(-1, key = "Periodo", value = "Valores") %>%
+  spread(key = rotulos, value = Valores) %>%
+  mutate(Valor = as.numeric(Valor)/1000,
+         Periodo = as.Date(as.numeric(Periodo), origin = "1899-12-30"),
+         Ano = lubridate::year(Periodo),
+         Mes = lubridate::month(Periodo),
+         Valor_12m = zoo::rollapply(Valor, width = 12, FUN = sum, fill = NA, align = 'right'),
+         Data = paste0(Ano, " - ", meses[Mes])) %>%
+  filter(!is.na(Valor_12m)) %>%
+  filter(Periodo >= "2008-12-01") %>% # para ficar igual à série das despesas
+  select(Periodo, Gasto_primario = Valor_12m)
+
+gasto_saude <- desp_12m_ipca %>%
+  filter(classificador == "Custeio Saúde") %>%
+  select(Periodo, Gasto_saude = Valor_12m_ipca)
+
+gastos_prim_saude_wide <- gasto_prim %>% 
+  left_join(gasto_saude) 
+
+gastos_prim_saude <- gastos_prim_saude_wide %>%
+  gather(Gasto_primario, Gasto_saude, key = "tipo", value = "valor")
+
+gastos_saude_prim <- gastos_prim_saude_wide %>%
+  mutate(relacao = Gasto_saude/Gasto_primario)
+```
+
+Primeiro plot
+
+```{r}
+ggplot(gastos_prim_saude, aes(x = Periodo, color = tipo, y = valor)) +
+  geom_line(size = 1) +
+  geom_text(aes(label = ifelse(Periodo == "2020-02-01", format(round(valor,0), big.mark = ".", decimal.mark = ","), NA)), family = "Merriweather Sans", size = 3,
+            hjust = "outward") +
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y", expand = expansion(mult = c(0,.1))) +
+  scale_y_continuous(labels = function(x){format(x, big.mark = ".", decimal.mark = ",")}) +
+  scale_color_manual(values = c("Gasto_primario" = "coral",
+                                "Gasto_saude" = azul_claro)) +
+  labs(x = NULL, y = NULL, title = "Despesas com <span style = 'color: #2c90bf;'>saúde</span> e <span style = 'color: coral;'>gasto primário total</span>", subtitle = "Valores (em R$ mi) acumulados em 12 meses, atualizados pelo IPCA", caption = "Fonte: RTN, para o gasto primário; Siafi e deflator do RTN, para as despesas com saúde") +
+  theme_minimal() +
+  theme(text = element_text(family = "Merriweather Sans"),
+        plot.title = element_markdown(family = "Merriweather", color = "#1e1e1e",
+                                  face = "bold", size = 12),
+        plot.subtitle = element_text(family = "Merriweather Light", color = "#1e1e1e", size = 8),
+        plot.caption = element_text(family = "Merriweather Light", color = "dimgray", size = 8, face = "italic"),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_blank(),
+        axis.line = element_line(color = "dimgrey", size = .5),
+        axis.ticks = element_line(size = 0.5),
+        legend.position = "none")
+
+```
+
+```{r}
+ggplot(gastos_saude_prim, aes(x = Periodo, y = relacao)) +
+  geom_line(color = azul_claro, size = 1) +
+  geom_point(aes(y = ifelse(lubridate::month(Periodo) == 12, relacao, NA)),
+             color = azul) +
+  geom_text(aes(label = ifelse(lubridate::month(Periodo) == 12, percent(relacao, accuracy = .1, decimal.mark = ","), NA), 
+                y = relacao + ifelse(lubridate::year(Periodo) %in% c(2009,2010,2013,2014,2015),
+                           -.004, +.004)),
+                  family = "Merriweather Sans", size = 3, color = azul,
+                  hjust = "center") +
+  scale_y_continuous(labels = function(x){scales::percent(x, decimal.mark = ",")}, limits = c(0, NA)) +
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
+  labs(x = NULL, y = NULL, title = "Despesas com <span style = 'color: #2c90bf;'>saúde</span> em relação ao gasto primário total", subtitle = "Valores acumulados em 12 meses, atualizados pelo IPCA", caption = "Fonte: RTN, para o gasto primário; Siafi e deflator do RTN, para as despesas com saúde") +
+  theme_minimal() +
+  theme(text = element_text(family = "Merriweather Sans"),
+        plot.title = element_markdown(family = "Merriweather", color = "#1e1e1e",
+                                  face = "bold", size = 12),
+        plot.subtitle = element_text(family = "Merriweather Light", color = "#1e1e1e", size = 8),
+        plot.caption = element_text(family = "Merriweather Light", color = "dimgray", size = 8, face = "italic"),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_blank(),
+        axis.line = element_line(color = "dimgrey", size = .5),
+        axis.ticks = element_line(size = 0.5))
+
+ggsave(filename = "saude.png", plot = last_plot(), h = 5, w = 7, type = "cairo-png")
+```
+
+
+
+### Um slopegraph
+
+```{r, fig.height=7, fig.width=5}
+desp_extremos <- desp_12m_ipca %>% 
+  filter(
+    Periodo == first(Periodo) |
+    Periodo == last(Periodo)) %>%
+  select(Periodo, classificador, valor = Valor_12m_ipca) %>%
+  mutate(Periodo = ifelse(Periodo == first(Periodo), 1, 2)) %>%
+  spread(key = Periodo, value = valor) %>%
+  mutate(var = percent(`2`/`1` - 1)) %>%
+  gather(`2`, `1`, key = "Periodo", value = "valor")
+    
+save(desp_extremos, file = "desp_extremos.RData")
+load("desp_extremos.RData")
+
+slope <- ggplot(desp_extremos, aes(x = Periodo, 
+                          y = valor, 
+                          color = classificador,
+                          group = classificador)) +
+  geom_point(size = 3) +
+  geom_line(size = .5) +
+  geom_text(aes(label = ifelse(Periodo == 1,
+                               paste0(classificador, "  ", round(valor,0), " bi  "),
+                               paste0("  ", round(valor,0), " bi  (", ifelse(var>0,"+",""), var, ")")),
+                y = ifelse(Periodo == 1, valor,
+                           valor + c(0,0,.5,0,6,4,-2.7,0))),
+            hjust = "outward", vjust = "center",
+            family = "Open Sans Condensed") +
+  
+  annotate("text", x = 1, label = paste0(
+    meses_red[month(min(desp_12m_ipca$Periodo))], "/",
+    year(min(desp_12m_ipca$Periodo))), family = "Open Sans", size = 4, fontface = "bold", y = max(desp_extremos$valor) + 40, color = "dimgrey", hjust = "right") +
+  
+  annotate("text", x = 2, label = paste0(
+    meses_red[month(max(desp_12m_ipca$Periodo))], "/",
+    year(max(desp_12m_ipca$Periodo))), family = "Open Sans", size = 4, fontface = "bold", y = max(desp_extremos$valor) + 40, color = "dimgrey", hjust = "left") +
+  
+  labs(y = NULL, x = NULL) +
+  coord_cartesian(clip = "off", expand = FALSE) +
+  #scale_x_discrete(expand = expand_scale(add = c(0, 0))) +
+  scale_color_manual(values = paleta_darker) +
+  tema() + theme(axis.line = element_blank(),
+                 axis.text = element_blank(),
+                 axis.ticks = element_blank(),
+                 plot.margin =  margin(.5, 3, 0, 4.7, "cm"),
+                 legend.position = "none")
+
+# ordem do vetor de posicionamento: (alfabética)
+# RGPS, RPPS, Administrativo, Educação, Saúde, Social, Investimentos, Pessoal
+
+ggsave(plot = slope, "slope.png", h = 8, w = 5, type = "cairo-png")
+
+# ordem do vetor de posicionamento: (alfabética)
+# RGPS, RPPS, Administrativo, Educação, Saúde, Social, Investimentos, Pessoal
+```
+
+
+### Gráfico de barras
+
+```{r}
+
+# cria o rank
+
+ultimo_mes <- lubridate::month(ultimo_periodo)
+
+desp_bar_prep <- desp_12m_ipca %>%
+  mutate(mes = lubridate::month(Periodo),
+         ano = lubridate::year(Periodo),
+         valor_texto = as.character(round(Valor_12m_ipca, 0))) %>%
+  filter(mes == ultimo_mes) %>%
+  group_by(ano) %>%
+  mutate(rank = rank(-Valor_12m_ipca))
+
+primeiro_ano <- min(desp_bar_prep$ano[1])
+
+primeiros_valores <- desp_bar_prep %>% 
+  filter(ano == primeiro_ano) %>%
+  mutate(primeiro_valor = Valor_12m_ipca) %>%
+  ungroup() %>%
+  select(classificador, primeiro_valor)
+
+desp_bar <- desp_bar_prep %>%
+  left_join(primeiros_valores)
+
+
+
+# incorporar cores à tabela
+
+cores <- data.frame(classificador = unique(desp_bar$classificador),
+                    cores_claras = paleta,
+                    cores_escuras = paleta_darker)
+
+desp_bar_cores <- desp_bar %>% left_join(cores)
+
+# faz o plot estático
+
+desp_bar_estatico <- ggplot(desp_bar_cores, 
+                            aes(y = Valor_12m_ipca, 
+                                x = rank,
+                                fill = cores_claras, #classificador,
+                                color = cores_escuras) #classificador)
+                            ) +
+  geom_bar(width = 0.7, stat = 'identity', color = NA) +
+  geom_text(aes(y = Valor_12m_ipca + 18, #color = cores_escuras,
+                label = valor_texto), 
+            position = position_dodge(1),
+            size = 5.5, family = "Open Sans Condensed", vjust = 'center') +  
+  geom_text(aes(y=0, label = paste(classificador, " ")), 
+            vjust = 0.2, hjust = 1, check_overlap = TRUE, family = "Open Sans Condensed", size = 5.5) +
+  coord_flip(clip = "off", expand = FALSE) +
+  scale_y_continuous(labels = percent) + #, expand = expand_scale(add = c(0.2,0) 
+  scale_x_reverse() +
+  scale_color_identity() + #scale_color_manual(values = paleta) +
+  scale_fill_identity() + #scale_fill_manual(values = paleta) +
+  labs(
+    x = NULL,
+    y = NULL,
+    title = NULL
+  ) +
+  tema() +
+  theme(legend.position = 'none') + theme(axis.ticks.y = element_blank(),
+                                          axis.ticks.x = element_blank(),
+                                          axis.text.x  = element_blank(),
+                                          axis.text.y  = element_blank(),
+                                          plot.subtitle = element_text(margin = margin(0, 0, 0.5, 0, "cm")),
+                                          plot.margin = margin(0, 0.8, 0, 5.2, "cm")) #t, r, b, l
+
+# inclui anotações
+
+desp_bar_estatico_anot <- desp_bar_estatico +
+  geom_tile(aes(y = primeiro_valor),
+            width = 0.9, height = 1,
+            linetype = "dotted") +
+  geom_text(aes(label = ifelse(rank == 1, primeiro_ano, NA),
+                y = primeiro_valor, x = 0.4), 
+            check_overlap = TRUE,
+            family = "Open Sans", size = 4.5, fontface = "italic")
+
+# animação
+
+desp_bar_anim <- desp_bar_estatico_anot + 
+  transition_states(Periodo, transition_length = 1, state_length = 2) +
+  theme(plot.background = element_rect(color = "#f0f5f7", linetype = "solid", size = 2)) +
+  labs(subtitle = paste("Últimos 12 meses, atualizadas pelo IPCA, até {meses[lubridate::month(closest_state)]} de {lubridate::year(closest_state)}")) +
+  ease_aes('sine-in-out')
+
+animate(desp_bar_anim, type = "cairo", nframes = 132, width = 668, height = 488, 
+        renderer = gifski_renderer()) 
+
+anim_save("despesas_bar4.gif", animation = last_animation())
+
+```
+
