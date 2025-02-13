@@ -45,7 +45,7 @@ const vis = {
 
         width_bars : 20,
 
-        node_padding : 10,
+        node_padding : 30,
 
     },
 
@@ -194,7 +194,7 @@ const vis = {
 
             let pos_vis_y = vis.elems.cont.getBoundingClientRect().y;
 
-            vis.dims.h = win_h - pos_vis_y; //- pos_vis_y - vis.dims.margins.top - vis.dims.margins.bottom;
+            vis.dims.h = 2000;//win_h - pos_vis_y; //- pos_vis_y - vis.dims.margins.top - vis.dims.margins.bottom;
             // subtraio a margem para usar como margem
             vis.dims.w = win_w; // - vis.dims.margins.left - vis.dims.margins.right; //+vis.sels.svg.style("width").slice(0, -2);
 
@@ -450,7 +450,7 @@ const vis = {
                     .attr("y", d => d.y0)
                     .attr("height", d => d.y1 - d.y0)
                     .attr("width", d => d.x1 - d.x0)
-                    .classed("hidden", true)
+                    //.classed("hidden", true)
                     .classed("nodes", true)
                     .attr("data-tipo", d => d.tipo)
                     .attr("data-id-node", d => d.rotulos)
@@ -471,7 +471,7 @@ const vis = {
                     .attr("data-target", d => d.target.rotulos)
                     .attr("data-value",  d => d.value)
                     .classed("links", true)
-                    .classed("hidden", true)
+                    //.classed("hidden", true)
                 ;
 
                 vis.sels.links.append("path")
@@ -1147,7 +1147,8 @@ const vis = {
             vis.f.make_link_table();
             vis.f.get_initial_bars_data();
             vis.draw.sankey.create_elements();
-            vis.draw.bar_chart.move("initial")
+            //vis.draw.bar_chart.move("initial")
+            vis.draw.bar_chart.move("sankey")
             vis.draw.cortina.create();
             vis.draw.sankey.rotulos.create();
 
@@ -1173,10 +1174,35 @@ const vis = {
             vis.f.set_size();
             vis.f.read_data();
     
+        },
+
+        init_alternate : function() {
+
+            direcao = "indo";
+
+            vis.f.generates_refs();
+            vis.f.get_size();
+            vis.f.set_size();
+            vis.f.read_data();
+
+            vis.draw.sankey.show("nodes", true);
+            //vis.draw.bar_chart.totals.show(direcao == 'vindo');
+            //vis.draw.bar_chart.totals.rotulos.show("gerais", true);
+
+            vis.draw.sankey.show("nodes", true);
+            vis.draw.bar_chart.move("sankey");
+
+            vis.draw.sankey.show("nodes", true);
+            vis.draw.bar_chart.totals.show(true);
+            vis.draw.sankey.show("links", true);
+
+            vis.draw.sankey.rotulos.show("todos", true);
+
         }
 
     }
 
 }
 
-vis.control.init();
+//vis.control.init();
+vis.control.init_alternate();
