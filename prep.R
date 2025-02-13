@@ -160,3 +160,33 @@ nodes$tipo <- c(
 write.csv(links, "./vis/links.csv", fileEncoding = "utf8")
 write.csv(nodes, "./vis/nodes.csv", fileEncoding = "utf8")
 
+total_links <- sum(links$value)
+
+cards_sources <- links %>% 
+  group_by(source) %>%
+  mutate(
+    subtotal_grupo = sum(value),
+    percent_do_total = subtotal_grupo / total_links,
+    percent_do_grupo = value / subtotal_grupo,
+    rank = rank(-percent_do_grupo)
+  ) %>%
+  arrange(source, rank)
+
+cards_targets <- links %>% 
+  group_by(target) %>%
+  mutate(
+    subtotal_grupo = sum(value),
+    percent_do_total = subtotal_grupo / total_links,
+    percent_do_grupo = value / subtotal_grupo,
+    rank = rank(-percent_do_grupo)
+  ) %>%
+  arrange(target, rank)
+
+output <- list(
+  links = links,
+  nodes = nodes,
+  cards_sources = cards_sources,
+  cards_targets = cards_targets
+)
+
+jsonlite::write_json(output, "output.json")
