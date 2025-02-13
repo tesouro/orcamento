@@ -78,6 +78,13 @@ desp %>% group_by(despesa) %>% summarise(sum(valor_desp))
 
 sum(rec$valor_rec) - sum(desp$valor_desp) # tem que dar zero, ou próximo
 
+# depois apagar isso
+dif <- sum(rec$valor_rec) - sum(desp$valor_desp)
+desp <- desp %>% mutate(
+  valor_desp = ifelse(despesa == "Reserva de Contingência" & fte_cod == "000", valor_desp + dif, valor_desp)
+)
+
+
 # 02 Preparação Matriz --------------------------------------------------
 
 rec_dist <- rec %>%

@@ -1,66 +1,69 @@
 "","source","target","value"
-"1","Contribuições sociais (exceto RGPS) e econômicas","Amortização da Dívida",2753814487.21436
-"2","Contribuições sociais (exceto RGPS) e econômicas","Benefícios Previdenciários RGPS",21163435075.2531
-"3","Contribuições sociais (exceto RGPS) e econômicas","Benefícios Previdenciários RPPS",102644256811.118
-"4","Contribuições sociais (exceto RGPS) e econômicas","Custeio Administrativo",9306633870.96877
-"5","Contribuições sociais (exceto RGPS) e econômicas","Custeio de Educação",9676174977.76204
-"6","Contribuições sociais (exceto RGPS) e econômicas","Custeio de Saúde",119675787082.341
-"7","Contribuições sociais (exceto RGPS) e econômicas","Custeio Social",138746359533.885
-"8","Contribuições sociais (exceto RGPS) e econômicas","Investimentos",28542645788.1546
-"9","Contribuições sociais (exceto RGPS) e econômicas","Outras transferências",14153454433.1135
-"10","Contribuições sociais (exceto RGPS) e econômicas","Pessoal Ativo",29790547985.8312
-"11","Contribuições sociais (exceto RGPS) e econômicas","Reserva de Contingência",21446514268.1884
-"12","Demais receitas","Amortização da Dívida",7112227167.82593
-"13","Demais receitas","Benefícios Previdenciários RGPS",3034851640.59406
-"14","Demais receitas","Benefícios Previdenciários RPPS",429450820.883439
-"15","Demais receitas","Custeio Administrativo",13247514697.6944
-"16","Demais receitas","Custeio de Educação",1987583369.52661
-"17","Demais receitas","Custeio de Saúde",1171048515.89781
-"18","Demais receitas","Custeio Social",507868718.872142
-"19","Demais receitas","Investimentos",4632872423.17768
-"20","Demais receitas","Outras transferências",590826457.986869
-"21","Demais receitas","Pessoal Ativo",8987219193.94229
-"22","Demais receitas","Reserva de Contingência",10696998125.9516
-"23","Emissões de Dívida","Amortização da Dívida",1603999829449.3
-"24","Emissões de Dívida","Benefícios Previdenciários RGPS",260893080541.007
-"25","Emissões de Dívida","Benefícios Previdenciários RPPS",38934067572.3334
-"26","Emissões de Dívida","Custeio Administrativo",43433172468.2749
-"27","Emissões de Dívida","Custeio de Educação",20859014706.2269
-"28","Emissões de Dívida","Custeio de Saúde",289521647.033564
-"29","Emissões de Dívida","Custeio Social",1055190451.413
-"30","Emissões de Dívida","Investimentos",16443795693.2572
-"31","Emissões de Dívida","Juros",362781845257.13
-"32","Emissões de Dívida","Outras transferências",2266935814.56387
-"33","Emissões de Dívida","Pessoal Ativo",81335940091.4631
-"34","Exploração de Petróleo e outros recursos naturais","Custeio Administrativo",521693019.726746
-"35","Exploração de Petróleo e outros recursos naturais","Custeio de Educação",8398443198.76992
-"36","Exploração de Petróleo e outros recursos naturais","Custeio de Saúde",724650563.158711
-"37","Exploração de Petróleo e outros recursos naturais","Investimentos",9057326651.45136
-"38","Exploração de Petróleo e outros recursos naturais","Outras transferências",38056479589.0496
-"39","Exploração de Petróleo e outros recursos naturais","Reserva de Contingência",1893450096.58122
-"40","Impostos","Amortização da Dívida",178539056329.214
-"41","Impostos","Benefícios Previdenciários RPPS",6590568168.82978
-"42","Impostos","Custeio Administrativo",22978489431.3492
-"43","Impostos","Custeio de Educação",5362902679.63931
-"44","Impostos","Investimentos",33685978480.7368
-"45","Impostos","Outras transferências",235386316850.112
-"46","Impostos","Pessoal Ativo",98479368690.5995
-"47","Impostos","Reserva de Contingência",553206680.564126
-"48","Juros e remunerações recebidas","Amortização da Dívida",54283570847.4857
-"49","Juros e remunerações recebidas","Custeio Administrativo",2482922929.25
-"50","Juros e remunerações recebidas","Custeio Social",11842563599.3977
-"51","Juros e remunerações recebidas","Investimentos",20572930275.2998
-"52","Juros e remunerações recebidas","Juros",2932137024.2742
-"53","Juros e remunerações recebidas","Reserva de Contingência",4079527307.29029
-"54","Outras receitas financeiras","Amortização da Dívida",31995001697.136
-"55","Outras receitas financeiras","Custeio Administrativo",257903067.013964
-"56","Outras receitas financeiras","Custeio de Educação",328837493.08329
-"57","Outras receitas financeiras","Custeio de Saúde",722843998.865949
-"58","Outras receitas financeiras","Investimentos",7115258483.45387
-"59","Outras receitas financeiras","Outras transferências",275845268.345221
-"60","Outras receitas financeiras","Reserva de Contingência",1644208662.4836
-"61","Receitas do RGPS","Benefícios Previdenciários RGPS",415710263936.25
-"62","Receitas do RGPS","Custeio Administrativo",796197229.792774
-"63","Receitas do RGPS","Custeio de Educação",424781493.198807
-"64","Receitas do RGPS","Investimentos",564956543.030614
-"65","Receitas do RGPS","Reserva de Contingência",1069912665.94771
+"1","Contribuições sociais (exceto RGPS) e econômicas","Amortização da Dívida",1853499430.34691
+"2","Contribuições sociais (exceto RGPS) e econômicas","Benefícios Previdenciários RGPS",85627516721.2068
+"3","Contribuições sociais (exceto RGPS) e econômicas","Custeio Administrativo",9788422949.34207
+"4","Contribuições sociais (exceto RGPS) e econômicas","Custeio Social",303406759203.583
+"5","Contribuições sociais (exceto RGPS) e econômicas","Custeio de Educação",7574179275.00447
+"6","Contribuições sociais (exceto RGPS) e econômicas","Custeio de Saúde",155770647738.129
+"7","Contribuições sociais (exceto RGPS) e econômicas","Investimentos",52984512799.8456
+"8","Contribuições sociais (exceto RGPS) e econômicas","Outras transferências",19949575871.3498
+"9","Contribuições sociais (exceto RGPS) e econômicas","Pessoal Ativo",13954400501.5327
+"10","Contribuições sociais (exceto RGPS) e econômicas","Pessoal Inativo",80308221275.2402
+"11","Contribuições sociais (exceto RGPS) e econômicas","Reserva de Contingência",30899639682.4192
+"12","Demais receitas","Amortização da Dívida",36764381995.8854
+"13","Demais receitas","Custeio Administrativo",24512381324.7403
+"14","Demais receitas","Custeio Social",7389694988.23794
+"15","Demais receitas","Custeio de Educação",11541694445.226
+"16","Demais receitas","Custeio de Saúde",3236637185.44757
+"17","Demais receitas","Investimentos",28207874224.7762
+"18","Demais receitas","Outras transferências",1765860619.03577
+"19","Demais receitas","Pessoal Ativo",25849330550.8167
+"20","Demais receitas","Pessoal Inativo",7710959818.01967
+"21","Demais receitas","Reserva de Contingência",51283005942.368
+"22","Emissões de Dívida","Amortização da Dívida",1781445196824.78
+"23","Emissões de Dívida","Benefícios Previdenciários RGPS",147799410975.006
+"24","Emissões de Dívida","Custeio Administrativo",1701182012.08707
+"25","Emissões de Dívida","Investimentos",9858596655.41257
+"26","Emissões de Dívida","Juros",323480815490.571
+"27","Exploração de Petróleo e outros recursos naturais","Custeio Administrativo",1055780207.77411
+"28","Exploração de Petróleo e outros recursos naturais","Custeio de Educação",12828143524.7082
+"29","Exploração de Petróleo e outros recursos naturais","Custeio de Saúde",777512143.100174
+"30","Exploração de Petróleo e outros recursos naturais","Investimentos",13607649040.5685
+"31","Exploração de Petróleo e outros recursos naturais","Outras transferências",74331726454.644
+"32","Exploração de Petróleo e outros recursos naturais","Reserva de Contingência",12994095359.6634
+"33","Impostos","Amortização da Dívida",128242052626.778
+"34","Impostos","Custeio Administrativo",75487179569.9674
+"35","Impostos","Custeio Social",14548360273.8418
+"36","Impostos","Custeio de Educação",43859363730.8586
+"37","Impostos","Custeio de Saúde",14192809538.151
+"38","Impostos","Investimentos",62758065787.467
+"39","Impostos","Outras transferências",428809422460.614
+"40","Impostos","Pessoal Ativo",164594536174.731
+"41","Impostos","Pessoal Inativo",55224060006.3474
+"42","Impostos","Reserva de Contingência",35021258283.7093
+"43","Juros e remunerações recebidas","Amortização da Dívida",61924218895.4783
+"44","Juros e remunerações recebidas","Benefícios Previdenciários RGPS",485218911.449517
+"45","Juros e remunerações recebidas","Custeio Administrativo",7698251998.87376
+"46","Juros e remunerações recebidas","Custeio Social",19791683061.5109
+"47","Juros e remunerações recebidas","Custeio de Educação",886435208.585201
+"48","Juros e remunerações recebidas","Custeio de Saúde",278344103.150942
+"49","Juros e remunerações recebidas","Investimentos",9885089540.22401
+"50","Juros e remunerações recebidas","Pessoal Ativo",3049470878.95093
+"51","Juros e remunerações recebidas","Pessoal Inativo",547148347.198204
+"52","Juros e remunerações recebidas","Reserva de Contingência",3222010951.7832
+"53","Outras receitas financeiras","Amortização da Dívida",29458698233.5365
+"54","Outras receitas financeiras","Custeio Administrativo",16440838763.4105
+"55","Outras receitas financeiras","Custeio Social",3216685642.96147
+"56","Outras receitas financeiras","Custeio de Educação",9697435516.23105
+"57","Outras receitas financeiras","Custeio de Saúde",3138072319.85748
+"58","Outras receitas financeiras","Investimentos",7964082228.69248
+"59","Outras receitas financeiras","Outras transferências",1516108552.23835
+"60","Outras receitas financeiras","Pessoal Ativo",35719815953.2886
+"61","Outras receitas financeiras","Pessoal Inativo",12177259607.0381
+"62","Outras receitas financeiras","Reserva de Contingência",7097559323.0639
+"63","Receitas do RGPS","Amortização da Dívida",9618139085.57063
+"64","Receitas do RGPS","Benefícios Previdenciários RGPS",689547711420.815
+"65","Receitas do RGPS","Custeio Administrativo",618820168.865632
+"66","Receitas do RGPS","Custeio Social",485387908.95954
+"67","Receitas do RGPS","Investimentos",2622749311.52264
+"68","Receitas do RGPS","Juros",114312586704.151
