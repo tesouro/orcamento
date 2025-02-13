@@ -45,6 +45,7 @@ function begin(files) {
     const nodes = files[1];
 
     vis = new SankeyVis(links, nodes, svg_);
+    vis.plot();
 
 }
 
@@ -102,7 +103,6 @@ class SankeyVis {
 
         this.links_elems = this.svg.append("g")
             .attr("fill", "none")
-            .attr("stroke-opacity", 0.5)
             .selectAll("g")
             .data(this.data.links)
             .join("g")
@@ -117,6 +117,7 @@ class SankeyVis {
             .attr("d", d3.sankeyLinkHorizontal())
             //.attr("stroke", "#401F14")
             .attr("stroke-width", d => Math.max(1, d.width))
+            .attr("stroke-opacity", d => d.value < 10e9 ? 0.3 : 0.6)
         ;
 
         this.links_elems.append("title")
