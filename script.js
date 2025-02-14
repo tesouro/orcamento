@@ -1,5 +1,7 @@
 const svg = document.querySelector('svg');
 const svg_ = d3.select('svg');
+const container = document.querySelector('.vis');
+const container_ = d3.select('.vis');
 
 let win_w = svg_.style("width").slice(0,-2); //window.innerWidth;
 
@@ -44,7 +46,7 @@ function begin(files) {
     const links = files[0];
     const nodes = files[1];
 
-    vis = new SankeyVis(links, nodes, svg_);
+    vis = new SankeyVis(links, nodes, svg_, container_);
     vis.plot();
 
 }
@@ -55,12 +57,14 @@ class SankeyVis {
     svg;
     nodes_elems;
     links_elems;
+    labels_elems;
 
-    constructor(links, nodes, svg) {
+    constructor(links, nodes, svg, visContainer) {
 
         //this.links = links;
         //this.nodes = nodes;
         this.svg = svg;
+        this.visContainer = visContainer;
 
         const sankey = d3.sankey()
             .nodeId(d => d.rotulos)
@@ -121,7 +125,26 @@ class SankeyVis {
         ;
 
         this.links_elems.append("title")
-            .text(d => `${d.source.rotulos} → ${d.target.rotulos}\n${Utils.valor_formatado(d.value)}`);
+            .text(d => `${d.source.rotulos} → ${d.target.rotulos}\n${Utils.valor_formatado(d.value)}`)
+        ;
+
+        this.labels_elems = this.visContainer 
+            .selectAll("p.labels")
+            .data(this.data.nodes)
+            .join("p")
+            .style("left", d => d.x0 + 'px')
+            .style("top", d => d.y0 + 'px')
+            .style("transform", d => d.tipo == "receita" ? "translate(-100%, 0)" : `translate(${PAD}px, 0)`)
+            .style("width", DIMS.MARGINS.RIGHT + 'px')
+            .classed("labels", true)
+            .classed("labels-receitas", d => d.tipo === "receita")
+            .classed("labels-despesas", d => d.tipo === "despesa")
+            .text(d => d.rotulos)
+        ;
+
+        
+
+        
 
     }
 

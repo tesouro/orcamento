@@ -11,3 +11,25 @@ svg {
 .links {
     stroke: hotpink;
 }
+
+.info-card {
+    position: absolute;
+}
+
+.vis {
+    position: relative;
+}
+
+.vis p.labels {
+
+    position: absolute;
+    margin: 0;
+    padding: 0 .5em;
+
+}
+
+p.labels.labels-receitas {
+
+    text-align: right;
+
+}
