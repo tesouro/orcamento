@@ -49,6 +49,25 @@ function begin(files) {
     vis = new SankeyVis(links, nodes, svg_, container_);
     vis.plot();
 
+    const tooltip = d3.select(".info-card");
+    tooltip.style("width", DIMS.MARGINS.RIGHT + "px");
+
+    d3.selectAll("rect.nodes").on("click", function(e,d) {
+
+        console.log(e, d);
+
+        const rotulo = d.rotulos;
+        const tipo = d.tipo;
+
+        const {x0, y0} = d;
+
+        tooltip
+            .style("transform", tipo == "despesa" ? `translate(${x0 + BAR_W}px, ${y0}px)` : `translate(calc(${x0}px - 100%), ${y0}px)`)
+            .select("[data-info='nome']")
+            .text(rotulo);
+
+    })
+
 }
 
 class SankeyVis {
@@ -60,6 +79,29 @@ class SankeyVis {
     labels_elems;
 
     constructor(links, nodes, svg, visContainer) {
+
+        const order = [
+            "Impostos",
+            "Receitas do RGPS",
+            "Contribuições sociais (exceto RGPS) e econômicas",
+            "Exploração de Petróleo e outros recursos naturais",
+            "Juros e remunerações recebidas",
+            "Outras receitas financeiras",
+            "Demais receitas",
+            "Pessoal Ativo",
+            "Pessoal Inativo",
+            "Benefícios Previdenciários RGPS",
+            "Custeio Administrativo",
+            "Custeio Social",
+            "Custeio de Educação",
+            "Custeio de Saúde",
+            "Investimentos",
+            "Outras transferências",
+            "Reserva de Contingência",
+            "Emissões de Dívida",
+            "Juros",
+            "Amortização da Dívida"
+        ];
 
         //this.links = links;
         //this.nodes = nodes;
@@ -73,6 +115,8 @@ class SankeyVis {
             .extent([
                 [DIMS.MARGINS.LEFT, DIMS.MARGINS.RIGHT], 
                 [W - DIMS.MARGINS.RIGHT, H - DIMS.MARGINS.BOTTOM]])
+            //
+            // .nodeSort((a, b) => order.indexOf(a.rotulo) - order.indexOf(b.rotulo));
         ;
 
         this.data = sankey({
@@ -86,8 +130,11 @@ class SankeyVis {
 
     plot() {
 
-        this.nodes_elems = this.svg.append("g")
+        const nodes_group = this.svg.append("g")
             .attr("stroke", "#000")
+        ;
+
+        this.nodes_elems = nodes_group
             .selectAll("rect")
             .data(this.data.nodes)
             .join("rect")
@@ -103,10 +150,14 @@ class SankeyVis {
             .text(d => d.rotulos)
         ;
 
+
         // links
 
-        this.links_elems = this.svg.append("g")
+        const links_group = this.svg.append("g")
             .attr("fill", "none")
+        ;
+
+        this.links_elems = links_group
             .selectAll("g")
             .data(this.data.links)
             .join("g")
@@ -149,6 +200,8 @@ class SankeyVis {
     }
 
 }
+
+
 
 class Utils {
 
