@@ -230,6 +230,15 @@ class SankeyVis {
                 .select("[data-info='nome']")
                 .text(rotulo);
 
+            const destino_origem = tipo == "receita" ? "destinações" : "origens";
+
+            this.tooltip.selectAll(".tt-receita-ou-despesa").text(tipo);
+
+            this.tooltip.selectAll(".tt-origens-ou-destinacoes").text(destino_origem);
+
+            this.tooltip.select(".tt-percent-total").text(
+                Utils.valor_percent(minidata[0].percent_do_total));
+
             const table = document.querySelector(".container-itens-detalhamento tbody");
 
             table.innerHTML = "";
