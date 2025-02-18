@@ -31,20 +31,24 @@ const DIMS = {
 const PAD = 20;
 const BAR_W = 20;
 
-const DATA = ["vis/links.csv", "vis/nodes.csv"];
+//const DATA = ["vis/links.csv", "vis/nodes.csv"];
+const DATA = "output.json";
 let vis;
 
-Promise.all([
-    d3.csv(DATA[0]),
-    d3.csv(DATA[1])
-]).then(
-    files => begin(files)
+//Promise.all([
+    //d3.csv(DATA[0]),
+    //d3.csv(DATA[1])
+//])
+d3.json(DATA)
+   .then(
+    file => begin(file)
 );
 
-function begin(files) {
+function begin(file) {
 
-    const links = files[0];
-    const nodes = files[1];
+    console.log(file);
+    const links = file.links//files[0];
+    const nodes = file.nodes//files[1];
 
     vis = new SankeyVis(links, nodes, svg_, container_);
     vis.plot();
@@ -161,7 +165,8 @@ class SankeyVis {
             .selectAll("g")
             .data(this.data.links)
             .join("g")
-            .style("mix-blend-mode", "multiply")
+            //.style("mix-blend-mode", "multiply")
+            .style("mix-blend-mode", "screen")
             .attr("data-source", d => d.source.rotulos)
             .attr("data-target", d => d.target.rotulos)
             .attr("data-value",  d => d.value)
