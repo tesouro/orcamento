@@ -168,11 +168,20 @@ class SankeyVis {
             .classed("links", true)
         ;
 
+        function tweenDash()  {
+            const l = this.getTotalLength(),
+                i = d3.interpolateString("0," + l, l + "," + l);
+            return function(t) { return i(t) };
+        }
+
         this.links_elems.append("path")
             .attr("d", d3.sankeyLinkHorizontal())
             //.attr("stroke", "#401F14")
             .attr("stroke-width", d => Math.max(1, d.width))
             .attr("stroke-opacity", d => d.value < 10e9 ? 0.3 : 0.6)
+            .transition()
+            .duration(1000)
+            .attrTween("stroke-dasharray", tweenDash)
         ;
 
         this.links_elems.append("title")
