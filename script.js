@@ -47,30 +47,12 @@ d3.json(DATA)
 function begin(file) {
 
     console.log(file);
-    const links = file.links//files[0];
-    const nodes = file.nodes//files[1];
+    //const links = file.links//files[0];
+    //const nodes = file.nodes//files[1];
 
-    vis = new SankeyVis(links, nodes, svg_, container_);
+    vis = new SankeyVis(file, svg_, container_);
     vis.plot();
-
-    const tooltip = d3.select(".info-card");
-    tooltip.style("width", DIMS.MARGINS.RIGHT + "px");
-
-    d3.selectAll("rect.nodes").on("click", function(e,d) {
-
-        console.log(e, d);
-
-        const rotulo = d.rotulos;
-        const tipo = d.tipo;
-
-        const {x0, y0} = d;
-
-        tooltip
-            .style("transform", tipo == "despesa" ? `translate(${x0 + BAR_W}px, ${y0}px)` : `translate(calc(${x0}px - 100%), ${y0}px)`)
-            .select("[data-info='nome']")
-            .text(rotulo);
-
-    })
+    vis.interaction();
 
 }
 
@@ -82,7 +64,9 @@ class SankeyVis {
     links_elems;
     labels_elems;
 
-    constructor(links, nodes, svg, visContainer) {
+    tooltip;
+
+    constructor(file, svg, visContainer) {
 
         const order = [
             "Impostos",
@@ -123,6 +107,10 @@ class SankeyVis {
             // .nodeSort((a, b) => order.indexOf(a.rotulo) - order.indexOf(b.rotulo));
         ;
 
+        const links = file.links;
+        const nodes = file.nodes;
+        this.file = file;
+
         this.data = sankey({
 
             nodes: [...nodes],
@@ -150,6 +138,9 @@ class SankeyVis {
             .classed("nodes", true)
             .attr("data-tipo", d => d.tipo)
             .attr("data-id-node", d => d.rotulos)
+        ;
+
+        this.nodes_elems
             .append("title")
             .text(d => d.rotulos)
         ;
@@ -207,10 +198,65 @@ class SankeyVis {
             .text(d => d.rotulos)
         ;
 
-        
+    }
 
-        
+    interaction() {
 
+        this.tooltip = d3.select(".info-card");
+        
+        this.tooltip.style("width", DIMS.MARGINS.RIGHT + "px");
+    
+        this.nodes_elems.on("click", (e,d) => {
+    
+            //console.log(e, d);
+    
+            const rotulo = d.rotulos;
+            const tipo = d.tipo;
+
+            console.log(rotulo, tipo);
+
+            const keyword = tipo == "receita" ? "source" : "target";
+            const antikeyword = tipo == "receita" ? "target" : "source";
+
+            const minidata = this.file[`cards_${keyword}s`].filter(d => d[keyword] == rotulo);
+
+            console.log(minidata);
+
+
+            const {x0, y0} = d;
+    
+            this.tooltip
+                .style("transform", tipo == "despesa" ? `translate(${x0 + BAR_W}px, ${y0}px)` : `translate(calc(${x0}px - 100%), ${y0}px)`)
+                .select("[data-info='nome']")
+                .text(rotulo);
+
+            const table = document.querySelector(".container-itens-detalhamento tbody");
+
+            table.innerHTML = "";
+
+            minidata.forEach(d => {
+
+                const tr = document.createElement("tr");
+
+                const td_nome = document.createElement("td");
+                const td_valor = document.createElement("td");
+
+                td_nome.classList.add("item-nome");
+                td_valor.classList.add("item-valor");
+
+                td_nome.textContent = d[antikeyword];
+                td_valor.textContent = Utils.valor_percent(d.percent_do_grupo);
+
+                tr.appendChild(td_nome);
+                tr.appendChild(td_valor);
+
+                table.appendChild(tr);
+
+            })
+
+        ;
+    
+        })
     }
 
 }
@@ -222,6 +268,15 @@ class Utils {
     static valor_formatado(value) {
 
         return new Intl.NumberFormat('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2}).format(
+            value,
+        )
+        
+    }
+
+    static valor_percent(value) {
+
+        return new Intl.NumberFormat(
+        'pt-BR', { style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(
             value,
         )
         

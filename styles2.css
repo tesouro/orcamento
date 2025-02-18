@@ -9,7 +9,7 @@ svg {
 }
 
 .links {
-    stroke: hotpink;
+    stroke: magenta;
 }
 
 .info-card {
@@ -35,6 +35,16 @@ svg {
 }
 
 p.labels.labels-receitas {
+
+    text-align: right;
+
+}
+
+.nodes {
+    stroke: none;
+}
+
+table td.item-valor {
 
     text-align: right;
 
