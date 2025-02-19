@@ -175,6 +175,7 @@ class SankeyVis {
             //.attr("stroke", "#401F14")
             .attr("stroke-width", d => Math.max(1, d.width))
             .attr("stroke-opacity", d => d.value < 10e9 ? 0.3 : 0.6)
+            //.attr("filter","url(#glow)")
             .transition()
             .duration(1000)
             .attrTween("stroke-dasharray", tweenDash)
@@ -205,67 +206,104 @@ class SankeyVis {
         this.tooltip = d3.select(".info-card");
         
         this.tooltip.style("width", DIMS.MARGINS.RIGHT + "px");
-    
+
         this.nodes_elems.on("click", (e,d) => {
-    
-            //console.log(e, d);
-    
-            const rotulo = d.rotulos;
-            const tipo = d.tipo;
 
-            console.log(rotulo, tipo);
-
-            const keyword = tipo == "receita" ? "source" : "target";
-            const antikeyword = tipo == "receita" ? "target" : "source";
-
-            const minidata = this.file[`cards_${keyword}s`].filter(d => d[keyword] == rotulo);
-
-            console.log(minidata);
-
-
-            const {x0, y0} = d;
-    
-            this.tooltip
-                .style("transform", tipo == "despesa" ? `translate(${x0 + BAR_W}px, ${y0}px)` : `translate(calc(${x0}px - 100%), ${y0}px)`)
-                .select("[data-info='nome']")
-                .text(rotulo);
-
-            const destino_origem = tipo == "receita" ? "destinações" : "origens";
-
-            this.tooltip.selectAll(".tt-receita-ou-despesa").text(tipo);
-
-            this.tooltip.selectAll(".tt-origens-ou-destinacoes").text(destino_origem);
-
-            this.tooltip.select(".tt-percent-total").text(
-                Utils.valor_percent(minidata[0].percent_do_total));
-
-            const table = document.querySelector(".container-itens-detalhamento tbody");
-
-            table.innerHTML = "";
-
-            minidata.forEach(d => {
-
-                const tr = document.createElement("tr");
-
-                const td_nome = document.createElement("td");
-                const td_valor = document.createElement("td");
-
-                td_nome.classList.add("item-nome");
-                td_valor.classList.add("item-valor");
-
-                td_nome.textContent = d[antikeyword];
-                td_valor.textContent = Utils.valor_percent(d.percent_do_grupo);
-
-                tr.appendChild(td_nome);
-                tr.appendChild(td_valor);
-
-                table.appendChild(tr);
-
-            })
-
-        ;
+            this.show_tooltip(e, d, this);
+            this.fade_all_links();
+            this.highlight_links(e, d, this);
     
         })
+
+        this.labels_elems.on("click", (e,d) => {
+
+            this.show_tooltip(e, d, this);
+            this.fade_all_links();
+            this.highlight_links(e, d, this);
+    
+        })
+
+    }
+
+    show_tooltip(e, d, self) {
+    
+        const rotulo = d.rotulos;
+        const tipo = d.tipo;
+
+        console.log(rotulo, tipo);
+
+        const keyword = tipo == "receita" ? "source" : "target";
+        const antikeyword = tipo == "receita" ? "target" : "source";
+
+        const minidata = self.file[`cards_${keyword}s`].filter(d => d[keyword] == rotulo);
+
+        console.log(minidata);
+
+
+        const {x0, y0} = d;
+
+        self.tooltip
+            .style("transform", tipo == "despesa" ? `translate(${x0 + BAR_W}px, ${y0}px)` : `translate(calc(${x0}px - 100%), ${y0}px)`)
+            .select("[data-info='nome']")
+            .text(rotulo);
+
+        const destino_origem = tipo == "receita" ? "destinações" : "origens";
+
+        self.tooltip.selectAll(".tt-receita-ou-despesa").text(tipo);
+
+        self.tooltip.selectAll(".tt-origens-ou-destinacoes").text(destino_origem);
+
+        self.tooltip.select(".tt-percent-total").text(
+            Utils.valor_percent(minidata[0].percent_do_total));
+
+        const table = document.querySelector(".container-itens-detalhamento tbody");
+
+        table.innerHTML = "";
+
+        minidata.forEach(d => {
+
+            const tr = document.createElement("tr");
+
+            const td_nome = document.createElement("td");
+            const td_valor = document.createElement("td");
+
+            td_nome.classList.add("item-nome");
+            td_valor.classList.add("item-valor");
+
+            td_nome.textContent = d[antikeyword];
+            td_valor.textContent = Utils.valor_percent(d.percent_do_grupo);
+
+            tr.appendChild(td_nome);
+            tr.appendChild(td_valor);
+
+            table.appendChild(tr);
+
+        });
+
+    }
+
+    fade_all_links() {
+
+        this.links_elems
+            .style("opacity", 0.1)
+
+    }
+
+
+    highlight_links(e, d, self) {
+
+        const rotulo = d.rotulos;
+        const tipo = d.tipo;
+
+        console.log(rotulo, tipo);
+
+        const keyword = tipo == "receita" ? "source" : "target";
+        const antikeyword = tipo == "receita" ? "target" : "source";
+
+        d3.selectAll(`.links[data-${keyword}='${rotulo}']`).style("opacity", 1);
+
+        console.log(`.links[data-${keyword}='${rotulo}']`);
+
     }
 
 }

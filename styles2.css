@@ -10,6 +10,7 @@ svg {
 
 .links {
     stroke: magenta;
+    transition: opacity .5s;
 }
 
 .info-card {
@@ -20,6 +21,7 @@ svg {
     background-color: black;
     color: hotpink;
     margin: 0;
+    z-index: 1;
 }
 
 .vis {
@@ -31,7 +33,13 @@ svg {
     position: absolute;
     margin: 0;
     padding: 0 .5em;
+    border-top: 2px dotted transparent;
+    border-bottom: 2px dotted transparent;
 
+}
+
+.vis p.labels:hover {
+    border-color: gray;
 }
 
 p.labels.labels-receitas {
