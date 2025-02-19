@@ -41,6 +41,7 @@
 
             <div class="info-card">
                 <h3 data-info="nome">Nome</h3>
+                <p><span class="tt-receita-ou-despesa"></span> de R$ <span class="tt-valor-total"></span></p>
                 <p>Representa <span class="tt-percent-total"></span> do total de <span class="tt-receita-ou-despesa"></span>s.</p>
                 <p>Principais <span class="tt-origens-ou-destinacoes"></span> desta <span class="tt-receita-ou-despesa"></span>:</p>
                 <table class="container-itens-detalhamento">
@@ -48,7 +49,24 @@
                 </table>
 
             </div>
-            <svg class="sankey"></svg>
+            <svg class="sankey">
+                <defs>
+                    <!--<filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                      <feGaussianBlur stdDeviation="4" result="blur"/> 
+                      <feMerge>
+                        <feMergeNode in="blur"/>  
+                        <feMergeNode in="blur"/>  
+                        <feMergeNode in="blur"/>  
+                        <feMergeNode in="SourceGraphic"/> 
+                      </feMerge>
+                    </filter>-->
+                    <linearGradient id="strokeGradient" x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stop-color="rgb(255,213,0)"/> <!-- Yellow -->
+                        <stop offset="100%" stop-color="rgb(50,156,50)"/> <!-- Green -->
+                    </linearGradient>
+                </defs>
+
+            </svg>
 
         </div>
 

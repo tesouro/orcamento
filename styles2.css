@@ -2,6 +2,14 @@
     box-sizing: border-box;
 }
 
+:root {
+
+    --amarelo-tesouro: rgb(255,213,0);
+    --verde-tesouro: rgb(50,156,50);
+    --azul-tesouro: rgb(0,74,147);
+
+}
+
 svg {
     width: 100%;
     border: 1px solid red;
@@ -9,7 +17,8 @@ svg {
 }
 
 .links {
-    stroke: magenta;
+    /*stroke: magenta;*/
+    stroke: var(--azul-tesouro);
     transition: opacity .5s;
 }
 
@@ -57,3 +66,9 @@ table td.item-valor {
     text-align: right;
 
 }
+
+.nodes[data-tipo="receita"] { fill: var(--amarelo-tesouro); }
+.nodes[data-tipo="despesa"] { fill: var(--verde-tesouro); }
+
+.labels-receitas {color: var(--amarelo-tesouro)}
+.labels-despesas {color: var(--verde-tesouro)}

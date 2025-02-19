@@ -249,6 +249,7 @@ class SankeyVis {
 
         const destino_origem = tipo == "receita" ? "destinações" : "origens";
 
+        // preenche campos
         self.tooltip.selectAll(".tt-receita-ou-despesa").text(tipo);
 
         self.tooltip.selectAll(".tt-origens-ou-destinacoes").text(destino_origem);
@@ -256,6 +257,10 @@ class SankeyVis {
         self.tooltip.select(".tt-percent-total").text(
             Utils.valor_percent(minidata[0].percent_do_total));
 
+        self.tooltip.select(".tt-valor-total").text(
+            Utils.valor_reais(minidata[0].subtotal_grupo));
+
+        // monta tabela com destinos ou origens
         const table = document.querySelector(".container-itens-detalhamento tbody");
 
         table.innerHTML = "";
@@ -286,6 +291,8 @@ class SankeyVis {
 
         this.links_elems
             .style("opacity", 0.1)
+            //.stroke("rgb(0,74,147)")
+        ;
 
     }
 
@@ -300,7 +307,7 @@ class SankeyVis {
         const keyword = tipo == "receita" ? "source" : "target";
         const antikeyword = tipo == "receita" ? "target" : "source";
 
-        d3.selectAll(`.links[data-${keyword}='${rotulo}']`).style("opacity", 1);
+        d3.selectAll(`.links[data-${keyword}='${rotulo}']`).style("opacity", 1).stroke("url(#strokeGradient)");
 
         console.log(`.links[data-${keyword}='${rotulo}']`);
 
@@ -327,6 +334,29 @@ class Utils {
             value,
         )
         
+    }
+
+    static valor_reais(value) {
+
+        /* para formatar os numeros */
+        const numero_br = new Intl.NumberFormat('pt-BR');
+        const numero_br1 = new Intl.NumberFormat('pt-BR', {maximumFractionDigits: 1, minimumFractionDigits: 1});
+        const numero_br0 = new Intl.NumberFormat('pt-BR', {maximumFractionDigits: 0, minimumFractionDigits: 0});
+
+        const multiplos = [1, 1e3, 1e6, 1e9, 1e12];
+        const sufixo    = ["", "mil", "mi", "bi", "tri"];
+        const obj_mult = multiplos.map((d,i) => ({
+            valor: d,
+            sufixo: sufixo[i]
+        }));
+
+        console.log(obj_mult);
+
+        for (let mult of obj_mult) {
+            const val = value/mult.valor;
+            if (val < 1000) return numero_br0.format(val) + " " + mult.sufixo;
+        }
+
     }
 
 }
