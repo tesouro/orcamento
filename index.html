@@ -3,68 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Mohave:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./vis/style.css">
-    <title>Receitas e Despesas</title>
+    <title>O Orçamento do Governo Federal</title>
+    <link rel="stylesheet" href="styles2.css">
 </head>
 <body>
 
-    <header>
-        <h1>O Orçamento Federal de 2021</h1>
-        <img src="./logo-enef.png" alt="Logotipo da Oitava Semana Nacional de Educação Financeira" class="logo">
-    </header>
+    <header></header>
 
     <main>
-        <div class="controls-wrapper">
 
-            <div class="buttons-wrapper">
+        <div class="intro">
+            
+            <h1>O Orçamento Federal em 2025</h1>
 
-                <button aria-label="Voltar" class="disabled">
-                    <svg class="arrow" viewBox="0 0 101 101">
-                        <path d="M100,0 L0,50 L100,100 Z" fill="black"></path>
-                    </svg>
-                </button>
-    
-                <button aria-label="Avançar">
-                    <svg class="arrow" viewBox="0 0 101 101">
-                        <path d="M0,0 L100,50 L0,100 Z" fill="black"></path>
-                    </svg>
-                </button>
-    
-            </div>
-            <ul class="steps" data-current-step="receitas|despesas|divida...">
-                <li data-step="receitas">As Receitas</li>
-                <li data-step="despesas">As Despesas</li>
-                <li data-step="divida">A dívida</li>
-                <li data-step="necessidade">Fechando o orçamento</li>
-                <li data-step="vinculacao">O fluxo</li>
+            <p> O Orçamento Federal é gigantesco. Estamos falando de receitas no valor BLA, e despesas no mesmo valor.</p>
+
+            <p>Esses valores representam XXX% do PIB nacional. Cada centavo dessa montanha de dinheiro está classificada e tem um destino certo. O que queremos mostrar aqui é...</p>
+
+            <p>Tem sido cada vez mais comum encontrar informações e análises sobre as receitas e despesas do governo na imprensa, nos discursos de políticos e autoridades, e até nas conversas do dia-a-dia. Em geral, comparam-se receitas e despesas, fala-se em superávit ou déficit, analisa-se o crescimento das despesas, a sua composição etc. Mas como as receitas e as despesas orçamentárias da União de fato se relacionam?</p>
+
+            <p>Ou seja, o que pretendemos é responder, talvez de forma inédita, a seguinte pergunta: que receitas na prática financiam que despesas? Para isso, construímos uma visualização, agrupando as receitas e despesas em categorias, com o intuito de simplificar a extensa classificação orçamentária adotada no setor público brasileiro, e estimamos a relação entre cada uma dessas receitas e despesas. Os critérios técnicos adotados nesses agrupamentos estão descritos na seção de “Metodologia”, abaixo.</p>
+
+            <p>Esse tipo de visualização pode ajudar a iluminar algumas questões que surgem com frequência a respeito da gestão de finanças públicas no Governo Federal, por exemplo:</p>
+
+            <ul>
+                <li>É verdade que recursos dos tributos (impostos, contribuições e taxas) são gastos para pagar os juros da dívida?</li>
+                <li>Se há um déficit no Regime Geral de Previdência Social, como ele é financiado?</li>
+                <li>Se o governo vem apresentando déficit nas contas, de onde vem o dinheiro para pagar suas despesas?</li>
+                <li>O que é feito com o dinheiro obtido pelo governo com a emissão e venda de títulos públicos, tais como os do Tesouro Direto?</li>
             </ul>
 
-            <p class="cartaz"></p>
+            <p>Vamos dar uma olhada nos gráficos.</p>
 
         </div>
 
-        <div class="vis-container">
-            <svg class="vis">
-    
-            </svg>
-            <a class="limpar hidden">Limpar seleção</a>
+        <div class="vis">
+
+            <div class="info-card">
+                <h3 data-info="nome">Nome</h3>
+                <p>Representa <span class="tt-percent-total"></span> do total de <span class="tt-receita-ou-despesa"></span>s.</p>
+                <p>Principais <span class="tt-origens-ou-destinacoes"></span> desta <span class="tt-receita-ou-despesa"></span>:</p>
+                <table class="container-itens-detalhamento">
+                    <tbody></tbody>
+                </table>
+
+            </div>
+            <svg class="sankey"></svg>
+
         </div>
 
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script src="https://unpkg.com/d3-array@1"></script>
+    <script src="https://unpkg.com/d3-collection@1"></script>
+    <script src="https://unpkg.com/d3-path@1"></script>
+    <script src="https://unpkg.com/d3-shape@1"></script>
+    <script src="https://unpkg.com/d3-sankey@0"></script>
 
-    <script src="./vis/d3.v6.min.js"></script>
-    <script src="./vis/ext/d3-array.min.js"></script>
-    <script src="./vis/ext/d3-collection.min.js"></script>
-    <script src="./vis/ext/d3-path.min.js"></script>
-    <script src="./vis/ext/d3-sankey.min.js"></script>
-    <script src="./vis/ext/d3-shape.min.js"></script>
-    <script src="./vis/utils.js"></script>
-    <script src="./vis/vis.js"></script>
+    <script src="script.js"></script>
+    
 </body>
 </html>
