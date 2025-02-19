@@ -19,7 +19,11 @@ svg {
 .links {
     /*stroke: magenta;*/
     stroke: var(--azul-tesouro);
-    transition: opacity .5s;
+    transition: opacity .5s, stroke .5s;
+}
+
+.links-ativo {
+    stroke: url(#strokeGradient);
 }
 
 .info-card {

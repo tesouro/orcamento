@@ -291,7 +291,7 @@ class SankeyVis {
 
         this.links_elems
             .style("opacity", 0.1)
-            //.stroke("rgb(0,74,147)")
+            .classed("links-ativo", false)
         ;
 
     }
@@ -307,7 +307,7 @@ class SankeyVis {
         const keyword = tipo == "receita" ? "source" : "target";
         const antikeyword = tipo == "receita" ? "target" : "source";
 
-        d3.selectAll(`.links[data-${keyword}='${rotulo}']`).style("opacity", 1).stroke("url(#strokeGradient)");
+        d3.selectAll(`.links[data-${keyword}='${rotulo}']`).style("opacity", 1).classed("links-ativo", true);//.attr("stroke", "url(#strokeGradient)");
 
         console.log(`.links[data-${keyword}='${rotulo}']`);
 
