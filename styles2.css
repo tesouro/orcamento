@@ -13,6 +13,8 @@
 
 }
 
+/* ======== vis ========= */
+
 svg {
     width: 100%;
     height: 2000px;
@@ -142,4 +144,29 @@ table td.item-valor {
     font-size: .7rem;
     padding: .2em .5em;
     background-color: transparent;
+}
+
+/* ======== texto ========= */
+
+.intro {
+
+    font-family: 'Roboto';
+    margin: 0 auto;
+    max-width: 620px;
+
+}
+
+.intro {
+
+    line-height: 1.4;
+
+}
+
+.intro h1 {
+
+    font-size: 3.5rem;
+    text-align: center;
+    margin: 2rem 0;
+    font-family: 'Roboto Serif';
+
 }
