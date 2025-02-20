@@ -223,6 +223,13 @@ class SankeyVis {
     
         })
 
+        // fechar tooltip
+        const btnFechar = document.querySelector('.btn-fechar');
+        btnFechar.addEventListener("click", e => {
+            this.tooltip.classed("info-card-hidden", true);
+            this.show_all_links();
+        })
+
     }
 
     show_tooltip(e, d, self) {
@@ -292,15 +299,25 @@ class SankeyVis {
 
     fade_all_links() {
 
-        this.links_elems
+        d3.selectAll(".links")
             .style("opacity", 0.1)
-            .classed("links-ativo", false)
+            .classed("links-ativo", false) // isso serve para não usar o gradiente nas cores dos links
         ;
 
     }
 
+    show_all_links() {
+
+        d3.selectAll(".links")
+            .style("opacity", 1)
+            .classed("links-ativo", false) // isso serve para não usar o gradiente nas cores dos links
+        ;
+    }
+
 
     highlight_links(e, d, self) {
+
+        console.log("Fired")
 
         const rotulo = d.rotulos;
         const tipo = d.tipo;
