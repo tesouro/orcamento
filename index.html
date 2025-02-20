@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>O Orçamento do Governo Federal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&family=Roboto+Flex:opsz,wght@8..144,100..1000&family=Roboto+Serif:ital,opsz,wght@0,8..144,100..900;1,8..144,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles2.css">
 </head>
 <body>
@@ -39,15 +42,16 @@
 
         <div class="vis">
 
-            <div class="info-card">
+            <div class="info-card info-card-hidden">
+                <p><span class="tt-receita-ou-despesa" data-tag=""></span></p> 
                 <h3 data-info="nome">Nome</h3>
-                <p><span class="tt-receita-ou-despesa"></span> de R$ <span class="tt-valor-total"></span></p>
-                <p>Representa <span class="tt-percent-total"></span> do total de <span class="tt-receita-ou-despesa"></span>s.</p>
+                <p class="info-card-valor-total">R$ <span class="tt-valor-total"></span></p>
+                <p class="info-card-pct-total">(<span class="tt-percent-total"></span> do total de <span class="tt-receita-ou-despesa"></span>s)</p>
                 <p>Principais <span class="tt-origens-ou-destinacoes"></span> desta <span class="tt-receita-ou-despesa"></span>:</p>
                 <table class="container-itens-detalhamento">
                     <tbody></tbody>
                 </table>
-
+                <button class="btn-fechar">&times; FECHAR</button>
             </div>
             <svg class="sankey">
                 <defs>
@@ -74,7 +78,7 @@
             <h2>Metodologia</h2>
             <p>Para construir a visualização, agrupamos as receitas e despesas orçamentárias em categorias, com o intuito de simplificar a extensa classificação orçamentária adotada no setor público brasileiro. A classificação orçamentária é um sistema de codificação que organiza as receitas e despesas públicas em categorias, subcategorias e elementos, de acordo com a natureza econômica dos recursos e das obrigações financeiras. A classificação orçamentária é um instrumento de controle e de transparência das finanças públicas, que permite a análise e o acompanhamento da execução orçamentária e financeira do governo.</p>
             <p>As categorias de receitas e despesas foram agrupadas de acordo com a classificação orçamentária adotada no Brasil, que é baseada na classificação funcional programática, que organiza as ações governamentais em programas de governo, e na classificação por natureza da receita e da despesa, que organiza as receitas e despesas em categorias econômicas, tais como receitas correntes e despesas correntes, receitas de capital e despesas de capital.</p>
-            
+
         </div>
 
     </main>

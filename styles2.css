@@ -5,14 +5,16 @@
 :root {
 
     --amarelo-tesouro: rgb(255,213,0);
+    --amarelo-tesouro-texto: #D5B723;
     --verde-tesouro: rgb(50,156,50);
     --azul-tesouro: rgb(0,74,147);
+    background-color: ivory;
+    --text: #333;
 
 }
 
 svg {
     width: 100%;
-    border: 1px solid red;
     height: 2000px;
 }
 
@@ -26,17 +28,6 @@ svg {
     stroke: url(#strokeGradient);
 }
 
-.info-card {
-    position: absolute;
-    top: 0;
-    left: 0;
-    border: 2px solid purple;
-    background-color: black;
-    color: hotpink;
-    margin: 0;
-    z-index: 1;
-}
-
 .vis {
     position: relative;
 }
@@ -48,6 +39,7 @@ svg {
     padding: 0 .5em;
     border-top: 2px dotted transparent;
     border-bottom: 2px dotted transparent;
+    font-family: 'Roboto Condensed';
 
 }
 
@@ -65,14 +57,89 @@ p.labels.labels-receitas {
     stroke: none;
 }
 
+.info-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-top: 2px solid var(--text);
+    border-bottom: 2px solid var(--text);
+    background-color: ivory;
+    color: var(--text);
+    padding: .5em;
+    margin: 0;
+    z-index: 1;
+    font-family: 'Roboto Condensed';
+    transition: opacity .5s;
+}
+
+.info-card-hidden { 
+    opacity : 0;
+    pointer-events: none;
+}
+
+.info-card[data-tipo-infocard="receita"]  { background-color: lemonchiffon;/*border-color: var(--amarelo-tesouro);*/}
+.info-card[data-tipo-infocard="despesa"]  {background-color: lightgoldenrodyellow;/*border-color: var(--verde-tesouro);*/}
+
+
+.info-card table {
+    font-weight: 300;
+    font-size: .8em;
+}
+
+.info-card h3 {
+    margin: 0;
+    font-size: 1.2em;
+    margin-top: .5rem;
+}
+
+
+.info-card[data-tipo-infocard="receita"] h3 { color: var(--amarelo-tesouro-texto); }
+.info-card[data-tipo-infocard="despesa"] h3 { color: var(--verde-tesouro); }
+
+
 table td.item-valor {
 
     text-align: right;
 
 }
 
+.info-card p {
+    margin: 0;
+}
+
+.info-card .info-card-valor-total { 
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.info-card .info-card-pct-total {
+    font-size: .8em;
+    margin-bottom: .5rem;
+}
+
 .nodes[data-tipo="receita"] { fill: var(--amarelo-tesouro); }
 .nodes[data-tipo="despesa"] { fill: var(--verde-tesouro); }
 
-.labels-receitas {color: var(--amarelo-tesouro)}
+.labels-receitas {color: var(--amarelo-tesouro-texto)}
 .labels-despesas {color: var(--verde-tesouro)}
+
+[data-tag] {
+    padding: .2em .4em;
+    border-radius: 5px;
+    text-transform: uppercase;
+    font-size: .6em;
+}
+
+[data-tag="receita"] { background-color: var(--amarelo-tesouro);}
+[data-tag="despesa"] { background-color: var(--verde-tesouro); color: white;}
+
+.btn-fechar {
+    font-family: 'Roboto Condensed';
+    position: absolute;
+    top: 100%;
+    margin-top: .5rem;
+    border: 1px dotted var(--text);
+    font-size: .7rem;
+    padding: .2em .5em;
+    background-color: transparent;
+}

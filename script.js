@@ -157,7 +157,7 @@ class SankeyVis {
             .data(this.data.links)
             .join("g")
             //.style("mix-blend-mode", "multiply")
-            .style("mix-blend-mode", "screen")
+            .style("mix-blend-mode", "normal")
             .attr("data-source", d => d.source.rotulos)
             .attr("data-target", d => d.target.rotulos)
             .attr("data-value",  d => d.value)
@@ -244,6 +244,8 @@ class SankeyVis {
 
         self.tooltip
             .style("transform", tipo == "despesa" ? `translate(${x0 + BAR_W}px, ${y0}px)` : `translate(calc(${x0}px - 100%), ${y0}px)`)
+            .classed("info-card-hidden", false)
+            .attr("data-tipo-infocard", tipo)
             .select("[data-info='nome']")
             .text(rotulo);
 
@@ -251,6 +253,7 @@ class SankeyVis {
 
         // preenche campos
         self.tooltip.selectAll(".tt-receita-ou-despesa").text(tipo);
+        self.tooltip.select("[data-tag]").attr("data-tag", tipo);
 
         self.tooltip.selectAll(".tt-origens-ou-destinacoes").text(destino_origem);
 
@@ -343,8 +346,8 @@ class Utils {
         const numero_br1 = new Intl.NumberFormat('pt-BR', {maximumFractionDigits: 1, minimumFractionDigits: 1});
         const numero_br0 = new Intl.NumberFormat('pt-BR', {maximumFractionDigits: 0, minimumFractionDigits: 0});
 
-        const multiplos = [1, 1e3, 1e6, 1e9, 1e12];
-        const sufixo    = ["", "mil", "mi", "bi", "tri"];
+        const multiplos = [1, 1e3, 1e6, 1e9];//, 1e12];
+        const sufixo    = ["", "mil", "mi", "bi"];//, "tri"];
         const obj_mult = multiplos.map((d,i) => ({
             valor: d,
             sufixo: sufixo[i]
@@ -356,6 +359,8 @@ class Utils {
             const val = value/mult.valor;
             if (val < 1000) return numero_br0.format(val) + " " + mult.sufixo;
         }
+
+        return numero_br0.format(value/1e9) + " bi";
 
     }
 
