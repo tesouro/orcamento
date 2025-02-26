@@ -8,8 +8,17 @@
     --amarelo-tesouro-texto: #D5B723;
     --verde-tesouro: rgb(50,156,50);
     --azul-tesouro: rgb(0,74,147);
-    background-color: ivory;
+    --bg: ivory;
+    background-color: var(--bg);
     --text: #333;
+
+    --cor1: #ffd700;
+    --cor2: #ffb14e;
+    --cor3: #fa8775;
+    --cor4: #ea5f94;
+    --cor5: #cd34b5;
+    --cor6: #9d02d7;
+    --cor7: #0000ff;
 
 }
 
@@ -20,18 +29,35 @@ svg {
     height: 2000px;
 }
 
+.nodes:hover {
+    stroke: var(--text);
+}
+
 .links {
     /*stroke: magenta;*/
-    stroke: var(--azul-tesouro);
+    stroke: var(--cor4);
     transition: opacity .5s, stroke .5s;
 }
 
-.links-ativo {
+.links[data-source="Emissões de Dívida"] { stroke: var(--cor6); }
+.links[data-source="Receitas do RGPS"] { stroke: var(--cor7); }
+.links[data-source="Juros e remunerações recebidas"] { stroke: var(--cor2); }
+.links[data-source="Contribuições sociais (exceto RGPS) e econômicas"] { stroke: var(--cor3); }
+.links[data-source="Impostos"] { stroke: var(--cor4); }
+.links[data-source="Demais receitas"] { stroke: var(--cor5); }
+.links[data-source="Exploração de Petróleo e outros recursos naturais"] { stroke: var(--cor1); }
+.links[data-source="Outras receitas financeiras"] { stroke: var(--azul-tesouro); }
+
+
+
+.links.links-ativo {
     stroke: url(#strokeGradient);
 }
 
 .vis {
     position: relative;
+    max-width: 900px;
+    margin: 0 auto;
 }
 
 .vis p.labels {
@@ -65,7 +91,7 @@ p.labels.labels-receitas {
     left: 0;
     border-top: 2px solid var(--text);
     border-bottom: 2px solid var(--text);
-    background-color: ivory;
+    background-color: var(--bg);
     color: var(--text);
     padding: .5em;
     margin: 0;
@@ -143,7 +169,12 @@ table td.item-valor {
     border: 1px dotted var(--text);
     font-size: .7rem;
     padding: .2em .5em;
-    background-color: transparent;
+    background-color: var(--bg);
+}
+
+.btn-fechar:hover {
+    /*box-shadow: 2px 2px currentColor;*/
+    border-style: solid;
 }
 
 /* ======== texto ========= */
