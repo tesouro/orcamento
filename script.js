@@ -1,5 +1,5 @@
-const svg = document.querySelector('svg');
-const svg_ = d3.select('svg');
+const svg = document.querySelector('svg.sankey');
+const svg_ = d3.select('svg.sankey');
 const container = document.querySelector('.vis');
 const container_ = d3.select('.vis');
 
@@ -21,8 +21,8 @@ const DIMS = {
     MARGINS : {
 
         TOP: 10,
-        LEFT: W < W_cutoff ? 120 : 200,
-        RIGHT: W < W_cutoff  ? 120: 200,
+        LEFT: W < W_cutoff ? 100 : 200,
+        RIGHT: W < W_cutoff  ? 100 : 200,
         BOTTOM: 20
 
     }

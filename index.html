@@ -11,13 +11,21 @@
 </head>
 <body>
 
-    <header></header>
+    <header class="logo">
+        <img class="logo-tt" src="tt-logo-int.png" alt="logo do Tesouro Nacional Transparente">
+    </header>
 
     <main>
 
         <div class="intro">
             
-            <h1>O Orçamento Federal em 2025</h1>
+            <div class="hero">
+                <div class="hero-image">
+                    <img src="balanca.png" alt="uma imagem que remete a uma balança em equilíbrio, com barras (como num gráfico de barras) sobre os pratos da balança.">
+                </div>
+                <h1>O Orçamento Federal em 2025</h1>
+            </div>
+
 
             <p> O Orçamento Federal é gigantesco. Estamos falando de receitas no valor BLA, e despesas no mesmo valor.</p>
 
@@ -36,7 +44,7 @@
                 <li>O que é feito com o dinheiro obtido pelo governo com a emissão e venda de títulos públicos, tais como os do Tesouro Direto?</li>
             </ul>
 
-            <p>Vamos dar uma olhada nos gráficos.</p>
+            <p>O gráfico abaixo mostra as <span class="txt-receita">receitas</span> e as <span class="txt-despesa">despesas</span>, assim como a vinculação entre elas. Fique à vontade para clicar em qualquer item para destacá-lo e obter mais detalhes.</p>
 
         </div>
 
@@ -74,11 +82,38 @@
 
         </div>
 
-        <div class="metodologia">
-            <h2>Metodologia</h2>
-            <p>Para construir a visualização, agrupamos as receitas e despesas orçamentárias em categorias, com o intuito de simplificar a extensa classificação orçamentária adotada no setor público brasileiro. A classificação orçamentária é um sistema de codificação que organiza as receitas e despesas públicas em categorias, subcategorias e elementos, de acordo com a natureza econômica dos recursos e das obrigações financeiras. A classificação orçamentária é um instrumento de controle e de transparência das finanças públicas, que permite a análise e o acompanhamento da execução orçamentária e financeira do governo.</p>
-            <p>As categorias de receitas e despesas foram agrupadas de acordo com a classificação orçamentária adotada no Brasil, que é baseada na classificação funcional programática, que organiza as ações governamentais em programas de governo, e na classificação por natureza da receita e da despesa, que organiza as receitas e despesas em categorias econômicas, tais como receitas correntes e despesas correntes, receitas de capital e despesas de capital.</p>
+        <div class="wrapper-metodologia">
+            <div class="metodologia">
 
+                <h2>Metodologia</h2>
+
+                <h3>Receitas</h3>
+
+                <p>Como dito, cada centavo que ingressa nos cofres públicos é classificado e destinado. A principal classificação das receitas do orçamento é a chamada <em>classificação por natureza de receita</em>. É uma classificação utilizada por todos os entes da Federação (União, Estados, Distrito Federal e Municípios) e <q cite="https://www1.siop.planejamento.gov.br/mto/lib/exe/fetch.php/mto2025:mto2025.pdf">visa a identificar a origem do recurso segundo o fato gerador da receita (acontecimento real que ocasionou o ingresso da receita nos cofres públicos).</q> [<cite><a href="https://www1.siop.planejamento.gov.br/mto/lib/exe/fetch.php/mto2025:mto2025.pdf">Manual Técnico de Orçamento 2025</a></cite>]</p>
+
+                <p>Essa classificação é representada por um código com uma estrutura bem definida:</p>
+
+                <figure>
+                    <img src="mto-2025-natureza-receita.png" alt="Estrutura da natureza de receita orçamentária">
+                    <figcaption>Estrutura da natureza de receita, conforme o <cite><a href="https://www1.siop.planejamento.gov.br/mto/lib/exe/fetch.php/mto2025:mto2025.pdf">Manual Técnico de Orçamento 2025</a></cite>.</figcaption>
+                </figure>
+
+                <div class="mini-scroller-receita">
+
+                    <div class="container-mini-chart-receita">
+                        <svg class="mini-chart-receita"></svg>
+                    </div>
+
+                    <div class="text-scroller-receita">
+                        <p>
+
+                        </p>
+                    </div>
+
+                </div>
+
+                <p>As categorias de receitas e despesas foram agrupadas de acordo com a classificação orçamentária adotada no Brasil, que é baseada na classificação funcional programática, que organiza as ações governamentais em programas de governo, e na classificação por natureza da receita e da despesa, que organiza as receitas e despesas em categorias econômicas, tais como receitas correntes e despesas correntes, receitas de capital e despesas de capital.</p>
+            </div>
         </div>
 
     </main>

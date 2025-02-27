@@ -12,19 +12,24 @@
     background-color: var(--bg);
     --text: #333;
 
-    --cor1: #ffd700;
-    --cor2: #ffb14e;
-    --cor3: #fa8775;
-    --cor4: #ea5f94;
-    --cor5: #cd34b5;
-    --cor6: #9d02d7;
-    --cor7: #0000ff;
+    --cor1: #FFA100;
+    --cor2: #9500FF;
+    --cor3: #0A00FF;
+    --cor4: #AA9739;
+    --cor5: #7C9C32;
+    --cor6: #9C4132;
+    --cor7: #9C3267;
+    --cor8: #2E472E;
+    --cor9: #009490;
+    --cor10: #947B00;
+    --cor11: #945D00;
+    --cor12: #152A3F;
 
 }
 
 /* ======== vis ========= */
 
-svg {
+svg.sankey {
     width: 100%;
     height: 2000px;
 }
@@ -39,14 +44,14 @@ svg {
     transition: opacity .5s, stroke .5s;
 }
 
-.links[data-source="Emissões de Dívida"] { stroke: var(--cor6); }
-.links[data-source="Receitas do RGPS"] { stroke: var(--cor7); }
-.links[data-source="Juros e remunerações recebidas"] { stroke: var(--cor2); }
-.links[data-source="Contribuições sociais (exceto RGPS) e econômicas"] { stroke: var(--cor3); }
-.links[data-source="Impostos"] { stroke: var(--cor4); }
-.links[data-source="Demais receitas"] { stroke: var(--cor5); }
-.links[data-source="Exploração de Petróleo e outros recursos naturais"] { stroke: var(--cor1); }
-.links[data-source="Outras receitas financeiras"] { stroke: var(--azul-tesouro); }
+.links[data-source="Emissões de Dívida"] { stroke: var(--cor7); }
+.links[data-source="Receitas do RGPS"] { stroke: var(--cor3); }
+.links[data-source="Juros e remunerações recebidas"] { stroke: var(--cor4); }
+.links[data-source="Contribuições sociais (exceto RGPS) e econômicas"] { stroke: var(--cor5); }
+.links[data-source="Impostos"] { stroke: var(--cor2); }
+.links[data-source="Demais receitas"] { stroke: var(--cor8); }
+.links[data-source="Exploração de Petróleo e outros recursos naturais"] { stroke: var(--cor9); }
+.links[data-source="Outras receitas financeiras"] { stroke: var(--cor10); }
 
 
 
@@ -58,6 +63,7 @@ svg {
     position: relative;
     max-width: 900px;
     margin: 0 auto;
+    margin-bottom: 3rem;
 }
 
 .vis p.labels {
@@ -179,11 +185,36 @@ table td.item-valor {
 
 /* ======== texto ========= */
 
+body {
+    padding: 0;
+    margin: 0;
+}
+
+header.logo {
+    width: 100%;
+    background-color: var(--azul-tesouro);
+    padding: 10px;
+    box-shadow: 0 0 5px 1px var(--azul-tesouro);
+    margin: 0;
+    margin-bottom: 1rem;
+}
+
+header img.logo-tt {
+    /*position: absolute;*/
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    /*left: 0;
+    right: 0;
+    top: 20px;*/
+}
+
 .intro {
 
-    font-family: 'Roboto';
+    font-family: 'Roboto Serif';
     margin: 0 auto;
     max-width: 620px;
+    font-weight: 300;
 
 }
 
@@ -195,11 +226,12 @@ table td.item-valor {
 
 .intro h1 {
 
-    font-size: 3.5rem;
+    font-size: 3rem;
     text-align: center;
     max-width: 400px;
     margin: 2rem auto;
     font-family: 'Roboto Serif';
+    color: var(--azul-tesouro);
 
 }
 
@@ -210,3 +242,70 @@ table td.item-valor {
     width: 4rem;
     margin: 2rem auto;
 }
+
+.hero-image {
+    width: 300px; /* Adjust as needed */
+    height: 300px;
+    border-radius: 50%;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+  }
+  
+  .hero-image::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0) 60%, ivory 70%);
+    pointer-events: none;
+  }
+  
+  .hero-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    padding: .2em;
+  }
+
+  .wrapper-metodologia {
+
+    font-family: 'Roboto';
+    border-top: 3px solid currentColor;
+    background-color: cornsilk;
+
+  }
+
+  .metodologia {
+    margin: 3em auto;
+    max-width: 620px;
+
+  }
+
+  .txt-receita { background-color: var(--amarelo-tesouro); }
+  .txt-despesa { background-color: var(--verde-tesouro); }
+
+  figure img {
+    display: block;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  figure figcaption {
+    font-size: .8em;
+    text-align: center;
+  }
+
+  .mini-scroller-receita {
+    position: relative;
+  }
+
+  .container-mini-chart-receita {
+    position: sticky;
+    top: 0;
+    left: 0;
+  }
