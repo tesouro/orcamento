@@ -335,7 +335,69 @@ class SankeyVis {
 
 }
 
+class Scroller {
 
+    constructor(seletor, steps) {
+
+        this.render = steps;
+
+        enterView({
+
+            selector: seletor,
+
+            enter: el => {
+
+                const step = el.dataset.step;
+                console.log("Passo...", step, this);
+
+                this.render[step]();
+
+            },
+
+            exit: el => {
+
+                const step = el.dataset.step;
+                const step_anterior = +step - 1;
+                console.log("Saindo do passo...", step);
+
+                //if (step_anterior < 1) return;
+
+                this.render[step_anterior]('back');
+
+            },
+
+            offset: 0.5
+
+        });
+
+    }
+
+}
+
+const scrollerReceita = new Scroller(
+    ".scroller-receita-step", 
+
+    {
+        "0": function() {
+            console.log("Step 0");
+            d3.select(".mini-vis-rec").attr("fill", "black");
+        },
+
+        "1": function(dir) {
+            console.log("Step 1");
+            d3.select(".mini-vis-rec").attr("fill", "red");
+        },
+
+        "2": function() {
+            console.log("Step 2");
+            d3.select(".mini-vis-rec").attr("fill", "green");
+        },
+
+        "3": function() {
+            console.log("Step 3");
+            d3.select(".mini-vis-rec").attr("fill", "blue");
+        }
+    });
 
 class Utils {
 
