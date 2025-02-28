@@ -4,18 +4,18 @@ library(tidyverse)
 
 # 01a Importa Receitas do RGPS --------------------------------------------
 
-rec_rgps_raw <- read_excel("./dados/rec_rgps.xlsx", skip = 10)
-
-colnames(rec_rgps_raw) <- c(
-  "especie_cod", "especie",
-  "desdobramento_cod", "desdobramento",
-  "natureza_cod", "natureza",
-  "fte_cod", "fte",
-  "valor_rec"
-)
-
-rec_rgps <- rec_rgps_raw %>%
-  mutate(receita = "RGPS")
+# rec_rgps_raw <- read_excel("./dados/rec_rgps.xlsx", skip = 10)
+# 
+# colnames(rec_rgps_raw) <- c(
+#   "especie_cod", "especie",
+#   "desdobramento_cod", "desdobramento",
+#   "natureza_cod", "natureza",
+#   "fte_cod", "fte",
+#   "valor_rec"
+# )
+# 
+# rec_rgps <- rec_rgps_raw %>%
+#   mutate(receita = "RGPS")
 
 
 # 01b Importa Demais Receitas ---------------------------------------------
@@ -23,35 +23,34 @@ rec_rgps <- rec_rgps_raw %>%
 rec_raw <- read_excel("./dados/rec.xlsx", skip = 10)
 
 colnames(rec_raw) <- c(
+  "categoria_cod", "categoria",
+  "origem_cod", "origem",
   "especie_cod", "especie",
   "desdobramento_cod", "desdobramento",
-  "natureza_cod", "natureza",
   "fte_cod", "fte",
   "valor_rec"
 )
 
-# tab_rec <- rec_raw %>%
-#   mutate(cod_esp = str_sub(natureza_cod, 1, 3),
-#          nom_esp = especie) %>%
-#   select(cod_esp, nom_esp) %>%
-#   filter(str_sub(cod_esp, 1, 1) %in% c("1", "2")) %>%
-#   distinct()
-
 
 rec <- rec_raw %>%
-  bind_rows(rec_rgps) %>%
+  #bind_rows(rec_rgps) %>%
   mutate(
-    cod_esp  = str_sub(natureza_cod, 1, 3),
-    cat      = str_sub(natureza_cod, 1, 1) %>% as.numeric(),
-    comp_esp = str_sub(natureza_cod, 2, 3),
+    categoria_cod = case_when(
+      categoria_cod == "7" ~ "1",
+      categoria_cod == "8" ~ "2",
+      TRUE ~ categoria_cod
+    ),
     
-    cod_esp = ifelse(
-      cat >= 7, 
-      paste0(cat-6, comp_esp),
-      cod_esp),
+    cod_esp  = paste0(categoria_cod, origem_cod, especie_cod),#str_sub(natureza_cod, 1, 3),
+    cod_des  = paste0(cod_esp, desdobramento_cod),#str_sub(natureza_cod, 1, 1) %>% as.numeric(),
+
+    # cod_esp = ifelse(
+    #   cat >= 7, 
+    #   paste0(cat-6, comp_esp),
+    #   cod_esp),
     
     receita = case_when(
-      receita == "RGPS"                   ~ "Receitas do RGPS",
+      cod_des == "1214"                   ~ "Receitas do RGPS",
       cod_esp %in% c("211", "212")        ~ "Emissões de Dívida",
       cod_esp %in% c("132", "164", "230") ~ "Juros e remunerações recebidas",
       cod_esp == "111"                    ~ "Impostos",
@@ -63,6 +62,7 @@ rec <- rec_raw %>%
   )
   
 rec %>% group_by(receita) %>% summarise(sum(valor_rec))
+rec %>% count(receita)
 
 # 01c Importa Despesas ----------------------------------------------------
 
@@ -157,8 +157,8 @@ nodes$tipo <- c(
   rep("despesa", length(unique(matriz_reduz$despesa)))
 )
 
-write.csv(links, "./vis/links.csv", fileEncoding = "utf8")
-write.csv(nodes, "./vis/nodes.csv", fileEncoding = "utf8")
+#write.csv(links, "./vis/links.csv", fileEncoding = "utf8")
+#write.csv(nodes, "./vis/nodes.csv", fileEncoding = "utf8")
 
 total_links <- sum(links$value)
 
@@ -186,7 +186,8 @@ output <- list(
   links = links,
   nodes = nodes,
   cards_sources = cards_sources,
-  cards_targets = cards_targets
+  cards_targets = cards_targets,
+  rec = rec
 )
 
 jsonlite::write_json(output, "output.json")
