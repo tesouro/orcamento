@@ -182,12 +182,44 @@ cards_targets <- links %>%
   ) %>%
   arrange(target, rank)
 
+
+# dados para scroller da receita ------------------------------------------
+
+rec_scroller <- rec %>%
+  group_by(across(-c(desdobramento_cod, desdobramento, cod_des, fte_cod, fte, valor_rec))) %>%
+  summarise(valor_rec = sum(valor_rec)) %>%
+  ungroup()
+
+variaveis_de_interesse <- c("categoria_cod", "especie_cod", "origem_cod", "receita")
+
+rec_stack <- rec_scroller
+
+# for (var in variaveis_de_interesse) {
+#   quo_var <- sym(var) # transforma "var", que é string, num símbolo
+#   
+#   rec_stack <- rec_stack %>%
+#     #group_by(!! quo_var) %>%
+#     mutate(!! paste0("pos_ini_", var) := cumsum(valor_rec) - valor_rec) #%>%
+#     #ungroup()
+# }
+
+rec_stack <- rec_stack %>%
+  arrange(cod_esp) %>%
+  mutate(valor_ac = cumsum(valor_rec) - valor_rec) %>%
+  mutate(cod_orig = paste0(categoria_cod, origem_cod)) %>%
+  mutate(across(c(categoria_cod, cod_orig, cod_esp, receita), 
+                ~ match(.x, unique(.x)) - 1, .names = "gap_{.col}"))
+
+ggplot(rec_stack) + geom_segment(aes(y = origem, yend = origem,
+                                        x = valor_ac + gap_cod_orig * 1000, xend = valor_ac + gap_cod_orig * 1000 + valor_rec, color = categoria_cod)) +
+  theme(legend.position = "none")
+
 output <- list(
   links = links,
   nodes = nodes,
   cards_sources = cards_sources,
   cards_targets = cards_targets,
-  rec = rec
+  rec_stack = rec_stack
 )
 
 jsonlite::write_json(output, "output.json")

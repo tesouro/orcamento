@@ -54,6 +54,35 @@ function begin(file) {
     vis.plot();
     vis.interaction();
 
+    const chartReceita = new ChartReceita(".mini-chart-receita", file["rec_stack"], 600);
+    const scrollerReceita = new Scroller(
+
+        ".scroller-receita-step", 
+    
+        {
+            "0": function() {
+                //console.log("Step 0");
+                chartReceita.plot_step0();
+            },
+    
+            "1": function(dir) {
+                //console.log("Step 1");
+                //d3.select(".mini-vis-rec").attr("fill", "red");
+                chartReceita.plot_step1();
+    
+            },
+    
+            "2": function() {
+                //console.log("Step 2");
+                chartReceita.plot_step2();
+            },
+    
+            "3": function() {
+                //console.log("Step 3");
+                d3.select(".mini-vis-rec").attr("fill", "blue");
+            }
+        });
+
 }
 
 class SankeyVis {
@@ -348,7 +377,6 @@ class Scroller {
             enter: el => {
 
                 const step = el.dataset.step;
-                console.log("Passo...", step, this);
 
                 this.render[step]();
 
@@ -358,9 +386,8 @@ class Scroller {
 
                 const step = el.dataset.step;
                 const step_anterior = +step - 1;
-                console.log("Saindo do passo...", step);
 
-                //if (step_anterior < 1) return;
+                if (step_anterior < 0) return;
 
                 this.render[step_anterior]('back');
 
@@ -374,31 +401,67 @@ class Scroller {
 
 }
 
-const scrollerReceita = new Scroller(
-    
-    ".scroller-receita-step", 
+class ChartReceita {
 
-    {
-        "0": function() {
-            console.log("Step 0");
-            d3.select(".mini-vis-rec").attr("fill", "black");
-        },
+    constructor(selector, data, h) {
 
-        "1": function(dir) {
-            console.log("Step 1");
-            d3.select(".mini-vis-rec").attr("fill", "red");
-        },
+        this.gap = 10;
 
-        "2": function() {
-            console.log("Step 2");
-            d3.select(".mini-vis-rec").attr("fill", "green");
-        },
+        this.el = d3.select(selector);
 
-        "3": function() {
-            console.log("Step 3");
-            d3.select(".mini-vis-rec").attr("fill", "blue");
-        }
-    });
+        this.H = +this.el.style("height").slice(0,-2) - 100;
+        console.log(this.H);
+
+        this.total = d3.sum(data, d => d.valor_rec);
+        console.log(this.total);
+
+        this.h = d3.scaleLinear().domain([0, this.total]).range([0, this.H]);
+        this.y = d3.scaleLinear().domain([0, this.total]).range([this.H, 0]);
+
+        this.rects = this.el.selectAll("rect.componentes-receita")
+            .data(data)
+            .join("rect")
+            .classed("componentes-receita", true)
+            .attr("x", 100)
+            .attr("y", d => this.h(d.valor_ac))
+            .attr("width", 20)
+            .attr("height", d => this.h(d.valor_rec))
+        ;
+
+    }
+
+    plot_step0() {
+
+        this.rects
+            .transition()
+            .duration(1000)
+            .attr("y", d => this.h(d.valor_ac))
+        ;
+
+
+    }
+
+    plot_step1() {
+
+        this.rects
+            .transition()
+            .duration(1000)
+            .attr("y", d => this.h(d.valor_ac) + d.gap_categoria_cod * this.gap)
+        ;
+
+    }
+
+    plot_step2() {
+
+        this.rects
+            .transition()
+            .duration(1000)
+            .attr("y", d => this.h(d.valor_ac) + d.gap_cod_orig * this.gap)
+        ;
+
+    }
+
+}
 
 class Utils {
 

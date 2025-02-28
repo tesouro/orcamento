@@ -321,7 +321,7 @@ header img.logo-tt {
 
   .mini-chart-receita {
     width: 100%;
-    height: 400px;
+    height: 600px;
     border: 1px solid var(--text);
   }
 
@@ -356,4 +356,8 @@ header img.logo-tt {
     box-shadow: 4px 4px gray;
     padding: 1em;
 
+  }
+
+  rect.componentes-receita {
+    fill: var(--amarelo-tesouro);
   }
