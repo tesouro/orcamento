@@ -375,6 +375,7 @@ class Scroller {
 }
 
 const scrollerReceita = new Scroller(
+    
     ".scroller-receita-step", 
 
     {

@@ -311,8 +311,12 @@ header img.logo-tt {
 
   .container-mini-chart-receita {
     position: sticky;
-    top: 2rem;
+    top: 0;
     left: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .mini-chart-receita {
@@ -324,10 +328,32 @@ header img.logo-tt {
   .scroller-receita-step {
 
     height: 50vh;
-    padding: 1em;
     width: 300px;
     margin: 0 auto;
     margin-top: 40vh;
-    border: 1px solid var(--text);
+    border: 1px dotted var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+  }
+
+  .text-scroller-receita {
+
+    margin-top: -100vh;
+
+  }
+
+  .scroller-receita-step[data-step="0"] { 
+
+    margin-top: 0;
+
+  }
+
+  .scroller-step-inner {
+
+    border: 2px solid currentColor;
+    box-shadow: 4px 4px gray;
+    padding: 1em;
 
   }
