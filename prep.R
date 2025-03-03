@@ -186,7 +186,7 @@ cards_targets <- links %>%
 # dados para scroller da receita ------------------------------------------
 
 rec_scroller <- rec %>%
-  group_by(across(-c(desdobramento_cod, desdobramento, cod_des, fte_cod, fte, valor_rec))) %>%
+  group_by(across(-c(especie, especie_cod, cod_esp, desdobramento_cod, desdobramento, cod_des, fte_cod, fte, valor_rec))) %>%
   summarise(valor_rec = sum(valor_rec)) %>%
   ungroup()
 
@@ -203,12 +203,14 @@ rec_stack <- rec_scroller
 #     #ungroup()
 # }
 
+ordem_receitas <- c("Impostos", "Receitas do RGPS", "Contribuições sociais (exceto RGPS) e econômicas",  "Exploração de Petróleo e outros recursos naturais", "Juros e remunerações recebidas", "Emissões de Dívida", "Outras receitas financeiras", "Demais receitas")
+
 rec_stack <- rec_stack %>%
-  arrange(cod_esp) %>%
-  mutate(valor_ac = cumsum(valor_rec) - valor_rec) %>%
   mutate(cod_orig = paste0(categoria_cod, origem_cod)) %>%
-  mutate(across(c(categoria_cod, cod_orig, cod_esp, receita), 
-                ~ match(.x, unique(.x)) - 1, .names = "gap_{.col}"))
+  mutate(valor_ac = cumsum(valor_rec) - valor_rec) %>%
+  mutate(across(c(categoria_cod, cod_orig), 
+                ~ match(.x, unique(.x)) - 1, .names = "gap_{.col}")) %>%
+  mutate(gap_receita = match(receita, ordem_receitas) - 1)
 
 ggplot(rec_stack) + geom_segment(aes(y = origem, yend = origem,
                                         x = valor_ac + gap_cod_orig * 1000, xend = valor_ac + gap_cod_orig * 1000 + valor_rec, color = categoria_cod)) +

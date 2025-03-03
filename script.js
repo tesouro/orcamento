@@ -55,6 +55,8 @@ function begin(file) {
     vis.interaction();
 
     const chartReceita = new ChartReceita(".mini-chart-receita", file["rec_stack"], 600);
+
+    // aqui passo as funções específicas para controlar o que acontece em cada step
     const scrollerReceita = new Scroller(
 
         ".scroller-receita-step", 
@@ -66,20 +68,23 @@ function begin(file) {
             },
     
             "1": function(dir) {
-                //console.log("Step 1");
-                //d3.select(".mini-vis-rec").attr("fill", "red");
+
                 chartReceita.plot_step1();
     
             },
     
             "2": function() {
-                //console.log("Step 2");
+
                 chartReceita.plot_step2();
             },
     
             "3": function() {
-                //console.log("Step 3");
-                d3.select(".mini-vis-rec").attr("fill", "blue");
+
+                chartReceita.plot_step3();
+            },
+
+            "4": function() {
+                console.log("Fim");
             }
         });
 
@@ -405,11 +410,14 @@ class ChartReceita {
 
     constructor(selector, data, h) {
 
-        this.gap = 10;
+        this.gap = 20;
 
         this.el = d3.select(selector);
 
-        this.H = +this.el.style("height").slice(0,-2) - 100;
+        const numero_origens = d3.max(data, d => +d.gap_cod_orig);
+        console.log(numero_origens);
+
+        this.H = +this.el.style("height").slice(0,-2) - this.gap * numero_origens;
         console.log(this.H);
 
         this.total = d3.sum(data, d => d.valor_rec);
@@ -434,7 +442,7 @@ class ChartReceita {
 
         this.rects
             .transition()
-            .duration(1000)
+            .duration(500)
             .attr("y", d => this.h(d.valor_ac))
         ;
 
@@ -445,7 +453,7 @@ class ChartReceita {
 
         this.rects
             .transition()
-            .duration(1000)
+            .duration(500)
             .attr("y", d => this.h(d.valor_ac) + d.gap_categoria_cod * this.gap)
         ;
 
@@ -455,8 +463,20 @@ class ChartReceita {
 
         this.rects
             .transition()
-            .duration(1000)
+            .duration(500)
             .attr("y", d => this.h(d.valor_ac) + d.gap_cod_orig * this.gap)
+            .attr("x", 100)
+        ;
+
+    }
+
+    plot_step3() {
+
+        this.rects
+            .transition()
+            .duration(500)
+            .attr("y", d => this.h(d.valor_ac) + d.gap_receita * this.gap)
+            .attr("x", 140)
         ;
 
     }
