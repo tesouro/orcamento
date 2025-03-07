@@ -192,7 +192,8 @@ rec_scroller <- rec %>%
 
 variaveis_de_interesse <- c("categoria_cod", "especie_cod", "origem_cod", "receita")
 
-rec_stack <- rec_scroller
+rec_stack <- rec_scroller %>%
+  mutate(across(c(categoria, origem), ~str_replace(.x, "-INTRA", "")))
 
 # for (var in variaveis_de_interesse) {
 #   quo_var <- sym(var) # transforma "var", que é string, num símbolo
@@ -212,9 +213,32 @@ rec_stack <- rec_stack %>%
                 ~ match(.x, unique(.x)) - 1, .names = "gap_{.col}")) %>%
   mutate(gap_receita = match(receita, ordem_receitas) - 1)
 
+# só para testar
 ggplot(rec_stack) + geom_segment(aes(y = origem, yend = origem,
                                         x = valor_ac + gap_cod_orig * 1000, xend = valor_ac + gap_cod_orig * 1000 + valor_rec, color = categoria_cod)) +
   theme(legend.position = "none")
+
+
+# rotulos
+
+rotulos_stack <- list()
+
+rotulos_stack$categoria <- rec_stack %>%
+  group_by(categoria) %>%
+  summarise(valor = sum(valor_rec)) %>%
+  ungroup() %>%
+  mutate(
+    valor_ac = cumsum(valor) - valor,
+    gap = row_number() -1)
+
+rotulos_stack$origem <- rec_stack %>%
+  group_by(origem, cod_orig) %>%
+  summarise(valor = sum(valor_rec)) %>%
+  ungroup() %>%
+  arrange(cod_orig) %>%
+  mutate(
+    valor_ac = cumsum(valor) - valor,
+    gap = row_number() -1)
 
 output <- list(
   links = links,
