@@ -21,8 +21,8 @@ const DIMS = {
     MARGINS : {
 
         TOP: 10,
-        LEFT: W < W_cutoff ? 100 : 200,
-        RIGHT: W < W_cutoff  ? 100 : 200,
+        LEFT: W < W_cutoff ? 100 : 180,
+        RIGHT: W < W_cutoff  ? 100 : 180,
         BOTTOM: 20
 
     }
@@ -103,6 +103,7 @@ class SankeyVis {
             .extent([
                 [DIMS.MARGINS.LEFT, DIMS.MARGINS.RIGHT], 
                 [W - DIMS.MARGINS.RIGHT, H - DIMS.MARGINS.BOTTOM]])
+            .iterations(10)
             //
             // .nodeSort((a, b) => order.indexOf(a.rotulo) - order.indexOf(b.rotulo));
         ;
