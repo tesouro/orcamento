@@ -8,7 +8,7 @@ let win_w = svg_.style("width").slice(0,-2); //window.innerWidth;
 
 const H = 2000;
 const W = win_w;
-const W_cutoff = 500;
+const W_cutoff = 600;
 
 // ordenar
 
@@ -44,6 +44,8 @@ d3.json(DATA)
     file => begin(file)
 );
 
+let b;
+
 function begin(file) {
 
     console.log(file);
@@ -53,6 +55,15 @@ function begin(file) {
     vis = new SankeyVis(file, svg_, container_);
     vis.plot();
     vis.interaction();
+
+    // para corrigir a curvatura do path
+    const link = vis.data.links.filter(d => d.source.rotulos == "Emissões de Dívida" && d.target.rotulos == "Amortização da Dívida")[0];
+    const node_emissoes = vis.data.nodes.filter(d => d.rotulos == "Emissões de Dívida")[0];
+    const node_amortizacao = vis.data.nodes.filter(d => d.rotulos == "Amortização da Dívida")[0];
+
+    const path_link_problematico = document.querySelector('[data-source="Emissões de Dívida"][data-target="Amortização da Dívida"] path ');
+
+    path_link_problematico.setAttribute("d", `M${node_emissoes.x1},${link.y0} L${node_amortizacao.x0},${link.y1}`);
 
 }
 

@@ -14,11 +14,11 @@
 
     --cor1: #FFA100;
     --cor2: #9500FF;
-    --cor3: #0A00FF;
+    --cor3: /*#0A00FF;*/ dodgerblue;
     --cor4: #AA9739;
     --cor5: #7C9C32;
     --cor6: #9C4132;
-    --cor7: #9C3267;
+    --cor7: /*#9C3267;*/ firebrick;
     --cor8: #2E472E;
     --cor9: #009490;
     --cor10: #947B00;
@@ -61,7 +61,8 @@ svg.sankey {
 
 .vis {
     position: relative;
-    max-width: 900px;
+    max-width: 1000px;
+    min-width: 600px;
     margin: 0 auto;
     margin-bottom: 3rem;
 }
@@ -187,7 +188,7 @@ table td.item-valor {
 
 body {
     padding: 0;
-    margin: 0;
+    /*margin: 0;*/
 }
 
 header.logo {
