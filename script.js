@@ -459,8 +459,8 @@ class Abertura {
         this.side = 10;
         this.gap = 1;
 
-        this.ni = Math.floor(this.w / (this.side + this.gap));
-        this.nj = Math.floor(this.h / (this.side + this.gap));  
+        this.ni = Math.ceil(this.w / (this.side + this.gap));
+        this.nj = Math.ceil(this.h / (this.side + this.gap));  
 
         this.n = this.ni * this.nj;
 
@@ -474,7 +474,7 @@ class Abertura {
                 const x = i * (this.side + this.gap);
                 const y = j * (this.side + this.gap);
 
-                //const idx = i + j * this.ni;
+                const idx = i + j * this.ni;
 
                 //const value = this.data[idx];
 
