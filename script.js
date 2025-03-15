@@ -56,7 +56,10 @@ function begin(file) {
     vis.plot();
     vis.interaction();
 
-    // para corrigir a curvatura do path
+    //const treemap = new TreeMapVis(file.nodes, ".treemap-opening");
+    //treemap.plot();
+
+    // tudo isso aqui para corrigir a curvatura do path
     const link = vis.data.links.filter(d => d.source.rotulos == "Emissões de Dívida" && d.target.rotulos == "Amortização da Dívida")[0];
     const node_emissoes = vis.data.nodes.filter(d => d.rotulos == "Emissões de Dívida")[0];
     const node_amortizacao = vis.data.nodes.filter(d => d.rotulos == "Amortização da Dívida")[0];
@@ -249,14 +252,14 @@ class SankeyVis {
         const rotulo = d.rotulos;
         const tipo = d.tipo;
 
-        console.log(rotulo, tipo);
+        //console.log(rotulo, tipo);
 
         const keyword = tipo == "receita" ? "source" : "target";
         const antikeyword = tipo == "receita" ? "target" : "source";
 
         const minidata = self.file[`cards_${keyword}s`].filter(d => d[keyword] == rotulo);
 
-        console.log(minidata);
+        //console.log(minidata);
 
 
         const {x0, y0} = d;
@@ -329,19 +332,157 @@ class SankeyVis {
 
     highlight_links(e, d, self) {
 
-        console.log("Fired")
-
         const rotulo = d.rotulos;
         const tipo = d.tipo;
-
-        console.log(rotulo, tipo);
 
         const keyword = tipo == "receita" ? "source" : "target";
         const antikeyword = tipo == "receita" ? "target" : "source";
 
         d3.selectAll(`.links[data-${keyword}='${rotulo}']`).style("opacity", 1).classed("links-ativo", true);//.attr("stroke", "url(#strokeGradient)");
 
-        console.log(`.links[data-${keyword}='${rotulo}']`);
+    }
+
+}
+
+class TreeMapVis {
+    
+    constructor(file, svg_ref) {
+
+        this.file = file;
+        this.svg_ref = svg_ref;
+        this.data = file.filter(d => d.tipo == "despesa").map(d => {
+            return ({
+                "name": d.rotulos,
+                "value": d.value
+            })
+        })
+
+    }
+
+    plot() {
+
+        const data = {
+            name: "Root",
+            children: [...this.data]
+        };
+
+        const svg = d3.select(this.svg_ref);
+        const width = +svg.style("width").slice(0,-2);
+        const height = +svg.style("height").slice(0, -2);
+        console.log(width, height);
+        
+        const root = d3.hierarchy(data)
+            .sum(d => d.value)
+            .sort((a, b) => b.value - a.value);
+
+        console.log(data, root)
+
+        const treemap = d3.treemap()
+            .size([width, height])
+            .padding(4)(root);
+
+        const color = d3.scaleOrdinal(d3.schemeCategory10);
+
+        const nodes = svg.selectAll("g")
+            .data(root.leaves())
+            .enter().append("g")
+            .attr("transform", d => `translate(${d.x0},${d.y0})`);
+
+        nodes.append("rect")
+            .attr("class", "node-treemap")
+            .attr("width", d => d.x1 - d.x0)
+            .attr("height", d => d.y1 - d.y0)
+            //.attr("fill", "url(#imgPattern)");
+            .attr("fill", (d, i) => color(i));
+
+        nodes.append("text")
+            .attr("x", d => (d.x1 - d.x0) / 2)
+            .attr("y", d => (d.y1 - d.y0) / 2)
+            .text(d => d.data.name);
+
+        /*
+        const treemap = d3.treemap()
+            .tile(d3.treemapSquarify)
+            .size([W, H])
+            .paddingInner(1)
+            .paddingOuter(1)
+            .paddingTop(1)
+            .paddingRight(1)
+            .paddingBottom(1)
+            .paddingLeft(1)
+        ;
+
+        const root = d3.hierarchy(this.file)
+            .sum(d => d.value)
+            .sort((a,b) => b.value - a.value)
+        ;
+
+        treemap(root);
+
+        const cell = this.visContainer
+            .selectAll("g")
+            .data(root.leaves())
+            .join("g")
+            .attr("transform", d => `translate(${d.x0},${d.y0})`)
+        ;
+
+        cell.append("rect")
+            .attr("fill", d => d.data.color)
+            .attr("width", d => d.x1 - d.x0)
+            .attr("height", d => d.y1 - d.y0)
+        ;
+
+        cell.append("text")
+            .attr("x", 3)
+            .attr("y", 12)
+            .text(d => d.data.name)
+        ;
+        */
+
+    }
+}
+
+class Abertura {
+
+    constructor(canvas, data) {
+
+        this.cv = document.querySelector(canvas);
+        this.ctx = this.cv.getContext("2d");
+        this.data = data;
+
+        this.w = window.getComputedStyle(this.cv).width.slice(0,-2);
+        this.h = window.getComputedStyle(this.cv).height.slice(0,-2);
+
+        this.cv.width = this.w;
+        this.cv.height = this.h;
+
+        this.side = 10;
+        this.gap = 1;
+
+        this.ni = Math.floor(this.w / (this.side + this.gap));
+        this.nj = Math.floor(this.h / (this.side + this.gap));  
+
+        this.n = this.ni * this.nj;
+
+    }
+
+    plot() {
+
+        for (let i = 0; i < this.ni; i++) {
+            for (let j = 0; j < this.nj; j++) {
+
+                const x = i * (this.side + this.gap);
+                const y = j * (this.side + this.gap);
+
+                //const idx = i + j * this.ni;
+
+                //const value = this.data[idx];
+
+                this.ctx.fillStyle = "tomato";
+                this.ctx.fillRect(x, y, this.side, this.side);
+
+            }
+        }
 
     }
 
