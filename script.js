@@ -456,7 +456,7 @@ class Abertura {
         this.cv.width = this.w;
         this.cv.height = this.h;
 
-        this.side = 10;
+        this.side = 100;
         this.gap = 1;
 
         this.ni = Math.ceil(this.w / (this.side + this.gap));
@@ -468,20 +468,37 @@ class Abertura {
 
     plot() {
 
-        for (let i = 0; i < this.ni; i++) {
-            for (let j = 0; j < this.nj; j++) {
+        for (let k = 0; k < this.n; k++) {
 
-                const x = i * (this.side + this.gap);
-                const y = j * (this.side + this.gap);
+            const j = k % this.nj;
+            const i = Math.floor(k / this.nj);
 
-                const idx = i + j * this.ni;
+            const sentido = i % 2 == 0 ? "crescente" : "decrescente";
 
-                //const value = this.data[idx];
+            let x, y;
 
-                this.ctx.fillStyle = "tomato";
-                this.ctx.fillRect(x, y, this.side, this.side);
+            if (sentido == "decrescente") {
+
+                y = (this.nj - j - 1) * (this.side + this.gap);
+
+            } else {
+
+                y = j * (this.side + this.gap);
 
             }
+
+            x = i * (this.side + this.gap);
+
+            //const value = this.data[idx];
+
+            this.ctx.fillStyle = "black";
+            this.ctx.strokeStyle = "black";
+            this.ctx.strokeRect(x, y, this.side, this.side);
+            this.ctx.font = "16px Arial";
+            this.ctx.textAlign = "center";
+            this.ctx.textBaseline = "middle";
+            this.ctx.fillText(k, x + this.side/2, y + this.side/2);
+
         }
 
     }
