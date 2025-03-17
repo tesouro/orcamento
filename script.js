@@ -543,6 +543,43 @@ class BubbleChart {
         ;
     }
 
+    plot() {
+
+        this.scaleR = d3.scaleSqrt()
+            .domain(d3.extent(this.data, d => d.vlr))
+            .range([2, 50])
+        ;
+
+        this.simulation = d3.forceSimulation(this.data)
+            .force("charge", d3.forceManyBody().strength(5))
+            .force("collision", d3.forceCollide().radius(d => this.scaleR(d.vlr) + 0))
+            .on("tick", ticked);
+
+        const nodes = this.svg.selectAll("circle")
+            .data(this.data)
+            .join("circle")
+            .attr("r", d => this.scaleR(d.vlr))
+            .attr("cx", 0)
+            .attr("cy", 0)
+            .attr("fill", (d,i) => d3.schemeCategory10[i % 10])
+        ;
+
+        this.simulation.force("x", d3.forceX(this.W / 2).strength(0.05));
+        this.simulation.force("y", d3.forceY(this.H / 2).strength(0.05));
+
+        this.simulation.alpha(1).restart();
+
+        function ticked() {
+            nodes.attr("transform", d => `translate(${d.x},${d.y})`);
+        }
+
+        
+
+
+
+
+    }
+
 }
 
 class Abertura {
