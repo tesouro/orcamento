@@ -302,6 +302,18 @@ header img.logo-tt {
 
   }
 
+  div.wrapper-chart-metodologia {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  svg.chart-metodologia {
+    width: 100%;
+    height: 500px;
+    max-height: 90vh;
+  }
+
   .txt-receita { background-color: var(--amarelo-tesouro); }
   .txt-despesa { background-color: var(--verde-tesouro); }
 

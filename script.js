@@ -56,6 +56,10 @@ function begin(file) {
     vis.plot();
     vis.interaction();
 
+    // bubble chart
+
+    b = new BubbleChart("svg.chart-metodologia", ".wrapper-chart-metodologia", file.desp_fun);
+
     //const treemap = new TreeMapVis(file.nodes, ".treemap-opening");
     //treemap.plot();
 
@@ -440,6 +444,105 @@ class TreeMapVis {
         */
 
     }
+}
+
+class BubbleChart {
+
+    constructor(svg, cont, data) {
+
+        this.data = data;
+        this.svg = d3.select(svg);
+        this.cont = d3.select(cont);
+
+        this.W = this.svg.style("width").slice(0,-2);
+        this.H = this.svg.style("height").slice(0,-2);
+
+        this.margin = 0.05;
+
+        this.svg.attr("viewBox", `0 0 ${this.W} ${this.H}`);
+        this.svg.attr("height", this.H);
+        this.svg.attr("width", this.W);
+
+        const variables = ["desp", "gnd", "fun"];
+
+        this.domains = {}
+
+        variables.forEach(variable => {
+
+            this.domains[variable] = this.data.map(d => d[variable]).filter((v, i, a) => a.indexOf(v) === i);
+
+        });
+
+        // POSITIONS!!!
+
+        this.positions = {}
+
+        // criar variaveis para as proporcoes, e so muda-las quando mudar o tamanho da tela
+
+        console.log("aqui");
+
+        // posicoes funcoes
+
+        this.positions.fun = [];
+        
+        const width_fun = Math.floor(this.W * (1 - this.margin * 2) / 7);
+        const height_fun = Math.floor(this.H * (1 - this.margin * 2) / 4);
+
+        for (let i = 0; i < 28; i++) {
+
+            this.positions.fun[i] = {
+                x : ( i % 7 ) * width_fun + this.W * this.margin + width_fun * 0.5,
+                y : Math.floor(i / 7) * height_fun + this.H * this.margin + height_fun * 0.5
+            }
+
+        }
+
+        // posicoes gnd
+
+        this.positions.gnd = [];
+        
+        const width_gnd = Math.floor(this.W * (1 - this.margin * 2) / 3);
+        const height_gnd = Math.floor(this.H * (1 - this.margin * 2) / 3);
+
+        for (let i = 0; i < 6; i++) {
+
+            this.positions.gnd[i] = {
+                x : ( i % 3 ) * width_gnd + this.W * this.margin + width_gnd * 0.5,
+                y : Math.floor(i / 3) * height_gnd + this.H * this.margin + height_gnd * 0.5
+            }
+
+        }
+
+        this.positions.gnd[6] = { x: this.W * 0.5, y: 3 * height_gnd + this.H * 0.05 };
+
+        // posicoes desp
+
+        this.positions.desp = [];
+
+        const width_desp = Math.floor(this.W * (1 - this.margin * 2) / 4);
+        const height_desp = Math.floor(this.H * (1 - this.margin * 2) / 3);
+
+        for (let i = 0; i <= 11; i++) {
+
+            this.positions.desp[i] = {
+                x : ( i % 4 ) * width_desp + this.W * this.margin + width_desp * 0.5,
+                y : Math.floor(i / 4) * height_desp + this.H * this.margin + height_desp * 0.5
+            }
+
+        }
+
+    }
+
+    plot_positions(variable, color) {
+
+        this.svg.selectAll("circle").data(this.positions[variable]).join("circle")
+            .attr("cx", d => d.x)
+            .attr("cy", d => d.y)
+            .attr("r", 5)
+            .attr("fill", color)
+        ;
+    }
+
 }
 
 class Abertura {
