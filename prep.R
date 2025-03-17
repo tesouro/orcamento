@@ -185,15 +185,15 @@ cards_targets <- links %>%
 
 # dados para scroller da receita ------------------------------------------
 
-rec_scroller <- rec %>%
-  group_by(across(-c(especie, especie_cod, cod_esp, desdobramento_cod, desdobramento, cod_des, fte_cod, fte, valor_rec))) %>%
-  summarise(valor_rec = sum(valor_rec)) %>%
-  ungroup()
-
-variaveis_de_interesse <- c("categoria_cod", "especie_cod", "origem_cod", "receita")
-
-rec_stack <- rec_scroller %>%
-  mutate(across(c(categoria, origem), ~str_replace(.x, "-INTRA", "")))
+# rec_scroller <- rec %>%
+#   group_by(across(-c(especie, especie_cod, cod_esp, desdobramento_cod, desdobramento, cod_des, fte_cod, fte, valor_rec))) %>%
+#   summarise(valor_rec = sum(valor_rec)) %>%
+#   ungroup()
+# 
+# variaveis_de_interesse <- c("categoria_cod", "especie_cod", "origem_cod", "receita")
+# 
+# rec_stack <- rec_scroller %>%
+#   mutate(across(c(categoria, origem), ~str_replace(.x, "-INTRA", "")))
 
 # for (var in variaveis_de_interesse) {
 #   quo_var <- sym(var) # transforma "var", que é string, num símbolo
@@ -204,48 +204,66 @@ rec_stack <- rec_scroller %>%
 #     #ungroup()
 # }
 
-ordem_receitas <- c("Impostos", "Receitas do RGPS", "Contribuições sociais (exceto RGPS) e econômicas",  "Exploração de Petróleo e outros recursos naturais", "Juros e remunerações recebidas", "Emissões de Dívida", "Outras receitas financeiras", "Demais receitas")
-
-rec_stack <- rec_stack %>%
-  mutate(cod_orig = paste0(categoria_cod, origem_cod)) %>%
-  mutate(valor_ac = cumsum(valor_rec) - valor_rec) %>%
-  mutate(across(c(categoria_cod, cod_orig), 
-                ~ match(.x, unique(.x)) - 1, .names = "gap_{.col}")) %>%
-  mutate(gap_receita = match(receita, ordem_receitas) - 1)
-
-# só para testar
-ggplot(rec_stack) + geom_segment(aes(y = origem, yend = origem,
-                                        x = valor_ac + gap_cod_orig * 1000, xend = valor_ac + gap_cod_orig * 1000 + valor_rec, color = categoria_cod)) +
-  theme(legend.position = "none")
+# ordem_receitas <- c("Impostos", "Receitas do RGPS", "Contribuições sociais (exceto RGPS) e econômicas",  "Exploração de Petróleo e outros recursos naturais", "Juros e remunerações recebidas", "Emissões de Dívida", "Outras receitas financeiras", "Demais receitas")
+# 
+# rec_stack <- rec_stack %>%
+#   mutate(cod_orig = paste0(categoria_cod, origem_cod)) %>%
+#   mutate(valor_ac = cumsum(valor_rec) - valor_rec) %>%
+#   mutate(across(c(categoria_cod, cod_orig), 
+#                 ~ match(.x, unique(.x)) - 1, .names = "gap_{.col}")) %>%
+#   mutate(gap_receita = match(receita, ordem_receitas) - 1)
+# 
+# # só para testar
+# ggplot(rec_stack) + geom_segment(aes(y = origem, yend = origem,
+#                                         x = valor_ac + gap_cod_orig * 1000, xend = valor_ac + gap_cod_orig * 1000 + valor_rec, color = categoria_cod)) +
+#   theme(legend.position = "none")
 
 
 # rotulos
 
-rotulos_stack <- list()
+# rotulos_stack <- list()
+# 
+# rotulos_stack$categoria <- rec_stack %>%
+#   group_by(categoria) %>%
+#   summarise(valor = sum(valor_rec)) %>%
+#   ungroup() %>%
+#   mutate(
+#     valor_ac = cumsum(valor) - valor,
+#     gap = row_number() -1)
+# 
+# rotulos_stack$origem <- rec_stack %>%
+#   group_by(origem, cod_orig) %>%
+#   summarise(valor = sum(valor_rec)) %>%
+#   ungroup() %>%
+#   arrange(cod_orig) %>%
+#   mutate(
+#     valor_ac = cumsum(valor) - valor,
+#     gap = row_number() -1)
 
-rotulos_stack$categoria <- rec_stack %>%
-  group_by(categoria) %>%
-  summarise(valor = sum(valor_rec)) %>%
-  ungroup() %>%
-  mutate(
-    valor_ac = cumsum(valor) - valor,
-    gap = row_number() -1)
 
-rotulos_stack$origem <- rec_stack %>%
-  group_by(origem, cod_orig) %>%
-  summarise(valor = sum(valor_rec)) %>%
-  ungroup() %>%
-  arrange(cod_orig) %>%
-  mutate(
-    valor_ac = cumsum(valor) - valor,
-    gap = row_number() -1)
+
+# Despesas por Função e GND -----------------------------------------------
+
+desp_fun_gnd_raw <- read_excel("./dados/desp-gnd-fun.xlsx", skip = 10) 
+
+desp_fun_gnd <- desp_fun_gnd_raw %>%
+  mutate(gnd = paste(`Grupo Despesa Código Grupo`, `Grupo Despesa Nome`),
+         fun = paste(`Função Governo Código`, `Função Governo Nome`),
+         vlr = as.numeric(`Saldo - R$ (Item Informação)`)) %>%
+  select(desp = `Sankey - Estrutura de Despesas - proxy Mansueto_v3`, gnd, fun, vlr)
+
+
+# Output -----------------------------------------------------------------
+
+
 
 output <- list(
   links = links,
   nodes = nodes,
   cards_sources = cards_sources,
   cards_targets = cards_targets,
-  rec_stack = rec_stack
+  desp_fun = desp_fun_gnd
+  #rec_stack = rec_stack
 )
 
 jsonlite::write_json(output, "output.json")
