@@ -298,6 +298,7 @@ header img.logo-tt {
   .metodologia {
     margin: 3em auto;
     max-width: 620px;
+    padding-bottom: 2rem;
 
   }
 
@@ -313,6 +314,11 @@ header img.logo-tt {
   figure figcaption {
     font-size: .8em;
     text-align: center;
+  }
+
+  h4 {
+    border-top: 1px solid currentColor;
+    border-bottom: 1px solid currentColor;
   }
 
 /* canvas */

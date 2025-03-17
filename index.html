@@ -108,12 +108,154 @@
                     <figcaption>Estrutura da natureza de receita, conforme o <cite><a href="https://www1.siop.planejamento.gov.br/mto/lib/exe/fetch.php/mto2025:mto2025.pdf">Manual Técnico de Orçamento 2025</a></cite>.</figcaption>
                 </figure>
 
-                <p>As categorias de receitas e despesas foram agrupadas de acordo com a classificação orçamentária adotada no Brasil, que é baseada na classificação funcional programática, que organiza as ações governamentais em programas de governo, e na classificação por natureza da receita e da despesa, que organiza as receitas e despesas em categorias econômicas, tais como receitas correntes e despesas correntes, receitas de capital e despesas de capital.</p>
+                <p>Considerando essa estrutura, agrupamos as receitas de acordo com a classificação da tabela abaixo:</p>
 
                 <figure>
                     <img src="metod-receita.png" alt="Tabela com a classificação utilizada para as receitas">
                     <figcaption>Estrutura da natureza de receita, conforme o <cite><a href="https://www1.siop.planejamento.gov.br/mto/lib/exe/fetch.php/mto2025:mto2025.pdf">Manual Técnico de Orçamento 2025</a></cite>.</figcaption>
                 </figure>
+
+                <p>Uma segunda classificação, a classificação por “fonte/destinação” dos recursos, procura agrupar e direcionar os recursos de acordo com as aplicações previstas na legislação (por exemplo, 18% da receita de impostos deve ser aplicada em Educação, os recursos das contribuições do INSS devem ser aplicados no pagamento de benefícios previdenciários etc.)</p>
+
+                <p>Como explica o <cite><a href="https://www1.siop.planejamento.gov.br/mto/lib/exe/fetch.php/mto2025:mto2025.pdf">Manual Técnico de Orçamento 2025</a></cite>, da Secretaria de Orçamento Federal:</p>
+
+                <blockquote cite="https://www1.siop.planejamento.gov.br/mto/lib/exe/fetch.php/mto2025:mto2025.pdf">
+                    A fonte/destinação, nesse contexto, é instrumento de gestão da receita e da despesa ao mesmo tempo, pois tem como objetivo assegurar que determinadas receitas sejam direcionadas para financiar projetos e atividades (despesas) do governo em conformidade com leis que regem o tema.
+                </blockquote>
+
+                <p>Ou seja, as receitas orçamentárias arrecadadas são distribuídas em fontes de recursos, e os recursos das fontes de recursos são alocados às despesas orçamentárias.</p>
+
+                <p>Assim, embora não seja possível afirmar categoricamente que um determinado real pago por um cidadão a título de imposto de renda foi com certeza utilizado no pagamento de uma determinada despesa, sabemos os percentuais dos recursos arrecadados que foram destinados a cada fonte, e sabemos os percentuais dessas fontes que foram destinadas a cada uma das despesas.</p>
+
+                <p>Dessa forma, analisando essas distribuições e calculando esses percentuais, podemos estimar então os percentuais de cada receita que foram destinados a cada despesa. É o que fizemos nessa visualização.</p>
+
+                <p>Os valores utilizados são aqueles da Lei Orçamentária Anual de 2025 (finalmente!).</p>
+
+                <h3>Despesas</h3>
+
+                    <p>Para as despesas, foi adotada uma classificação inspirada naquela utilizada no capítulo “Estrutura do Gasto Público no Brasil”, de autoria de Mansueto Almeida, do livro “A Reforma Esquecida”, acrescentando-se as despesas da dívida pública e as transferências a estados e municípios.</p>
+
+                    <p>Essa classificação busca integrar duas das principais classificações da despesa pública: a classificação econômica e a classificação funcional.</p>
+
+                    <p>A classificação econômica reparte as despesas nas seguintes categorias (“grupos de despesa”, mais precisamente):</p>
+
+                    <ul>
+                        <li>Pessoal e Encargos Sociais (que inclui as despesas previdenciárias dos servidores, ou seja, despesas com inativos e pensionistas);</li>
+                        <li>Juros e Encargos da Dívida;</li>
+                        <li>Outras despesas correntes (que acaba englobando uma miríade de despesas: desde despesas como os benefícios previdenciários do regime geral de previdência social, até despesas de manutenção como água, energia, compras de material de consumo, passando ainda por despesas como benefícios assistenciais, tais como o Bolsa-Família e o Seguro-Desemprego, além de transferências constitucionais a estados, municípios e Distrito Federal etc.).</li>
+                        <li>Investimentos;</li>
+                        <li>Inversões Financeiras (uma outra forma de investimento, muitas vezes na forma de concessão de empréstimos e financiamentos, tais como os financiamentos do FIES); e</li>
+                        <li>Amortização do Principal da Dívida Pública.</li>
+                    </ul>
+
+                    <p>A classificação funcional, por sua vez, reparte as despesas conforme as diversas área de atuação do governo: educação, saúde, defesa nacional, segurança pública etc. (são 28 “funções de governo”, ao todo).</p>
+
+                    <p>Assim, a classificação originalmente adotada no artigo citado, e adaptada para este trabalho, estabelece um recorte das despesas públicas misturando um pouco os dois conceitos, separando as despesas do grupo de despesa “Outras Despesas Correntes” (muitas vezes chamadas de “custeio”) em:</p>
+
+                    <ul>
+                        <li>Benefícios Previdenciários;</li>
+                        <li>Custeio da Saúde (ou seja, despesas relativas a “Outras Despesas Correntes” ocorridas na área de Saúde, incluindo transferências a estados e municípios classificadas nessa função - as transferências referentes ao SUS, por exemplo);</li>
+                        <li>Custeio da Educação (inclui transferências do FNDE);</li>
+                        <li>Custeio Social (da assistência social);</li>
+                        <li>Custeio Administrativo (demais custeios nas outras áreas de atuação do governo, com exceção de transferências); e</li>
+                        <li>Outras transferências a Estados e Municípios (as transferências a estados e municípios classificadas em outras áreas que não as áreas destacadas – Educação, Saúde e Assistência Social).</li>
+                    </ul>
+
+                    <p>Na prática, os critérios técnicos adotados para as despesas foram os seguintes:</p>
+
+                    <h4>Pessoal Ativo</h4>
+
+                    <ul>
+                        <li><strong>Grupo de Despesa</strong>: 1 &mdash; Pessoal e Encargos Sociais;</li>
+
+                        <li><strong>Ações orçamentárias</strong>: todas, <em>exceto</em> 214H &mdash; Inativos Militares da União; 0179 &mdash; Pensões Militares da União; 0181 &mdash; Aposentadorias e Pensões Civis da União; 21BW &mdash; Bônus de Eficiência e Produtividade de Servidores Inativos; 00S6 &mdash; Benefício Especial - Lei n. 12.618, de 2012; 00UX &mdash; Demais Aposentadorias e Complementações.</li>
+                    </ul>
+
+                    <h4>Pessoal Inativo</h4>
+
+                    <ul>
+                        <li><strong>Grupo de Despesa</strong>: 1 &mdash; Pessoal e Encargos Sociais;</li>
+
+                        <li><strong>Ações orçamentárias</strong>: 214H &mdash; Inativos Militares da União; 0179 &mdash; Pensões Militares da União; 0181 &mdash; Aposentadorias e Pensões Civis da União; 21BW &mdash; Bônus de Eficiência e Produtividade de Servidores Inativos; 00S6 &mdash; Benefício Especial - Lei n. 12.618, de 2012; 00UX &mdash; Demais Aposentadorias e Complementações.</li>
+                    </ul>
+
+                    <h4>Custeio da Saúde</h4>
+
+                    <ul>
+                        <li><strong>Grupo de Despesa</strong>: 3 &mdash; Outras Despesas Correntes;</li>
+
+                        <li><strong>Função orçamentária</strong>: 10 &mdash; Saúde.</li>
+                    </ul>
+
+                    <h4>Custeio da Educação</h4>
+
+                    <ul>
+                        <li><strong>Grupo de Despesa</strong>: 3 &mdash; Outras Despesas Correntes;</li>
+
+                        <li><strong>Função orçamentária</strong>: 12 &mdash; Educação.</li>
+                    </ul>
+
+                    <h4>Custeio Social</h4>
+
+                    <ul>
+                        <li><strong>Grupo de Despesa</strong>: 3 &mdash; Outras Despesas Correntes;</li>
+
+                        <li><strong>Funções orçamentárias</strong>: 08 &mdash; Assistência Social; 11 &mdash; Trabalho.</li>
+                    </ul>
+
+                    <h4>Custeio Administrativo</h4>
+
+                    <ul>
+                        <li><strong>Grupo de Despesa</strong>: 3 &mdash; Outras Despesas Correntes;</li>
+
+                        <li><strong>Função orçamentária</strong>: todas <em>exceto</em> 08 &mdash; Assistência Social; 10 &mdash; Saúde; 11 &mdash; Trabalho; 12 &mdash; Educação.</li>
+
+                        <li><strong>Modalidades de Aplicação</strong>: todas, <em>exceto</em> 30 &mdash; Transferências a Estados e ao Distrito Federal; e 40 &mdash; Transferências a Municípios (e demais códigos entre 30 e 49).</li>
+
+                    </ul>
+
+                    <h4>Outras transferências</h4>
+
+                    <ul>
+                        <li><strong>Grupo de Despesa</strong>: 3 &mdash; Outras Despesas Correntes;</li>
+
+                        <li><strong>Função orçamentária</strong>: todas <em>exceto</em> 08 &mdash; Assistência Social; 10 &mdash; Saúde; 11 &mdash; Trabalho; 12 &mdash; Educação.</li>
+
+                        <li><strong>Modalidades de Aplicação</strong>: 30 &mdash; Transferências a Estados e ao Distrito Federal; e 40 &mdash; Transferências a Municípios (e demais códigos entre 30 e 49).</li>
+                    </ul>
+
+                    <h4>Benefícios Previdenciários do RGPS (Regime Geral de Previdência Social)</h4>
+
+                    <ul>
+                        <li><strong>Grupo de Despesa</strong>: 3 &mdash; Outras Despesas Correntes;</li>
+
+                        <li><strong>Unidade orçamentária</strong>: 33904 &mdash; Fundo do Regime Geral de Previdência Social.</li>
+                    </ul>
+
+                    <h4>Investimentos</h4>
+                    <ul>
+                        <li><strong>Grupos de Despesa</strong>: 4 &mdash; Investimentos e 5 &mdash; Inversões Financeiras.</li>
+                    </ul>
+
+                    <h4>Juros</h4>
+                    <ul>
+                        <li><strong>Grupo de Despesa</strong>: 2 &mdash; Juros e Encargos da Dívida.</li>
+                    </ul>
+
+                    <h4>Amortização da Dívida</h4>
+                    <ul>
+                        <li><strong>Grupo de Despesa</strong>: 6 &mdash; Amortização da Dívida.</li>
+                    </ul>
+
+                    <h4>Reserva de Contingência</h4>
+                    <ul>
+                        <li><strong>Grupo de Despesa</strong>: 9 &mdash; Reserva de Contingência.</li>
+                    </ul>
+
+                    <h3>Repositório</h3>
+
+                    <p>Os códigos e dados utilizados para a construção desta visualização estão disponíveis no <a href="https://github.com/tesouro/orcamento">repositório do projeto, no GitHub</a>.</p>
+
             </div>
         </div>
 
