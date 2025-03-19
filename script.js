@@ -58,7 +58,7 @@ function begin(file) {
 
     // bubble chart
 
-    b = new BubbleChart("svg.chart-metodologia", ".wrapper-chart-metodologia", file.desp_fun);
+    b = new BubbleChart("svg.chart-metodologia", ".container-chart-metodologia", file.desp_fun);
     b.plot();
 
     //const treemap = new TreeMapVis(file.nodes, ".treemap-opening");

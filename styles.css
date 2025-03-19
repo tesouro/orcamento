@@ -311,10 +311,24 @@ header img.logo-tt {
 
 }
 
-div.wrapper-chart-metodologia {
+svg.chart-metodologia {
     width: 100%;
-    position: relative;
+    height: 500px;
+    max-height: 90vh;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+div.wrapper-chart-metodologia {
     background-color: cornsilk;
+    width: 100%;
+}
+
+div.container-chart-metodologia {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
 }
 
 .rotulo-cont-bubble {
@@ -339,14 +353,6 @@ div.wrapper-chart-metodologia {
     left: 50%;
     transform: translateX(-50%);
 
-}
-
-svg.chart-metodologia {
-    width: 100%;
-    height: 500px;
-    max-height: 90vh;
-    max-width: 1200px;
-    margin: 0 auto;
 }
 
   .txt-receita { background-color: var(--amarelo-tesouro); }
