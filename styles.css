@@ -125,6 +125,7 @@ p.labels.labels-receitas {
 .info-card table {
     font-weight: 300;
     font-size: .8em;
+    margin-top: .5rem;
 }
 
 .info-card h3 {
@@ -136,7 +137,6 @@ p.labels.labels-receitas {
 
 .info-card[data-tipo-infocard="receita"] h3 { color: var(--amarelo-tesouro-texto); }
 .info-card[data-tipo-infocard="despesa"] h3 { color: var(--verde-tesouro); }
-
 
 table td.item-valor {
 
@@ -151,6 +151,7 @@ table td.item-valor {
 .info-card .info-card-valor-total { 
     font-weight: bold;
     font-size: 1.2em;
+    margin-top: .5rem;
 }
 
 .info-card .info-card-pct-total {
@@ -269,7 +270,7 @@ header img.logo-tt {
     margin: 0 auto;
   }
   
-  .hero-image::before {
+.hero-image::before {
     content: "";
     position: absolute;
     width: 100%;
@@ -277,42 +278,76 @@ header img.logo-tt {
     border-radius: 50%;
     background: radial-gradient(circle, rgba(255, 255, 255, 0) 60%, ivory 70%);
     pointer-events: none;
-  }
-  
-  .hero-image img {
+}
+
+.hero-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     border-radius: 50%;
     padding: .2em;
-  }
+}
 
-  .wrapper-metodologia {
+  /* ======== metodologia ========= */
+
+.wrapper-metodologia {
 
     font-family: 'Roboto';
     border-top: 3px solid currentColor;
     background-color: cornsilk;
 
-  }
+}
 
-  .metodologia {
+.wrapper-metodologia.no-border{
+    border-color: cornsilk;
+}
+
+.metodologia {
     margin: 3em auto;
+    margin-bottom: 0;
     max-width: 620px;
     padding-bottom: 2rem;
+    line-height: 1.4;
 
-  }
+}
 
-  div.wrapper-chart-metodologia {
+div.wrapper-chart-metodologia {
     width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
+    position: relative;
+    background-color: cornsilk;
+}
 
-  svg.chart-metodologia {
+.rotulo-cont-bubble {
+    position: absolute;
+    font-family: 'Roboto Condensed';
+    text-align: center;
+}
+
+.valor-bubble {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.rotulo-cont-bubble p {
+    margin: 0;
+    margin-top: .5rem;
+}
+
+.rotulo-cont-bubble-total {
+
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+
+}
+
+svg.chart-metodologia {
     width: 100%;
     height: 500px;
     max-height: 90vh;
-  }
+    max-width: 1200px;
+    margin: 0 auto;
+}
 
   .txt-receita { background-color: var(--amarelo-tesouro); }
   .txt-despesa { background-color: var(--verde-tesouro); }
@@ -329,7 +364,10 @@ header img.logo-tt {
   }
 
   h4 {
-    border-top: 1px solid currentColor;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 1rem;
+    /*border-top: 1px solid currentColor;*/
     border-bottom: 1px solid currentColor;
   }
 

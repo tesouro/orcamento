@@ -59,6 +59,7 @@ function begin(file) {
     // bubble chart
 
     b = new BubbleChart("svg.chart-metodologia", ".wrapper-chart-metodologia", file.desp_fun);
+    b.plot();
 
     //const treemap = new TreeMapVis(file.nodes, ".treemap-opening");
     //treemap.plot();
@@ -547,12 +548,14 @@ class BubbleChart {
 
         this.scaleR = d3.scaleSqrt()
             .domain(d3.extent(this.data, d => d.vlr))
-            .range([2, 50])
+            .range([2, 80])
         ;
+
+        this.scaleColor = d3.scaleOrdinal().domain(this.domains.gnd).range(d3.schemeCategory10);
 
         this.simulation = d3.forceSimulation(this.data)
             .force("charge", d3.forceManyBody().strength(5))
-            .force("collision", d3.forceCollide().radius(d => this.scaleR(d.vlr) + 0))
+            .force("collision", d3.forceCollide().radius(d => this.scaleR(d.vlr) + 1))
             .on("tick", ticked);
 
         const nodes = this.svg.selectAll("circle")
@@ -561,7 +564,7 @@ class BubbleChart {
             .attr("r", d => this.scaleR(d.vlr))
             .attr("cx", 0)
             .attr("cy", 0)
-            .attr("fill", (d,i) => d3.schemeCategory10[i % 10])
+            .attr("fill", d => this.scaleColor(d.gnd))
         ;
 
         this.simulation.force("x", d3.forceX(this.W / 2).strength(0.05));
@@ -573,9 +576,16 @@ class BubbleChart {
             nodes.attr("transform", d => `translate(${d.x},${d.y})`);
         }
 
+        const div = this.cont.append("div").classed("rotulo-cont-bubble", true).classed("rotulo-cont-bubble-total", true);
         
+        div.append("p").classed("rotulo-bubble", true).classed("rotulo-total", true).text("Total");
+        div.append("p").classed("rotulo-bubble", true).classed("valor-bubble", true).text("R$" + Utils.valor_reais(d3.sum(this.data, d => d.vlr)));
 
 
+
+    }
+
+    plot_classificacao(variavel) {
 
 
     }
