@@ -336,6 +336,8 @@ div.container-chart-metodologia {
     position: absolute;
     font-family: 'Roboto Condensed';
     text-align: center;
+    transform: translate(-50%, -100%);
+    font-size: .7rem;
 }
 
 .valor-bubble {
@@ -345,7 +347,7 @@ div.container-chart-metodologia {
 
 .rotulo-cont-bubble p {
     margin: 0;
-    margin-top: .5rem;
+    margin-top: .5em;
 }
 
 .rotulo-cont-bubble-total {

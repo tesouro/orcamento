@@ -466,7 +466,8 @@ class BubbleChart {
 
         const variables = ["desp", "gnd", "fun"];
 
-        this.domains = {}
+        this.domains = {};
+        this.subtotais = {};
 
         variables.forEach(variable => {
 
@@ -476,11 +477,26 @@ class BubbleChart {
                 this.domains[variable].sort();
             }
 
+            this.subtotais[variable] = [];
+
+            this.domains[variable].forEach(categoria => {
+
+                this.subtotais[variable].push(
+                    {
+                        nome : categoria,
+                        valor : this.data.filter(d => d[variable] == categoria).reduce((acc, curr) => acc + curr.vlr, 0)
+                    }
+                );
+
+
+            });
+
         });
 
         // POSITIONS!!!
 
         this.positions = {}
+        this.cell_sizes = {}
 
         // criar variaveis para as proporcoes, e so muda-las quando mudar o tamanho da tela
 
@@ -492,6 +508,8 @@ class BubbleChart {
         
         const width_fun = Math.floor(this.W * (1 - this.margin * 2) / 8);
         const height_fun = Math.floor(this.H * (1 - this.margin * 2) / 4);
+
+        this.cell_sizes["fun"] = { width: width_fun, height: height_fun };
 
         for (let i = 0; i < 29; i++) {
 
@@ -511,6 +529,8 @@ class BubbleChart {
         const width_gnd = Math.floor(this.W * (1 - this.margin * 2) / 3);
         const height_gnd = Math.floor(this.H * (1 - this.margin * 2) / 3);
 
+        this.cell_sizes["gnd"] = { width: width_gnd, height: height_gnd };
+
         for (let i = 0; i < 6; i++) {
 
             this.positions.gnd[i] = {
@@ -528,6 +548,8 @@ class BubbleChart {
 
         const width_desp = Math.floor(this.W * (1 - this.margin * 2) / 4);
         const height_desp = Math.floor(this.H * (1 - this.margin * 2) / 3);
+
+        this.cell_sizes["desp"] = { width: width_desp, height: height_desp };
 
         for (let i = 0; i <= 11; i++) {
 
@@ -605,7 +627,7 @@ class BubbleChart {
             return pos.x;
 
 
-        }).strength(0.05));
+        }).strength(0.07));
 
         this.simulation.force("y", d3.forceY(d => {
 
@@ -617,9 +639,23 @@ class BubbleChart {
 
             return pos.y;
 
-        }).strength(0.05));
+        }).strength(0.07));
 
         this.simulation.alpha(1).restart();
+
+        this.cont.selectAll("div.rotulo-cont-bubble").remove();
+        
+        this.cont.selectAll("div.rotulo-cont-bubble").data(this.subtotais[variavel]).join("div")
+            .classed("rotulo-cont-bubble", true)
+            .style("top", (d,i) => this.positions[variavel][i].y + this.cell_sizes[variavel].height/2 + "px")
+            .style("left", (d,i) => this.positions[variavel][i].x + "px")
+            .append("p")
+            .classed("rotulo-bubble", true)
+            .text(d => d.nome)
+            .append("p")
+            .classed("valor-bubble", true)
+            .text(d => "R$" + Utils.valor_reais(d.valor));
+
 
     }
 
