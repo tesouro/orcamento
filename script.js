@@ -472,6 +472,10 @@ class BubbleChart {
 
             this.domains[variable] = this.data.map(d => d[variable]).filter((v, i, a) => a.indexOf(v) === i);
 
+            if (variable != "desp") {
+                this.domains[variable].sort();
+            }
+
         });
 
         // POSITIONS!!!
@@ -486,17 +490,19 @@ class BubbleChart {
 
         this.positions.fun = [];
         
-        const width_fun = Math.floor(this.W * (1 - this.margin * 2) / 7);
+        const width_fun = Math.floor(this.W * (1 - this.margin * 2) / 8);
         const height_fun = Math.floor(this.H * (1 - this.margin * 2) / 4);
 
-        for (let i = 0; i < 28; i++) {
+        for (let i = 0; i < 29; i++) {
 
             this.positions.fun[i] = {
-                x : ( i % 7 ) * width_fun + this.W * this.margin + width_fun * 0.5,
-                y : Math.floor(i / 7) * height_fun + this.H * this.margin + height_fun * 0.5
+                x : ( i % 8 ) * width_fun + this.W * this.margin + width_fun * 0.5,
+                y : Math.floor(i / 8 ) * height_fun + this.H * this.margin + height_fun * 0.5
             }
 
         }
+
+        //this.positions.fun[28] = { x: this.W * 0.5, y: 4 * height_fun + this.H * 0.05 };
 
         // posicoes gnd
 
@@ -514,7 +520,7 @@ class BubbleChart {
 
         }
 
-        this.positions.gnd[6] = { x: this.W * 0.5, y: 3 * height_gnd + this.H * 0.05 };
+        this.positions.gnd[6] = { x: this.W * 0.5, y: 2 * height_gnd + this.H * this.margin + height_gnd * 0.5 };
 
         // posicoes desp
 
@@ -536,10 +542,11 @@ class BubbleChart {
 
     plot_positions(variable, color) {
 
-        this.svg.selectAll("circle").data(this.positions[variable]).join("circle")
-            .attr("cx", d => d.x)
-            .attr("cy", d => d.y)
-            .attr("r", 5)
+        this.svg.selectAll("rect").data(this.positions[variable]).join("rect")
+            .attr("x", d => d.x - 5)
+            .attr("y", d => d.y - 5)
+            .attr("width", 10)
+            .attr("height", 10)
             .attr("fill", color)
         ;
     }
@@ -548,7 +555,7 @@ class BubbleChart {
 
         this.scaleR = d3.scaleSqrt()
             .domain(d3.extent(this.data, d => d.vlr))
-            .range([2, 80])
+            .range([2, 60])
         ;
 
         this.scaleColor = d3.scaleOrdinal().domain(this.domains.gnd).range(d3.schemeCategory10);
@@ -587,6 +594,32 @@ class BubbleChart {
 
     plot_classificacao(variavel) {
 
+        this.simulation.force("x", d3.forceX(d => {
+
+            // posicao do valor da variavel no dominio da variavel
+            const idx = this.domains[variavel].indexOf(d[variavel]);
+            
+            // posicao da variavel no array de posicoes
+            const pos = this.positions[variavel][idx];
+
+            return pos.x;
+
+
+        }).strength(0.05));
+
+        this.simulation.force("y", d3.forceY(d => {
+
+            // posicao do valor da variavel no dominio da variavel
+            const idx = this.domains[variavel].indexOf(d[variavel]);
+
+            // posicao da variavel no array de posicoes
+            const pos = this.positions[variavel][idx];
+
+            return pos.y;
+
+        }).strength(0.05));
+
+        this.simulation.alpha(1).restart();
 
     }
 
