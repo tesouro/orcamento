@@ -374,13 +374,13 @@ class TreeMapVis {
         const svg = d3.select(this.svg_ref);
         const width = +svg.style("width").slice(0,-2);
         const height = +svg.style("height").slice(0, -2);
-        console.log(width, height);
+        //console.log(width, height);
         
         const root = d3.hierarchy(data)
             .sum(d => d.value)
             .sort((a, b) => b.value - a.value);
 
-        console.log(data, root)
+        //console.log(data, root)
 
         const treemap = d3.treemap()
             .size([width, height])
@@ -458,8 +458,8 @@ class BubbleChart {
         this.buttons = d3.selectAll("[data-button]");
         this.buttons.on("click", e => this.button_click(e, this));
 
-        this.W = this.svg.style("width").slice(0,-2);
-        this.H = this.svg.style("height").slice(0,-2);
+        this.W = +this.svg.style("width").slice(0,-2);
+        this.H = +this.svg.style("height").slice(0,-2);
 
         this.margin = 0.05;
 
@@ -539,7 +539,7 @@ class BubbleChart {
 
         });
 
-        console.log(this.grids, min_Height);
+        //console.log(this.grids, min_Height);
 
         this.H = min_Height;
 
@@ -554,7 +554,7 @@ class BubbleChart {
 
         // criar variaveis para as proporcoes, e so muda-las quando mudar o tamanho da tela
 
-        console.log("aqui");
+        //console.log("aqui");
 
         // circulando pelas variaveis para definir o grid
 
@@ -625,10 +625,17 @@ class BubbleChart {
         }
 
         // hover nos bubbles
-        
-        nodes.on("hover", (e,d) => {
+
+        nodes.on("mouseenter", (e,d) => {
 
             this.showtooltip(e, d, this);
+
+
+        });
+
+        nodes.on("mouseleave", (e,d) => {
+
+            this.hidetooltip(e, d, this);
 
 
         });
@@ -708,6 +715,43 @@ class BubbleChart {
             self.plot_classificacao(variavel);
         }
 
+    }
+
+    showtooltip(e, d, self) {
+
+        const tooltip = d3.select(".tooltip-bubble");
+
+        //console.log(d);
+
+        const w = +tooltip.style("width").slice(0,-2);
+        const h = +tooltip.style("height").slice(0,-2);
+
+        let dx = d.x + w > self.W ? -w -10 : 10;
+        let dy = d.y + h > self.H ? -h -10 : 10;
+
+        tooltip
+            .style("transform", `translate(${d.x + dx}px, ${d.y + dy}px)`)
+            .classed("hidden", false);
+
+        const variables = ["desp", "gnd", "fun"];
+
+        variables.forEach(variable => {
+
+            tooltip.select(`.vlr-${variable}`).text(d[variable]);
+
+        });
+
+        tooltip.select(".vlr-vlr").text(Utils.valor_reais(d.vlr));
+
+    }
+
+    hidetooltip(e, d, self) {
+
+        const tooltip = d3.select(".tooltip-bubble");
+
+
+        tooltip
+            .classed("hidden", true);
     }
 
 }

@@ -375,9 +375,34 @@ div.container-chart-metodologia {
 
 .tooltip-bubble {
     position: absolute;
-    width: 300px;
+    width: 250px;
     top: 0;
     left: 0;
+    opacity: 1;
+    transition: opacity .2s;
+    padding: .5em;
+    background-color: var(--bg);
+    border: 2px solid var(--text);
+    box-shadow: 1px 1px 5px 1px rgba(0,0,0,.2);
+    z-index: 2;
+}
+
+.tooltip-bubble p {
+    margin: .5em 0;
+    font-family: 'Roboto Condensed';
+    font-size: .9em;
+    font-weight: 300;
+
+}
+
+.tooltip-bubble p span {
+    font-weight: bold;
+    display: block;
+}
+
+.tooltip-bubble.hidden {
+    opacity: 0;
+    pointer-events: none    ;
 }
 
 .rotulo-cont-bubble {
