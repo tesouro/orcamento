@@ -460,10 +460,6 @@ class BubbleChart {
 
         this.margin = 0.05;
 
-        this.svg.attr("viewBox", `0 0 ${this.W} ${this.H}`);
-        this.svg.attr("height", this.H);
-        this.svg.attr("width", this.W);
-
         const variables = ["desp", "gnd", "fun"];
 
         this.domains = {};
@@ -495,6 +491,61 @@ class BubbleChart {
 
         // POSITIONS!!!
 
+        // Para achar o tamanho ideal do grid.
+
+        const min_cell_size = 150; // chute
+
+        this.grids = {
+
+            "fun": { rows: 4, cols: 8 },
+            "gnd": { rows: 3, cols: 3 },
+            "desp": { rows: 3, cols: 4 }
+
+        }
+
+        let min_Height = this.H;
+
+        // circulando pelas variaveis para ver a disposição e o tamanho necessário do grid para cada uma delas.
+
+        // a ideia é: quero um grid que tenha uma célula de no mínimo 150 ("min_cell_size") pixels de largura
+        // Se não couber, diminuo o número de colunas até que caiba.
+        // Só que, aumentando o número de linhas, a altura do grid também aumenta, então atualize essa altura
+
+        variables.forEach(variable => {
+
+            let tentative_cols = this.grids[variable].cols;
+            let tentative_grid_size = this.W * (1 - this.margin * 2) / tentative_cols;
+
+            while (tentative_grid_size < min_cell_size) {
+
+                tentative_cols -= 1;
+                tentative_grid_size = this.W * (1 - this.margin * 2) / tentative_cols;
+
+            }
+
+            let tentative_rows = Math.ceil(this.domains[variable].length / tentative_cols);
+
+            let tentative_Height = tentative_rows * tentative_grid_size + this.H * this.margin * 2;
+
+            // atualiza o altura minima necessária para caber
+            if (tentative_Height > min_Height) min_Height = tentative_Height;
+
+            this.grids[variable].cols = tentative_cols;
+            this.grids[variable].rows = tentative_rows;
+
+
+        });
+
+        console.log(this.grids, min_Height);
+
+        this.H = min_Height;
+
+        this.svg.attr("viewBox", `0 0 ${this.W} ${this.H}`);
+        this.svg.attr("height", this.H);
+        this.svg.attr("width", this.W);
+        this.svg.style("height", this.H + "px");
+
+
         this.positions = {}
         this.cell_sizes = {}
 
@@ -502,63 +553,28 @@ class BubbleChart {
 
         console.log("aqui");
 
-        // posicoes funcoes
+        // circulando pelas variaveis para definir o grid
 
-        this.positions.fun = [];
-        
-        const width_fun = Math.floor(this.W * (1 - this.margin * 2) / 8);
-        const height_fun = Math.floor(this.H * (1 - this.margin * 2) / 4);
+        variables.forEach(variable => {
 
-        this.cell_sizes["fun"] = { width: width_fun, height: height_fun };
+            this.positions[variable] = [];
 
-        for (let i = 0; i < 29; i++) {
+            let width = Math.floor(this.W * (1 - this.margin * 2) / this.grids[variable].cols);
+            let height = Math.floor(this.H * (1 - this.margin * 2) / this.grids[variable].rows);
 
-            this.positions.fun[i] = {
-                x : ( i % 8 ) * width_fun + this.W * this.margin + width_fun * 0.5,
-                y : Math.floor(i / 8 ) * height_fun + this.H * this.margin + height_fun * 0.5
+            this.cell_sizes[variable] = { width: width, height: height };
+
+            for (let i = 0; i < this.domains[variable].length; i++) {
+
+                this.positions[variable].push({
+                    x : ( i % this.grids[variable].cols ) * width + this.W * this.margin + width * 0.5,
+                    y : Math.floor(i / this.grids[variable].cols) * height + this.H * this.margin + height * 0.5
+                });
+
             }
 
-        }
 
-        //this.positions.fun[28] = { x: this.W * 0.5, y: 4 * height_fun + this.H * 0.05 };
-
-        // posicoes gnd
-
-        this.positions.gnd = [];
-        
-        const width_gnd = Math.floor(this.W * (1 - this.margin * 2) / 3);
-        const height_gnd = Math.floor(this.H * (1 - this.margin * 2) / 3);
-
-        this.cell_sizes["gnd"] = { width: width_gnd, height: height_gnd };
-
-        for (let i = 0; i < 6; i++) {
-
-            this.positions.gnd[i] = {
-                x : ( i % 3 ) * width_gnd + this.W * this.margin + width_gnd * 0.5,
-                y : Math.floor(i / 3) * height_gnd + this.H * this.margin + height_gnd * 0.5
-            }
-
-        }
-
-        this.positions.gnd[6] = { x: this.W * 0.5, y: 2 * height_gnd + this.H * this.margin + height_gnd * 0.5 };
-
-        // posicoes desp
-
-        this.positions.desp = [];
-
-        const width_desp = Math.floor(this.W * (1 - this.margin * 2) / 4);
-        const height_desp = Math.floor(this.H * (1 - this.margin * 2) / 3);
-
-        this.cell_sizes["desp"] = { width: width_desp, height: height_desp };
-
-        for (let i = 0; i <= 11; i++) {
-
-            this.positions.desp[i] = {
-                x : ( i % 4 ) * width_desp + this.W * this.margin + width_desp * 0.5,
-                y : Math.floor(i / 4) * height_desp + this.H * this.margin + height_desp * 0.5
-            }
-
-        }
+        });
 
     }
 
@@ -647,6 +663,7 @@ class BubbleChart {
         
         this.cont.selectAll("div.rotulo-cont-bubble").data(this.subtotais[variavel]).join("div")
             .classed("rotulo-cont-bubble", true)
+            .style("width", this.cell_sizes[variavel].width + "px")            
             .style("top", (d,i) => this.positions[variavel][i].y + this.cell_sizes[variavel].height/2 + "px")
             .style("left", (d,i) => this.positions[variavel][i].x + "px")
             .append("p")
@@ -757,7 +774,7 @@ class Utils {
             sufixo: sufixo[i]
         }));
 
-        console.log(obj_mult);
+        //console.log(obj_mult);
 
         for (let mult of obj_mult) {
             const val = value/mult.valor;
