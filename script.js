@@ -455,6 +455,9 @@ class BubbleChart {
         this.svg = d3.select(svg);
         this.cont = d3.select(cont);
 
+        this.buttons = d3.selectAll("[data-button]");
+        this.buttons.on("click", e => this.button_click(e, this));
+
         this.W = this.svg.style("width").slice(0,-2);
         this.H = this.svg.style("height").slice(0,-2);
 
@@ -596,7 +599,7 @@ class BubbleChart {
             .range([2, 60])
         ;
 
-        this.scaleColor = d3.scaleOrdinal().domain(this.domains.gnd).range(d3.schemeCategory10);
+        this.scaleColor = d3.scaleOrdinal().domain(this.domains.gnd).range(["#ED90A4","#D3A263","#99B657","#33C192","#00BDCE","#94A9EC","#DC91DB"]);// d3.schemeCategory10);
 
         this.simulation = d3.forceSimulation(this.data)
             .force("charge", d3.forceManyBody().strength(5))
@@ -620,6 +623,19 @@ class BubbleChart {
         function ticked() {
             nodes.attr("transform", d => `translate(${d.x},${d.y})`);
         }
+
+        // hover nos bubbles
+        
+        nodes.on("hover", (e,d) => {
+
+            this.showtooltip(e, d, this);
+
+
+        });
+
+        // rotulos do total. primeiro remover qualquer rotulo que já esteve presente.
+
+        this.cont.selectAll("div.rotulo-cont-bubble").remove();
 
         const div = this.cont.append("div").classed("rotulo-cont-bubble", true).classed("rotulo-cont-bubble-total", true);
         
@@ -673,6 +689,24 @@ class BubbleChart {
             .classed("valor-bubble", true)
             .text(d => "R$" + Utils.valor_reais(d.valor));
 
+
+    }
+
+    button_click(e, self) {
+
+        self.buttons.classed("selected", false);
+        e.target.classList.add("selected");
+
+        const variavel = e.target.dataset.button;
+
+        if (variavel == "total") {
+
+            self.plot();
+
+        } else {
+
+            self.plot_classificacao(variavel);
+        }
 
     }
 

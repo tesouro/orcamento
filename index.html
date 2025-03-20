@@ -160,12 +160,23 @@
                     <li>Custeio Administrativo (demais custeios nas outras áreas de atuação do governo, com exceção de transferências); e</li>
                     <li>Outras transferências a Estados e Municípios (as transferências a estados e municípios classificadas em outras áreas que não as áreas destacadas – Educação, Saúde e Assistência Social).</li>
                 </ul>
+
+                <p>O gráfico abaixo procura ilustrar a relação entre essas classificações. Clique nos botões para alterar a classificação adotada.</p>
                 
             </div>
         </div>
 
         <div class="wrapper-chart-metodologia">
+
+            <div class="wrapper-buttons">
+                <button data-button="gnd">Grupo de Despesa</button>
+                <button data-button="fun">Função de Governo</button>
+                <button data-button="desp">Classificação adaptada</button>
+                <button data-button="total" class="selected">Total</button>
+            </div>
+
             <div class="container-chart-metodologia">
+                <div class="tooltip-bubble"></div>
                 <svg class="chart-metodologia">
                 </svg>
             </div>
@@ -176,94 +187,98 @@
 
                 <p>Na prática, os critérios técnicos adotados para as despesas foram os seguintes:</p>
 
-                <h4>Pessoal Ativo</h4>
+                <div class="metodologia-criterios-despesas">
 
-                <ul>
-                    <li><strong>Grupo de Despesa</strong>: 1 &mdash; Pessoal e Encargos Sociais;</li>
+                    <h4>Pessoal Ativo</h4>
 
-                    <li><strong>Ações orçamentárias</strong>: todas, <em>exceto</em> 214H &mdash; Inativos Militares da União; 0179 &mdash; Pensões Militares da União; 0181 &mdash; Aposentadorias e Pensões Civis da União; 21BW &mdash; Bônus de Eficiência e Produtividade de Servidores Inativos; 00S6 &mdash; Benefício Especial - Lei n. 12.618, de 2012; 00UX &mdash; Demais Aposentadorias e Complementações.</li>
-                </ul>
+                    <ul>
+                        <li><strong>Grupo de Despesa</strong>: 1 &mdash; Pessoal e Encargos Sociais;</li>
 
-                <h4>Pessoal Inativo</h4>
+                        <li><strong>Ações orçamentárias</strong>: todas, <em>exceto</em> 214H &mdash; Inativos Militares da União; 0179 &mdash; Pensões Militares da União; 0181 &mdash; Aposentadorias e Pensões Civis da União; 21BW &mdash; Bônus de Eficiência e Produtividade de Servidores Inativos; 00S6 &mdash; Benefício Especial - Lei n. 12.618, de 2012; 00UX &mdash; Demais Aposentadorias e Complementações.</li>
+                    </ul>
 
-                <ul>
-                    <li><strong>Grupo de Despesa</strong>: 1 &mdash; Pessoal e Encargos Sociais;</li>
+                    <h4>Pessoal Inativo</h4>
 
-                    <li><strong>Ações orçamentárias</strong>: 214H &mdash; Inativos Militares da União; 0179 &mdash; Pensões Militares da União; 0181 &mdash; Aposentadorias e Pensões Civis da União; 21BW &mdash; Bônus de Eficiência e Produtividade de Servidores Inativos; 00S6 &mdash; Benefício Especial - Lei n. 12.618, de 2012; 00UX &mdash; Demais Aposentadorias e Complementações.</li>
-                </ul>
+                    <ul>
+                        <li><strong>Grupo de Despesa</strong>: 1 &mdash; Pessoal e Encargos Sociais;</li>
 
-                <h4>Custeio da Saúde</h4>
+                        <li><strong>Ações orçamentárias</strong>: 214H &mdash; Inativos Militares da União; 0179 &mdash; Pensões Militares da União; 0181 &mdash; Aposentadorias e Pensões Civis da União; 21BW &mdash; Bônus de Eficiência e Produtividade de Servidores Inativos; 00S6 &mdash; Benefício Especial - Lei n. 12.618, de 2012; 00UX &mdash; Demais Aposentadorias e Complementações.</li>
+                    </ul>
 
-                <ul>
-                    <li><strong>Grupo de Despesa</strong>: 3 &mdash; Outras Despesas Correntes;</li>
+                    <h4>Custeio da Saúde</h4>
 
-                    <li><strong>Função orçamentária</strong>: 10 &mdash; Saúde.</li>
-                </ul>
+                    <ul>
+                        <li><strong>Grupo de Despesa</strong>: 3 &mdash; Outras Despesas Correntes;</li>
 
-                <h4>Custeio da Educação</h4>
+                        <li><strong>Função orçamentária</strong>: 10 &mdash; Saúde.</li>
+                    </ul>
 
-                <ul>
-                    <li><strong>Grupo de Despesa</strong>: 3 &mdash; Outras Despesas Correntes;</li>
+                    <h4>Custeio da Educação</h4>
 
-                    <li><strong>Função orçamentária</strong>: 12 &mdash; Educação.</li>
-                </ul>
+                    <ul>
+                        <li><strong>Grupo de Despesa</strong>: 3 &mdash; Outras Despesas Correntes;</li>
 
-                <h4>Custeio Social</h4>
+                        <li><strong>Função orçamentária</strong>: 12 &mdash; Educação.</li>
+                    </ul>
 
-                <ul>
-                    <li><strong>Grupo de Despesa</strong>: 3 &mdash; Outras Despesas Correntes;</li>
+                    <h4>Custeio Social</h4>
 
-                    <li><strong>Funções orçamentárias</strong>: 08 &mdash; Assistência Social; 11 &mdash; Trabalho.</li>
-                </ul>
+                    <ul>
+                        <li><strong>Grupo de Despesa</strong>: 3 &mdash; Outras Despesas Correntes;</li>
 
-                <h4>Custeio Administrativo</h4>
+                        <li><strong>Funções orçamentárias</strong>: 08 &mdash; Assistência Social; 11 &mdash; Trabalho.</li>
+                    </ul>
 
-                <ul>
-                    <li><strong>Grupo de Despesa</strong>: 3 &mdash; Outras Despesas Correntes;</li>
+                    <h4>Custeio Administrativo</h4>
 
-                    <li><strong>Função orçamentária</strong>: todas <em>exceto</em> 08 &mdash; Assistência Social; 10 &mdash; Saúde; 11 &mdash; Trabalho; 12 &mdash; Educação.</li>
+                    <ul>
+                        <li><strong>Grupo de Despesa</strong>: 3 &mdash; Outras Despesas Correntes;</li>
 
-                    <li><strong>Modalidades de Aplicação</strong>: todas, <em>exceto</em> 30 &mdash; Transferências a Estados e ao Distrito Federal; e 40 &mdash; Transferências a Municípios (e demais códigos entre 30 e 49).</li>
+                        <li><strong>Função orçamentária</strong>: todas <em>exceto</em> 08 &mdash; Assistência Social; 10 &mdash; Saúde; 11 &mdash; Trabalho; 12 &mdash; Educação.</li>
 
-                </ul>
+                        <li><strong>Modalidades de Aplicação</strong>: todas, <em>exceto</em> 30 &mdash; Transferências a Estados e ao Distrito Federal; e 40 &mdash; Transferências a Municípios (e demais códigos entre 30 e 49).</li>
 
-                <h4>Outras transferências</h4>
+                    </ul>
 
-                <ul>
-                    <li><strong>Grupo de Despesa</strong>: 3 &mdash; Outras Despesas Correntes;</li>
+                    <h4>Outras transferências</h4>
 
-                    <li><strong>Função orçamentária</strong>: todas <em>exceto</em> 08 &mdash; Assistência Social; 10 &mdash; Saúde; 11 &mdash; Trabalho; 12 &mdash; Educação.</li>
+                    <ul>
+                        <li><strong>Grupo de Despesa</strong>: 3 &mdash; Outras Despesas Correntes;</li>
 
-                    <li><strong>Modalidades de Aplicação</strong>: 30 &mdash; Transferências a Estados e ao Distrito Federal; e 40 &mdash; Transferências a Municípios (e demais códigos entre 30 e 49).</li>
-                </ul>
+                        <li><strong>Função orçamentária</strong>: todas <em>exceto</em> 08 &mdash; Assistência Social; 10 &mdash; Saúde; 11 &mdash; Trabalho; 12 &mdash; Educação.</li>
 
-                <h4>Benefícios Previdenciários do RGPS (Regime Geral de Previdência Social)</h4>
+                        <li><strong>Modalidades de Aplicação</strong>: 30 &mdash; Transferências a Estados e ao Distrito Federal; e 40 &mdash; Transferências a Municípios (e demais códigos entre 30 e 49).</li>
+                    </ul>
 
-                <ul>
-                    <li><strong>Grupo de Despesa</strong>: 3 &mdash; Outras Despesas Correntes;</li>
+                    <h4>Benefícios Previdenciários do RGPS (Regime Geral de Previdência Social)</h4>
 
-                    <li><strong>Unidade orçamentária</strong>: 33904 &mdash; Fundo do Regime Geral de Previdência Social.</li>
-                </ul>
+                    <ul>
+                        <li><strong>Grupo de Despesa</strong>: 3 &mdash; Outras Despesas Correntes;</li>
 
-                <h4>Investimentos</h4>
-                <ul>
-                    <li><strong>Grupos de Despesa</strong>: 4 &mdash; Investimentos e 5 &mdash; Inversões Financeiras.</li>
-                </ul>
+                        <li><strong>Unidade orçamentária</strong>: 33904 &mdash; Fundo do Regime Geral de Previdência Social.</li>
+                    </ul>
 
-                <h4>Juros</h4>
-                <ul>
-                    <li><strong>Grupo de Despesa</strong>: 2 &mdash; Juros e Encargos da Dívida.</li>
-                </ul>
+                    <h4>Investimentos</h4>
+                    <ul>
+                        <li><strong>Grupos de Despesa</strong>: 4 &mdash; Investimentos e 5 &mdash; Inversões Financeiras.</li>
+                    </ul>
 
-                <h4>Amortização da Dívida</h4>
-                <ul>
-                    <li><strong>Grupo de Despesa</strong>: 6 &mdash; Amortização da Dívida.</li>
-                </ul>
+                    <h4>Juros</h4>
+                    <ul>
+                        <li><strong>Grupo de Despesa</strong>: 2 &mdash; Juros e Encargos da Dívida.</li>
+                    </ul>
 
-                <h4>Reserva de Contingência</h4>
-                <ul>
-                    <li><strong>Grupo de Despesa</strong>: 9 &mdash; Reserva de Contingência.</li>
-                </ul>
+                    <h4>Amortização da Dívida</h4>
+                    <ul>
+                        <li><strong>Grupo de Despesa</strong>: 6 &mdash; Amortização da Dívida.</li>
+                    </ul>
+
+                    <h4>Reserva de Contingência</h4>
+                    <ul>
+                        <li><strong>Grupo de Despesa</strong>: 9 &mdash; Reserva de Contingência.</li>
+                    </ul>
+
+                </div>
 
                 <h3>Repositório</h3>
 

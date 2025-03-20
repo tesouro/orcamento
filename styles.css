@@ -8,6 +8,7 @@
     --amarelo-tesouro-texto: #D5B723;
     --verde-tesouro: rgb(50,156,50);
     --azul-tesouro: rgb(0,74,147);
+    --azul-tesouro-claro: rgba(0, 74, 147, 0.7);
     --bg: ivory;
     background-color: var(--bg);
     --text: #333;
@@ -311,6 +312,40 @@ header img.logo-tt {
 
 }
 
+.metodologia h3 {
+    margin-top: 2rem;
+}
+
+.wrapper-buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 2rem auto;
+    max-width: 620px;
+    gap: 1rem;
+}
+
+.wrapper-buttons button {
+
+    padding: .5em;
+    border: 2px solid var(--azul-tesouro);
+    font-family: Roboto;
+    background-color: transparent;
+    color: var(--azul-tesouro);
+    border-radius: 5px;
+
+}
+
+.wrapper-buttons button:hover {
+    background-color: var(--azul-tesouro-claro);
+    color: white;
+}
+
+.wrapper-buttons button.selected {
+    background-color: var(--azul-tesouro);
+    color: white;
+}
+
 svg.chart-metodologia {
     width: 100%;
     height: 600px;
@@ -322,13 +357,27 @@ svg.chart-metodologia {
 div.wrapper-chart-metodologia {
     background-color: cornsilk;
     width: 100%;
+    padding-top: .5rem;
 }
+
+.metodologia div.metodologia-criterios-despesas {
+    font-size: .8em;
+    font-weight: 300;
+}
+
 
 div.container-chart-metodologia {
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
     position: relative;
+}
+
+.tooltip-bubble {
+    position: absolute;
+    width: 300px;
+    top: 0;
+    left: 0;
 }
 
 .rotulo-cont-bubble {
@@ -351,9 +400,10 @@ div.container-chart-metodologia {
 
 .rotulo-cont-bubble-total {
 
-    bottom: 0;
+    top: calc(50% + 200px);
     left: 50%;
     transform: translateX(-50%);
+    font-size: 1.2rem;
 
 }
 
@@ -372,7 +422,6 @@ div.container-chart-metodologia {
   }
 
   h4 {
-    font-style: italic;
     font-weight: 400;
     font-size: 1rem;
     /*border-top: 1px solid currentColor;*/
