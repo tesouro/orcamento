@@ -1,4 +1,4 @@
-# Uma visualização de para onde vai o dinheiro do cidadão
+# Uma visualização de onde vem e para onde vai o dinheiro do Governo Federal
 
 Esta visualização foi desenvolvida com as tecnologias padrões e abertas da Web: HTML, CSS e Javascript, além da biblioteca D3.js. Os dados foram analisados e preparados com R. Todos os códigos estão disponíveis neste repositório. Os dados estão disponíveis na pasta (dados)[./dados/].
 
