@@ -253,6 +253,11 @@ desp_fun_gnd <- desp_fun_gnd_raw %>%
   select(desp = `Sankey - Estrutura de Despesas - proxy Mansueto_v3`, gnd, fun, vlr)
 
 
+# Gráficos ----------------------------------------------------------------
+
+ggplot(desp_fun_gnd) +
+  geom_col(aes(y = "a", x = vlr, fill = fun), position = position_stack(), width = 100)
+
 # Output -----------------------------------------------------------------
 
 
