@@ -34,6 +34,14 @@
 
 }
 
+/* ======== abertura ========= */
+
+svg.opening-art {
+    width: 100%;
+    height: 100%;
+    border: 1px solid black;
+}
+
 /* ======== vis ========= */
 
 svg.sankey {
@@ -209,7 +217,6 @@ header.logo {
     padding: 10px;
     box-shadow: 0 0 5px 1px var(--azul-tesouro);
     margin: 0;
-    margin-bottom: 1rem;
 }
 
 header img.logo-tt {

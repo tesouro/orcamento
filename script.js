@@ -52,6 +52,8 @@ function begin(file) {
     //const links = file.links//files[0];
     //const nodes = file.nodes//files[1];
 
+    const opening = new OpeningArt("svg.opening-art");
+
     vis = new SankeyVis(file, svg_, container_);
     vis.plot();
     vis.interaction();
@@ -752,6 +754,33 @@ class BubbleChart {
 
         tooltip
             .classed("hidden", true);
+    }
+
+}
+
+class OpeningArt {
+
+    constructor(svg) {
+
+        this.svg = d3.select(svg);
+
+        this.header = document.querySelector("header");
+
+        const w_header = +window.getComputedStyle(this.header).width.slice(0,-2);
+        const h_header = +window.getComputedStyle(this.header).height.slice(0,-2);
+
+        const w_screen = window.innerWidth;
+        const h_screen = window.innerHeight;
+
+        this.w = w_header;
+        this.h = h_screen - h_header;
+
+        this.svg.attr("viewBox", `0 0 ${this.w} ${this.h}`);
+        this.svg.style("height", this.h + "px");
+        this.svg.style("width", this.w + "px");
+
+        this.colors = ["dodgerblue", "khaki", "firebrick"];
+
     }
 
 }
