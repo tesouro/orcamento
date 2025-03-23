@@ -880,35 +880,28 @@ class OpeningArt {
                 .join("path")
                 .classed("voronoi-cell", true)
                 .attr("d", d => "M" + d.join("L") + "Z")
-                .attr("fill", "transparent")//(d, i) => d3.interpolateSpectral(i / data.length))
-                .attr("stroke", "hotpink")
+                //.attr("fill", "transparent")
+                //.attr("stroke", (d, i) => d3.interpolateSpectral(i / data.length))
             ;
         }
 
         function displayLabels() {  
 
+            //const color = d3.interpolate("white", "rgb(50,156,50)");
+            const color = d3.interpolateCool;//interpolateSpectral;
+
+            d3.selectAll('path.voronoi-cell').transition().duration((d,i) => 300 + i * 100).style("fill", (d, i) => color(i / data.length));//.style("stroke", "transparent");
+
             const state = simulation.state(); 
             const polygons = state.polygons;  
 
-            console.log(polygons, cont);
-
             const labels = cont.selectAll("div.label-voronoi").data(polygons).join("div");
-
-            cont.style("border", "5px solid black");
-
-            console.log(labels);
             
             labels
                 .classed("label-voronoi", true)
-                .style("left", function(d) {
-
-                    console.log(d, d3.polygonCentroid(d));
-
-                    return d3.polygonCentroid(d)[0] + "px"
-
-                })
+                .style("left", d => d3.polygonCentroid(d)[0] + "px")
                 .style("top", d => d3.polygonCentroid(d)[1] + "px")
-                .text(d => d.site.originalObject.data.originalData.weight > 0.05 ? d.site.originalObject.data.originalData.nome : "")
+                .text(d => d.site.originalObject.data.originalData.weight > 0.03 ? d.site.originalObject.data.originalData.nome.slice(3) : "")
             ;
 
 

@@ -48,6 +48,17 @@ div.label-voronoi {
     left: 0;
     font-size: 0.8em;
     text-align: center;
+    font-family: 'Roboto Condensed';
+    width: 100px;
+    color: var(--bg);
+    text-shadow: 0 0 10px var(--text);
+    transform: translate(-50%, -50%);
+}
+
+.voronoi-cell {
+    fill: var(--bg);
+    stroke: #333;
+    stroke-width: 2px;
 }
 
 /* ======== vis ========= */
