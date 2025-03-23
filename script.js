@@ -52,7 +52,6 @@ function begin(file) {
     //const links = file.links//files[0];
     //const nodes = file.nodes//files[1];
 
-    const opening = new OpeningArt("svg.opening-art");
 
     vis = new SankeyVis(file, svg_, container_);
     vis.plot();
@@ -62,6 +61,10 @@ function begin(file) {
 
     b = new BubbleChart("svg.chart-metodologia", ".container-chart-metodologia", file.desp_fun);
     b.plot();
+
+    const opening = new OpeningArt("svg.opening-art", b.subtotais);
+    opening.plot();
+
 
     //const treemap = new TreeMapVis(file.nodes, ".treemap-opening");
     //treemap.plot();
@@ -760,9 +763,10 @@ class BubbleChart {
 
 class OpeningArt {
 
-    constructor(svg) {
+    constructor(svg, data) {
 
         this.svg = d3.select(svg);
+        this.data = data;
 
         this.header = document.querySelector("header");
 
@@ -782,6 +786,70 @@ class OpeningArt {
         this.colors = ["dodgerblue", "khaki", "firebrick"];
 
     }
+
+    plot() {
+
+        let vertical = false;
+
+        if (this.h > this.w) {
+
+            vertical = true;
+
+        }
+
+        const variables = ["fun"];
+
+        variables.forEach((variable, i) => {
+
+            let xScale, yScale;
+            
+            if (vertical & variable == "fun") {
+
+                yScale = d3.scaleBand()
+                    .domain(this.data[variable].map(d => d.nome))
+                    .range([0, this.h])
+                    .padding(0.1)
+                ;
+
+                xScale = d3.linearScale()
+                    .domain([0, d3.max(this.data[variable], d => d.valor)])
+                    .range([0, this.w * 0.7])
+            } else {
+
+                xScale = d3.scaleBand()
+                    .domain(this.data[variable].map(d => d.nome))
+                    .range([0, this.w])
+                    .padding(0.1)
+                ;
+
+                yScale = d3.scaleLinear()
+                    .domain([0, d3.max(this.data[variable], d => d.valor)])
+                    .range([0, this.h])
+
+            }
+
+            this.svg.selectAll("rect").data(this.data[variable]).join("rect")
+                .attr("x", d => xScale(d.nome))
+                .attr("y", yScale(0))
+                .attr("width", xScale.bandwidth())
+                .attr("height", 0)
+                .attr("fill", this.colors[i])
+                .transition()
+                .delay(1000)
+                .duration(1000)
+                .attr("height", d => yScale(d.valor))
+
+
+            ;
+
+        });
+
+
+
+
+    }
+
+
 
 }
 
