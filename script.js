@@ -62,8 +62,8 @@ function begin(file) {
     b = new BubbleChart("svg.chart-metodologia", ".container-chart-metodologia", file.desp_fun);
     b.plot();
 
-    const opening = new OpeningArt("svg.opening-art", b.subtotais);
-    opening.plot();
+    const opening = new OpeningArt("svg.opening-art", "div.cont-opening-art", b.subtotais);
+    setTimeout(() => opening.plot_voronoi(), 1000);
 
 
     //const treemap = new TreeMapVis(file.nodes, ".treemap-opening");
@@ -763,9 +763,10 @@ class BubbleChart {
 
 class OpeningArt {
 
-    constructor(svg, data) {
+    constructor(svg, cont, data) {
 
         this.svg = d3.select(svg);
+        this.cont = d3.select(cont);
         this.data = data;
 
         this.header = document.querySelector("header");
@@ -846,6 +847,72 @@ class OpeningArt {
 
 
 
+
+    }
+
+    plot_voronoi() {
+
+        const data = this.data.fun.filter(d => d.nome != "28 ENCARGOS ESPECIAIS");
+        const total_valor = d3.sum(data, d => d.valor);
+
+        data.forEach(d => {
+            d.weight = d.valor / total_valor;
+            d.x = Math.random() * this.w;
+            d.y = Math.random() * this.h;
+        })
+
+        const simulation = d3.voronoiMapSimulation(data)
+            //.weight(function(d){ return d.weight; })           // se tenho uma propriedade "weight", não preciso usar o weight accessor
+            .clip([[0,0], [0,this.h], [this.w, this.h], [this.w,0]])  // set the clipping polygon
+            .maxIterationCount(500)                            // set the maximum number of iterations
+            .on ("tick", ticked)                                   // function 'ticked' is called after each iteration
+            .on ("end", displayLabels)    // function 'end' is called when the simulation ends
+        ;
+
+        const svg = this.svg;
+        const cont = this.cont;
+            
+        function ticked() {
+            const state = simulation.state();                       // retrieve the simulation's state, i.e. {ended, polygons, iterationCount, convergenceRatio}
+            const polygons = state.polygons;                        // retrieve polygons, i.e. cells of the current iteration
+
+            const cells = svg.selectAll('path.voronoi-cell').data(polygons)
+                .join("path")
+                .classed("voronoi-cell", true)
+                .attr("d", d => "M" + d.join("L") + "Z")
+                .attr("fill", "transparent")//(d, i) => d3.interpolateSpectral(i / data.length))
+                .attr("stroke", "hotpink")
+            ;
+        }
+
+        function displayLabels() {  
+
+            const state = simulation.state(); 
+            const polygons = state.polygons;  
+
+            console.log(polygons, cont);
+
+            const labels = cont.selectAll("div.label-voronoi").data(polygons).join("div");
+
+            cont.style("border", "5px solid black");
+
+            console.log(labels);
+            
+            labels
+                .classed("label-voronoi", true)
+                .style("left", function(d) {
+
+                    console.log(d, d3.polygonCentroid(d));
+
+                    return d3.polygonCentroid(d)[0] + "px"
+
+                })
+                .style("top", d => d3.polygonCentroid(d)[1] + "px")
+                .text(d => d.site.originalObject.data.originalData.weight > 0.05 ? d.site.originalObject.data.originalData.nome : "")
+            ;
+
+
+        }
 
     }
 

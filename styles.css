@@ -38,8 +38,16 @@
 
 svg.opening-art {
     width: 100%;
-    height: 100%;
+    height: 100vh;
     border: 1px solid black;
+}
+
+div.label-voronoi {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 0.8em;
+    text-align: center;
 }
 
 /* ======== vis ========= */
