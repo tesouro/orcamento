@@ -26,6 +26,8 @@
     --cor11: #945D00;
     --cor12: #152A3F;
 
+    scroll-behavior: smooth;
+
 }
 
 .treemap-opening {
@@ -38,6 +40,7 @@
 
 div.cont-opening-art {
     height: calc(97vh - 57px);
+    position: relative;
 }
 
 svg.opening-art {
@@ -64,6 +67,55 @@ div.label-voronoi {
     stroke: #333;
     stroke-width: 2px;
 }
+
+h1 {
+    font-size: 2.5rem;
+    color: var(--azul-tesouro);
+    font-family: 'Roboto Condensed';
+    text-align: center;
+}
+
+h1::after {
+    content: "";
+    border-bottom: 4px solid currentColor;
+    display: block;
+    width: 4rem;
+    margin: 2rem auto;
+}
+
+.wrapper-arrow {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    opacity: 0;
+}
+
+svg.arrow {
+    stroke: var(--bg);
+    animation: bounce infinite 2s;
+}
+
+p.label-grafico-abertura {
+    margin: 0 auto;
+    font-size: .8em;
+    text-align: center;
+    font-family: 'Roboto Condensed';
+    max-width: 80%;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+      transform: translateY(0);
+    }
+    40% {
+      transform: translateY(-30px);
+    }
+    60% {
+      transform: translateY(-15px);
+    }
+  }
 
 /* ======== vis ========= */
 
@@ -268,58 +320,6 @@ header img.logo-tt {
 
 }
 
-.hero h1 {
-
-    font-size: 3rem;
-    text-align: center;
-    max-width: 400px;
-    margin: 2rem auto;
-    font-family: 'Roboto Serif';
-    color: var(--azul-tesouro);
-
-}
-
-.intro h1::after {
-    content: "";
-    border-bottom: 4px solid currentColor;
-    display: block;
-    width: 4rem;
-    margin: 2rem auto;
-}
-
-.opening {
-    width: 100%;
-}
-
-.hero-image {
-    width: 300px; /* Adjust as needed */
-    height: 300px;
-    border-radius: 50%;
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 auto;
-  }
-  
-.hero-image::before {
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0) 60%, ivory 70%);
-    pointer-events: none;
-}
-
-.hero-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-    padding: .2em;
-}
-
   /* ======== metodologia ========= */
 
 .wrapper-metodologia {
@@ -464,7 +464,7 @@ div.container-chart-metodologia {
 }
 
   .txt-receita { background-color: var(--amarelo-tesouro); }
-  .txt-despesa { background-color: var(--verde-tesouro); }
+  .txt-despesa { background-color: var(--verde-tesouro); color: var(--bg)}
 
   figure img {
     display: block;
@@ -484,11 +484,9 @@ div.container-chart-metodologia {
     border-bottom: 1px solid currentColor;
   }
 
-/* canvas */
-
-canvas {
-    width: 100%;
-    height: 300px;
-    border: 1px solid black;  
+p.dedication {
+    font-size: 12px;
+    text-align: center;
+    margin: 2rem 0;
 }
 

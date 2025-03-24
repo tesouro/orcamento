@@ -905,6 +905,8 @@ class OpeningArt {
                 .text(d => d.site.originalObject.data.originalData.weight > 0.03 ? d.site.originalObject.data.originalData.nome.slice(3) : "")
             ;
 
+            d3.select(".wrapper-arrow").transition().delay(1000).duration(1000).style("opacity", 1);
+
 
         }
 
