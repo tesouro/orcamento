@@ -775,10 +775,11 @@ class OpeningArt {
         const h_header = +window.getComputedStyle(this.header).height.slice(0,-2);
 
         const w_screen = window.innerWidth;
-        const h_screen = window.innerHeight;
+        //const h_screen = window.innerHeight;
+        const h_svg = +this.svg.style("height").slice(0,-2);
 
         this.w = w_header;
-        this.h = h_screen - h_header;
+        this.h = h_svg;//h_screen - h_header;
 
         this.svg.attr("viewBox", `0 0 ${this.w} ${this.h}`);
         this.svg.style("height", this.h + "px");
