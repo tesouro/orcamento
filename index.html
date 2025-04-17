@@ -41,13 +41,15 @@
 
             <h1>O Orçamento Federal em 2025</h1>
 
-            <p> O Orçamento Federal é gigantesco. Estamos falando de receitas no valor BLA, e despesas no mesmo valor.</p>
+            <p> O Orçamento Federal é gigantesco. Estamos falando de receitas no valor <strong>R$ 5.722.394.887.721,00</strong> (cinco trilhões, setecentos e vinte e dois bilhões, trezentos e noventa e quatro milhões, oitocentos e oitenta e sete mil e setecentos e vinte e um reais), e despesas no mesmo valor.</p>
 
-            <p>Esses valores representam XXX% do PIB nacional. Cada centavo dessa montanha de dinheiro está classificada e tem um destino certo. O que queremos mostrar aqui é...</p>
+            <p>Esses valores representam 49% do PIB nacional. Cada centavo dessa montanha de dinheiro está classificada e tem um destino certo, especificados na <a href="https://www.gov.br/planejamento/pt-br/assuntos/orcamento/orcamentos-anuais/2025/loa/lei-orcamentaria-anual-loa-2025">Lei Orçamentária Anual, um documento de mais de duas mil páginas distribuídas ao longo de seis volumes</a>.</p>
 
             <p>Tem sido cada vez mais comum encontrar informações e análises sobre as receitas e despesas do governo na imprensa, nos discursos de políticos e autoridades, e até nas conversas do dia-a-dia. Em geral, comparam-se receitas e despesas, fala-se em superávit ou déficit, analisa-se o crescimento das despesas, a sua composição etc. O Ministério do Planejamento e Orçamento, por exemplo, disponibiliza <a href="https://www.gov.br/planejamento/pt-br/assuntos/orcamento/orcamentos-anuais/2025/ploa/ploa-2025">uma série de informativos interessantes a respeito do Orçamento Federal</a> ("Orçamento Cidadão", "Orçamento em Números", além das íntegras da Lei e da Mensagem Presidencial).</p>
 
-            <p>Mas como as receitas e as despesas orçamentárias da União se relacionam? Ou seja, o que pretendemos é responder, talvez de forma inédita, a seguinte pergunta: para que despesas se destinam os recursos arrecadados nas principais receitas? Ou, em outras palavras, na prática, quais receitas financiam quais despesas? Ou, de onde vêm os recursos que custeiam determinada despesa?</p>
+            <p>Mas como as receitas e as despesas orçamentárias da União se relacionam? Ou seja, o que pretendemos é responder, talvez de forma inédita, a seguinte pergunta: para que despesas se destinam os recursos arrecadados nas principais receitas? Em outras palavras, na prática, quais receitas financiam quais despesas? De onde vêm os recursos que custeiam determinada despesa?</p>
+
+            <p>(ou, em nordestinês: receita, ponde tu rai? Despesa, donde tu rem?)</p>
             
             <p>Para isso, construímos uma visualização (em caráter experimental), agrupando as receitas e despesas em categorias, com o intuito de simplificar a extensa classificação orçamentária adotada no setor público brasileiro, e estimamos a relação entre cada uma dessas receitas e despesas. Os critérios técnicos adotados nesses agrupamentos estão descritos na seção de “Metodologia”, abaixo.</p>
 
@@ -71,7 +73,7 @@
                 <h3 data-info="nome">Nome</h3>
                 <p class="info-card-valor-total">R$ <span class="tt-valor-total"></span></p>
                 <p class="info-card-pct-total">(<span class="tt-percent-total"></span> do total de <span class="tt-receita-ou-despesa"></span>s)</p>
-                <p>Principais <span class="tt-origens-ou-destinacoes"></span> desta <span class="tt-receita-ou-despesa"></span>:</p>
+                <p>Principais <span class="tt-origens-ou-destinacoes"></span> dos recursos desta <span class="tt-receita-ou-despesa"></span>:</p>
                 <table class="container-itens-detalhamento">
                     <tbody></tbody>
                 </table>
@@ -298,7 +300,9 @@
 
                 <p>Este não é exatamente um produto oficial do Tesouro Nacional, mas apenas um produto experimental que busca oferecer uma visão um pouco diferente do Orçamento Público, mostrando a relação entre as receitas e as despesas orçamentárias.</p>
 
-                <p>Os códigos e dados utilizados para a construção desta visualização estão disponíveis no <a href="https://github.com/tesouro/orcamento">repositório do projeto, no GitHub</a>, bem como informações para contato.</p>
+                <p>Os dados foram obtidos do sistema "Tesouro Gerencial", que por sua vez é alimentado com dados do Sistema Integrado de Administração Financeira do Governo Federal, o famoso Siafi. Os dados foram então tratados e preparados com R, e esta página e suas visualizações foram elaboradas com HTML, CSS, Javascript e a biblioteca D3.js.</p>
+
+                <p>Os códigos e dados utilizados para a construção desta visualização estão disponíveis no <a href="https://github.com/tesouro/orcamento">repositório do projeto, no GitHub</a>.</p>
 
                 <p class="dedication">&#5832;&#5800;&#5809;&#5800; &#5867; &#5847;&#5846;&#5850;&#5825;&#5835;&#5835;&#5800; &#5868; &#5794;&#5825;&#5811;&#5846;&#5822;&#5839;&#5846; &#5867;&#5846;&#5867; &#5839;&#5846;&#5801;&#5854;&#5801;&#5809;&#5800;</p>
 
